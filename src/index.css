@@ -1,0 +1,22 @@
+:root {
+  font-family: Arial, sans-serif;
+  color: white;
+  background: #120b07;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
