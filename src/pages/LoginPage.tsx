@@ -31,6 +31,7 @@ function LoginPage() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
           />
+          
         </div>
 
         <div>
