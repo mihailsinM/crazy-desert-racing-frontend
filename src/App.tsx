@@ -1,12 +1,22 @@
+import { useState } from "react";
 import "./App.css";
-// import LoginPage from "./pages/LoginPage";
-import DashboardPage from './pages/DashboardPage'
+import DashboardPage from "./pages/DashboardPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+
+  function handleLoginSuccess() {
+    setToken(localStorage.getItem("token"));
+  }
+
   return (
     <main className="app">
-      {/* <LoginPage /> */}
-      <DashboardPage />
+      {token ? (
+        <DashboardPage />
+      ) : (
+        <LoginPage onLoginSuccess={handleLoginSuccess} />
+      )}
     </main>
   );
 }

@@ -1,5 +1,5 @@
-import HeroSection from '../components/HeroSection'
-import Navbar from '../components/Navbar'
+import HeroSection from "../components/HeroSection";
+import Navbar from "../components/Navbar";
 
 function HomePage() {
   return (
@@ -7,7 +7,7 @@ function HomePage() {
       <Navbar />
       <HeroSection />
     </>
-  )
+  );
 }
 
-export default HomePage
+export default HomePage;

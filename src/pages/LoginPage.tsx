@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { login } from "../services/authService";
+import logo from "../assets/logo.png";
+import "../styles/login-page.css";
 
-function LoginPage() {
+type LoginPageProps = {
+  onLoginSuccess: () => void;
+};
+
+function LoginPage({ onLoginSuccess }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -11,43 +17,59 @@ function LoginPage() {
 
     try {
       const response = await login({ email, password });
+
       localStorage.setItem("token", response.token);
 
-      setMessage("Login success.");
+      onLoginSuccess();
     } catch {
       setMessage("Login failed. Check email or password.");
     }
   }
 
   return (
-    <section>
-      <h1>Login</h1>
+    <main className="login-page">
+      <section className="login-brand">
+        <img src={logo} alt="Crazy Desert Racing logo" className="login-logo" />
 
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          
-        </div>
+        <p className="login-eyebrow">Crazy Desert Racing Club</p>
 
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-        </div>
+        <h1>Welcome back, racer.</h1>
 
-        <button type="submit">Login</button>
-      </form>
+        <p className="login-description">
+          Sign in to access your dashboard, cars, races and VIP club.
+        </p>
+      </section>
 
-      {message && <p>{message}</p>}
-    </section>
+      <section className="login-card">
+        <h2>Member Login</h2>
+
+        <form onSubmit={handleLogin} className="login-form">
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              placeholder="racer@email.com"
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </label>
+
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              placeholder="••••••••"
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </label>
+
+          <button type="submit">Login</button>
+        </form>
+
+        {message && <p className="login-message">{message}</p>}
+      </section>
+    </main>
   );
 }
 

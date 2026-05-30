@@ -1,0 +1,86 @@
+.dashboard-hero {
+  margin: 28px 0 28px;
+  padding: 34px;
+  border-radius: 28px;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  align-items: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 122, 26, 0.02),
+      rgba(35, 25, 20, 0.18)
+    );
+
+  border: 1px solid rgba(255, 179, 71, 0.24);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+
+  animation: cardPopIn 0.7s ease both;
+}
+
+.dashboard-hero-eyebrow {
+  color: #ffb347;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.dashboard-hero h1 {
+  margin: 10px 0;
+  font-size: 46px;
+  line-height: 1;
+}
+
+.dashboard-hero-text {
+  max-width: 560px;
+  color: #f0ddd0;
+  line-height: 1.6;
+  font-size: 17px;
+}
+
+.dashboard-hero-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  min-width: 260px;
+}
+
+.dashboard-hero-stats div {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.dashboard-hero-stats span {
+  display: block;
+  color: #ffb347;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.dashboard-hero-stats strong {
+  font-size: 18px;
+}
+
+@media (max-width: 800px) {
+  .dashboard-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-hero h1 {
+    font-size: 36px;
+  }
+
+  .dashboard-hero-stats {
+    width: 100%;
+  }
+}

@@ -1,0 +1,48 @@
+.dashboard-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 20px 32px;
+
+  background: rgba(20, 12, 8, 0.55);
+  backdrop-filter: blur(12px);
+
+  border-radius: 18px;
+  margin-bottom: 24px;
+}
+
+.dashboard-logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.dashboard-menu {
+  display: flex;
+  gap: 12px;
+}
+
+.dashboard-menu button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.dashboard-menu button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-menu button.active {
+  background: #ffb347;
+  color: #120b07;
+  border-color: #ffb347;
+}
+
+.logout-nav-button {
+  background: #ff7a1a !important;
+  color: #120b07 !important;
+  border-color: #ff7a1a !important;
+}
