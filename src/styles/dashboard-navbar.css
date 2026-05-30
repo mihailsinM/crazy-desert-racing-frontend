@@ -31,14 +31,25 @@
   cursor: pointer;
 }
 
-.dashboard-menu button:hover {
-  background: rgba(255, 255, 255, 0.1);
+.dashboard-menu a {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: transparent;
+  color: #f8fafc;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.dashboard-menu button.active {
-  background: #ffb347;
-  color: #120b07;
-  border-color: #ffb347;
+.dashboard-menu a:hover,
+.dashboard-menu a.active {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.dashboard-menu button:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .logout-nav-button {

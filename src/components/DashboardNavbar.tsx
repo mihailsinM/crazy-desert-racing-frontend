@@ -1,55 +1,51 @@
-import '../styles/dashboard-navbar.css'
+import "../styles/dashboard-navbar.css";
+import { NavLink } from "react-router-dom";
 
 type DashboardNavbarProps = {
-  activePage: string
-  onNavigate: (page: string) => void
-  onLogout: () => void
-}
+  title: string;
+  onLogout: () => void;
+};
 
-function DashboardNavbar({
-  activePage,
-  onNavigate,
-  onLogout,
-}: DashboardNavbarProps) {
+function DashboardNavbar({ title, onLogout }: DashboardNavbarProps) {
   return (
     <nav className="dashboard-navbar">
-      <div className="dashboard-logo">Crazy Desert Racing</div>
+      <div className="dashboard-logo">{title}</div>
 
       <div className="dashboard-menu">
-        <button
-          className={activePage === 'dashboard' ? 'active' : ''}
-          onClick={() => onNavigate('dashboard')}
+        <NavLink
+          to="/dashboard"
+          className={({ isActive }) => (isActive ? "active" : "")}
         >
           Dashboard
-        </button>
+        </NavLink>
 
-        <button
-          className={activePage === 'cars' ? 'active' : ''}
-          onClick={() => onNavigate('cars')}
+        <NavLink
+          to="/cars"
+          className={({ isActive }) => (isActive ? "active" : "")}
         >
           My Cars
-        </button>
+        </NavLink>
 
-        <button
-          className={activePage === 'races' ? 'active' : ''}
-          onClick={() => onNavigate('races')}
+        <NavLink
+          to="/races"
+          className={({ isActive }) => (isActive ? "active" : "")}
         >
           Races
-        </button>
+        </NavLink>
 
-        <button
-          className={activePage === 'vip' ? 'active' : ''}
-          onClick={() => onNavigate('vip')}
+        <NavLink
+          to="/vip"
+          className={({ isActive }) => (isActive ? "active" : "")}
         >
           VIP Club
-        </button>
+        </NavLink>
 
         <button className="logout-nav-button" onClick={onLogout}>
           Logout
         </button>
       </div>
     </nav>
-  )
+  );
 }
 
-export default DashboardNavbar
+export default DashboardNavbar;
