@@ -1,4 +1,38 @@
+import { useEffect, useState } from "react";
+import { getAllRaces } from "../services/raceService";
+import type { Race } from "../types/race";
+
+import "../styles/mock-pages.css";
+import "../styles/animations.css";
+
 function RacesPage() {
+  const [races, setRaces] = useState<Race[]>([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadRaces() {
+      try {
+        const data = await getAllRaces();
+        setRaces(data);
+      } catch {
+        setError("Failed to load races");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadRaces();
+  }, []);
+
+  if (loading) {
+    return <p>Loading races...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
   return (
     <section className="mock-page">
       <header className="page-header">
@@ -7,26 +41,17 @@ function RacesPage() {
       </header>
 
       <div className="mock-grid">
-        <article className="mock-card">
-          <h2>Negev Desert Challenge</h2>
-          <p>Three-day desert race across dunes, rocks and open tracks.</p>
-          <span>April 15, 2027</span>
-        </article>
-
-        <article className="mock-card">
-          <h2>Arava Night Sprint</h2>
-          <p>Short high-speed night race with festival lights and DJ stage.</p>
-          <span>June 8, 2027</span>
-        </article>
-
-        <article className="mock-card">
-          <h2>Dead Sea Rally Weekend</h2>
-          <p>Premium racing weekend with VIP lounge and camping zones.</p>
-          <span>September 20, 2027</span>
-        </article>
+        {races.map((race) => (
+          <article key={race.id} className="mock-card">
+            <h2>{race.name}</h2>
+            <p>{race.location}</p>
+            <span>{race.startDate}</span>
+            <span>{race.maxParticipants} participants</span>
+          </article>
+        ))}
       </div>
     </section>
-  )
+  );
 }
 
-export default RacesPage
+export default RacesPage;

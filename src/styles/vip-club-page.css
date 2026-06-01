@@ -96,15 +96,62 @@
     transparent
   );
   transform: rotate(20deg);
+  pointer-events: none;
+  animation: goldShineIntro 2.8s ease-in-out 0.6s 1;
 }
 
 .vip-card.featured:hover::before {
-  opacity: 1;
-  animation: goldShine 4s ease-in-out;
+  animation: goldShineHover 2.8s ease-in-out 1;
 }
 
 @media (max-width: 800px) {
   .vip-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+.vip-price {
+  display: block;
+  margin-top: 18px;
+  font-size: 24px;
+  color: #ffffff;
+}
+
+.vip-button {
+  display: block;
+  margin-top: 22px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 999px;
+  background: #ff7a1a;
+  color: #120b07;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.vip-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(255, 122, 26, 0.25);
+}
+
+@keyframes goldShineIntro {
+  from {
+    left: -80%;
+  }
+
+  to {
+    left: 130%;
+  }
+}
+
+@keyframes goldShineHover {
+  from {
+    left: -80%;
+  }
+
+  to {
+    left: 130%;
   }
 }

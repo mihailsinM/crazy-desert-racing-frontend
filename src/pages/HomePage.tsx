@@ -6,6 +6,7 @@ function HomePage() {
     <>
       <Navbar />
       <HeroSection />
+      
     </>
   );
 }
