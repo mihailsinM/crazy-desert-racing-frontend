@@ -67,3 +67,65 @@
     grid-template-columns: 1fr;
   }
 }
+
+.race-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.race-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 179, 71, 0.08),
+    transparent 50%
+  );
+
+  pointer-events: none;
+}
+
+.race-card p {
+  margin: 8px 0;
+}
+
+.race-status {
+  margin-top: auto;
+}
+
+.upcoming {
+  background: rgba(255, 179, 71, 0.18);
+  color: #ffb347;
+}
+
+.past {
+  background: rgba(255, 255, 255, 0.12);
+  color: #d8c7bd;
+}
+
+.race-admin-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.race-admin-actions button {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.race-admin-actions button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
+}

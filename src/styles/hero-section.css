@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
 
-  background:
+  /* background:
     linear-gradient(
       90deg,
       rgba(18, 11, 7, 0.52) 0%,
@@ -15,7 +15,7 @@
 
   background-size: cover;
   background-position: center;
-  color: white;
+  color: white; */
 }
 
 .hero-layout {
@@ -62,15 +62,18 @@
 }
 
 .hero-story-card {
-  max-width: 400px;
+  width: 380px;
+  max-width: 100%;
+
   padding: 28px;
   border-radius: 24px;
-  background: rgba(18, 11, 7, 0.01);
-  border: 1px solid rgba(255, 179, 71, 0.14);
-  backdrop-filter: blur(2px);
+  background: rgba(18, 11, 7, 0.14);
+  border: 1px solid rgba(255, 179, 71, 0.18);
+  backdrop-filter: blur(1px);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-  margin-top: 70px;
-  margin-left: 400px;
+
+  justify-self: end;
+  margin-top: 50px;
 }
 
 .hero-story-card h2 {
@@ -119,7 +122,10 @@
   }
 
   .hero-story-card {
-    max-width: 100%;
+    width: 100%;
+    max-width: 420px;
+    justify-self: start;
+    margin-top: 30px;
   }
 }
 

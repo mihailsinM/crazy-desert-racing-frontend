@@ -1,0 +1,17 @@
+.home-page {
+  min-height: 100vh;
+  color: white;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18, 11, 7, 0.35) 0%,
+      rgba(18, 11, 7, 0.45) 45%,
+      rgba(18, 11, 7, 0.7) 100%
+    ),
+    url("/src/assets/home_page.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}

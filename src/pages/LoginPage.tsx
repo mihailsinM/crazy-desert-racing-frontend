@@ -18,6 +18,8 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
     try {
       const response = await login({ email, password });
 
+      console.log(response.token);
+
       localStorage.setItem("token", response.token);
 
       onLoginSuccess();
