@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { getMyRaceCars } from "../services/raceCarService";
 import { registerMyCarForRace } from "../services/raceRegistrationService";
 import type { RaceCar } from "../types/raceCar";
+import { getCurrentUser } from "../services/userService";
+import type { UserResponse } from "../types/user";
 
 import "../styles/mock-pages.css";
 import "../styles/animations.css";
@@ -15,6 +17,7 @@ function RacesPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [myCars, setMyCars] = useState<RaceCar[]>([]);
+  const [currentUser, setCurrentUser] = useState<UserResponse | null>(null);
 
   function getRaceStatus(startDate: string) {
     const today = new Date();
@@ -44,6 +47,8 @@ function RacesPage() {
         setRaces(data);
         const cars = await getMyRaceCars();
         setMyCars(cars);
+        const user = await getCurrentUser();
+        setCurrentUser(user);
       } catch {
         setError("Failed to load races");
       } finally {
@@ -86,6 +91,17 @@ function RacesPage() {
         <p>Race Calendar</p>
         <h1>🏁 Races</h1>
       </header>
+
+      {currentUser?.role === "ADMIN" && (
+        <div style={{ marginBottom: "20px" }}>
+          <button
+            className="race-action-button"
+            onClick={() => navigate("/races/new")}
+          >
+            Add New Race
+          </button>
+        </div>
+      )}
 
       <div className="mock-grid">
         {races.map((race) => {

@@ -1,4 +1,4 @@
-.login-page {
+.auth-page {
   min-height: 100vh;
   padding: 32px;
 
@@ -15,11 +15,11 @@
   background-position: center;
 }
 
-.login-brand {
+.auth-brand {
   max-width: 620px;
 }
 
-.login-logo {
+.auth-logo {
   width: 160px;
   height: 160px;
   object-fit: contain;
@@ -27,7 +27,7 @@
   filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35));
 }
 
-.login-eyebrow {
+.auth-eyebrow {
   color: #ffb347;
   font-weight: bold;
   text-transform: uppercase;
@@ -35,20 +35,20 @@
   font-size: 13px;
 }
 
-.login-brand h1 {
+.auth-brand h1 {
   margin: 12px 0;
   font-size: 48px;
   line-height: 1;
 }
 
-.login-description {
+.auth-description {
   max-width: 520px;
   color: #f0ddd0;
   font-size: 19px;
   line-height: 1.6;
 }
 
-.login-card {
+.auth-card {
   padding: 34px;
   border-radius: 28px;
 
@@ -59,25 +59,25 @@
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
 }
 
-.login-card h2 {
+.auth-card h2 {
   margin-top: 0;
   margin-bottom: 24px;
   font-size: 28px;
 }
 
-.login-form {
+.auth-form {
   display: grid;
   gap: 18px;
 }
 
-.login-form label {
+.auth-form label {
   display: grid;
   gap: 8px;
   font-weight: bold;
   color: #f0ddd0;
 }
 
-.login-form input {
+.auth-form input {
   width: 100%;
   padding: 14px 16px;
 
@@ -89,12 +89,12 @@
   outline: none;
 }
 
-.login-form input:focus {
+.auth-form input:focus {
   border-color: #ffb347;
   box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.18);
 }
 
-.login-form button {
+.auth-form button {
   margin-top: 8px;
   width: 100%;
 
@@ -109,32 +109,32 @@
   cursor: pointer;
 }
 
-.login-form button:hover {
+.auth-form button:hover {
   opacity: 0.92;
 }
 
-.login-message {
+.auth-message {
   margin-top: 16px;
   color: #ffb347;
   font-weight: bold;
 }
 
 @media (max-width: 850px) {
-  .login-page {
+  .auth-page {
     grid-template-columns: 1fr;
     padding: 24px;
   }
 
-  .login-brand h1 {
+  .auth-brand h1 {
     font-size: 42px;
   }
 
-  .login-card {
+  .auth-card {
     padding: 26px;
   }
 }
 
-.login-logo {
+.auth-logo {
   animation: floatLogo 4s ease-in-out infinite;
 }
 
@@ -152,7 +152,7 @@
   }
 }
 
-.login-page {
+.auth-page {
   animation: loginBackgroundZoom 24s ease-in-out infinite alternate;
 }
 
@@ -164,4 +164,9 @@
   to {
     background-size: 108%;
   }
+}
+
+.auth-footer {
+  margin-top: 18px;
+  color: #f0ddd0;
 }

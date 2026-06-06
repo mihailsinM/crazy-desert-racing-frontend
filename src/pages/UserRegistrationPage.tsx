@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../services/userRegistrationService";
 import logo from "../assets/logo.png";
-import "../styles/login-page.css";
+import "../styles/auth-page.css";
 
 function RegisterPage() {
   const [name, setName] = useState("");
@@ -41,24 +41,24 @@ function RegisterPage() {
   }
 
   return (
-    <main className="login-page">
-      <section className="login-brand">
-        <img src={logo} alt="Crazy Desert Racing logo" className="login-logo" />
+    <main className="auth-page">
+      <section className="auth-brand">
+        <img src={logo} alt="Crazy Desert Racing logo" className="auth-logo" />
 
-        <p className="login-eyebrow">Join Crazy Desert Racing</p>
+        <p className="auth-eyebrow">Join Crazy Desert Racing</p>
 
         <h1>Create your racer profile.</h1>
 
-        <p className="login-description">
+        <p className="auth-description">
           Start your journey with the desert racing community, future events,
           VIP access and powerful cars.
         </p>
       </section>
 
-      <section className="login-card">
+      <section className="auth-card">
         <h2>Create Account</h2>
 
-        <form onSubmit={handleSubmit} className="login-form">
+        <form onSubmit={handleSubmit} className="auth-form">
           <label>
             Name
             <input
@@ -112,9 +112,9 @@ function RegisterPage() {
           <button type="submit">Create Account</button>
         </form>
 
-        {message && <p className="login-message">{message}</p>}
+        {message && <p className="auth-message">{message}</p>}
 
-        <p className="login-message">
+        <p className="auth-footer">
           Already have an account? <Link to="/login">Login</Link>
         </p>
       </section>

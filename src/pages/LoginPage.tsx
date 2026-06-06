@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { login } from "../services/authService";
 import logo from "../assets/logo.png";
-import "../styles/login-page.css";
+import "../styles/auth-page.css";
 
 type LoginPageProps = {
   onLoginSuccess: () => void;
@@ -29,23 +29,23 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
   }
 
   return (
-    <main className="login-page">
-      <section className="login-brand">
-        <img src={logo} alt="Crazy Desert Racing logo" className="login-logo" />
+    <main className="auth-page">
+      <section className="auth-brand">
+        <img src={logo} alt="Crazy Desert Racing logo" className="auth-logo" />
 
-        <p className="login-eyebrow">Crazy Desert Racing Club</p>
+        <p className="auth-eyebrow">Crazy Desert Racing Club</p>
 
         <h1>Welcome back, racer.</h1>
 
-        <p className="login-description">
+        <p className="auth-description">
           Sign in to access your dashboard, cars, races and VIP club.
         </p>
       </section>
 
-      <section className="login-card">
+      <section className="auth-card">
         <h2>Member Login</h2>
 
-        <form onSubmit={handleLogin} className="login-form">
+        <form onSubmit={handleLogin} className="auth-form">
           <label>
             Email
             <input
@@ -69,7 +69,7 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
           <button type="submit">Login</button>
         </form>
 
-        {message && <p className="login-message">{message}</p>}
+        {message && <p className="auth-message">{message}</p>}
       </section>
     </main>
   );

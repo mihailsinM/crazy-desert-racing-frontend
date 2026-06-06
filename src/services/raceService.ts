@@ -20,3 +20,31 @@ export async function getRaceById(id: number): Promise<Race> {
 
   return response.json();
 }
+
+export type RaceCreateRequest = {
+  name: string;
+  location: string;
+  startDate: string;
+  maxParticipants: number;
+};
+
+export async function createRace(
+  request: RaceCreateRequest
+): Promise<Race> {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_BASE_URL}/races`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create race");
+  }
+
+  return response.json();
+}
