@@ -10,3 +10,13 @@ export async function getAllRaces(): Promise<Race[]> {
 
   return response.json();
 }
+
+export async function getRaceById(id: number): Promise<Race> {
+  const response = await fetch(`${API_BASE_URL}/races/${id}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to load race");
+  }
+
+  return response.json();
+}

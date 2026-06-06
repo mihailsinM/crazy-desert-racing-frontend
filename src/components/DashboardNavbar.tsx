@@ -13,6 +13,13 @@ function DashboardNavbar({ title, onLogout }: DashboardNavbarProps) {
 
       <div className="dashboard-menu">
         <NavLink
+          to="/"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Home
+        </NavLink>
+
+        <NavLink
           to="/dashboard"
           className={({ isActive }) => (isActive ? "active" : "")}
         >
