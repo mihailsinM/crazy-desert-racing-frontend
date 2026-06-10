@@ -1,0 +1,59 @@
+:root {
+  /* Brand colors */
+  --du-orange-main: #ff7a1a;
+  --du-orange-soft: #ffb347;
+  --du-orange-focus: #c6872e;
+
+  /* Text */
+  --du-text-main: #ffffff;
+  --du-text-soft: #f0ddd0;
+  --du-text-muted: #d6c3b4;
+  --du-text-warm: #ffe3bd;
+
+  /* Dark desert base */
+  --du-bg-dark: #120b07;
+  --du-bg-brown: #231914;
+
+  /* Glass */
+  --du-glass-card: rgba(35, 25, 20, 0.38);
+  --du-glass-card-strong: rgba(35, 25, 20, 0.72);
+  --du-glass-panel: rgba(18, 11, 7, 0.22);
+  --du-glass-input: rgba(18, 11, 7, 0.15);
+
+  /* Borders */
+  --du-border-light: rgba(255, 255, 255, 0.14);
+  --du-border-auth: rgba(255, 255, 255, 0.16);
+  --du-border-orange: rgba(255, 179, 71, 0.18);
+  --du-border-orange-strong: rgba(255, 179, 71, 0.6);
+
+  /* Shadows */
+  --du-shadow-card: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --du-shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.35);
+  --du-shadow-auth: 0 24px 70px rgba(0, 0, 0, 0.35);
+  --du-shadow-focus: 0 0 20px rgba(255, 122, 26, 0.75);
+  --du-shadow-button: 0 0 20px rgba(255, 122, 26, 0.45);
+
+  /* Radius */
+  --du-radius-card: 24px;
+  --du-radius-panel: 28px;
+  --du-radius-input: 12px;
+  --du-radius-pill: 999px;
+
+  /* Blur */
+  --du-blur-card: 14px;
+  --du-blur-panel: 2px;
+  --du-blur-auth: 16px;
+
+  /* Status */
+  --du-status-upcoming-bg: rgba(50, 205, 50, 0.18);
+  --du-status-upcoming-text: #7cfc00;
+
+  --du-status-postponed-bg: rgba(255, 165, 0, 0.18);
+  --du-status-postponed-text: #ffb347;
+
+  --du-status-canceled-bg: rgba(255, 80, 80, 0.18);
+  --du-status-canceled-text: #751111;
+
+  --du-status-past-bg: rgba(120, 120, 120, 0.18);
+  --du-status-past-text: #cfcfcf;
+}

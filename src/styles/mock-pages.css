@@ -39,7 +39,7 @@
   line-height: 1.6;
 }
 
-.mock-card span {
+.mock-card span:not(.du-status) {
   display: inline-block;
   margin-top: auto;
   padding: 8px 14px;
@@ -91,46 +91,6 @@
   margin: 8px 0;
 }
 
-.race-status {
-  margin-top: auto;
-}
-
-.upcoming {
-  background: rgba(255, 179, 71, 0.18);
-  color: #ffb347;
-}
-
-.past {
-  background: rgba(255, 255, 255, 0.12);
-  color: #d8c7bd;
-}
-
-.race-action-button {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 999px;
-  background: transparent;
-  border: 1px solid rgba(255, 179, 71, 0.25);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.race-action-button:hover {
-  border-color: rgba(255, 179, 71, 0.55);
-  box-shadow: 0 0 12px rgba(255, 179, 71, 0.18);
-}
-
-.race-action-button.primary {
-  background: #ff7a1a;
-  color: #120b07;
-  border: none;
-}
-
-.race-action-button.primary:hover {
-  box-shadow: 0 0 18px rgba(255, 122, 26, 0.35);
-}
 
 .race-actions {
   display: flex;
@@ -216,26 +176,6 @@
   margin-bottom: auto;
 }
 
-.race-details-register-button {
-  width: 100%;
-  margin-top: 44px;
-  padding: 10px 14px;
-
-  border: none;
-  border-radius: 24px;
-
-  background: #ff7a1a;
-  color: #120b07;
-
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.race-details-register-button:hover {
-  box-shadow: 0 0 24px rgba(255, 122, 26, 0.45);
-}
-
 @media (max-width: 800px) {
   .race-details-hero,
   .race-details-overlay {
@@ -249,4 +189,52 @@
   .race-details-hero h1 {
     font-size: 40px;
   }
+}
+
+.race-status.upcoming {
+  background: rgba(50, 205, 50, 0.18);
+  color: #7CFC00;
+}
+
+.race-status.postponed {
+  background: rgba(255, 165, 0, 0.18);
+  color: #ffb347;
+}
+
+.race-status.canceled {
+  background: rgba(255, 80, 80, 0.18);
+  color: #751111;
+}
+
+.race-status.past {
+  background: rgba(120, 120, 120, 0.18);
+  color: #cfcfcf;
+}
+.race-details-admin-message {
+  max-width: 620px;
+  margin-top: 10px;
+  margin-bottom: auto;
+  padding: 20px 22px;
+
+  border-radius: 22px;
+  background: rgba(18, 11, 7, 0.02);
+  border: 1px solid rgba(255, 179, 71, 0.14);
+
+  color: #ffe3bd;
+  line-height: 1.7;
+  backdrop-filter: blur(1px);
+}
+
+.race-details-message-title {
+  margin: 0 0 10px;
+  color: #ffb347;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 13px;
+}
+
+.race-details-admin-message p:last-child {
+  margin: 0;
+  font-size: 17px;
 }

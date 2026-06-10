@@ -1,0 +1,111 @@
+.form-panel {
+  max-width: 650px;
+  margin: 40px auto;
+}
+
+.form-subtitle {
+  color: white;
+  margin-bottom: 18px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.form input {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 179, 71, 0.18);
+  background: rgba(18, 11, 7, 0.15);
+  color: white;
+  font-size: 15px;
+}
+
+.form input:focus {
+  outline: none;
+  border-color: #c6872e;
+  box-shadow: 0 0 20px rgba(255, 122, 26, 0.75);
+}
+
+.form input::placeholder {
+  color: #d6c3b4;
+}
+
+.form button {
+  margin-top: 8px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 999px;
+  background: #ff7a1a;
+  color: #120b07;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.form button:hover {
+  box-shadow: 0 0 20px rgba(255, 122, 26, 0.45);
+}
+
+.form button[type="button"] {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.form button[type="button"]:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.form-error {
+  color: #ffb3b3;
+  margin-top: 8px;
+}
+
+.form select,
+.form textarea {
+  padding: 12px 14px;
+  border-radius: 12px;
+
+  border: 1px solid rgba(255, 179, 71, 0.18);
+
+  background: rgba(18, 11, 7, 0.15);
+  color: white;
+
+  font-size: 15px;
+}
+
+.form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form select:focus,
+.form textarea:focus {
+  outline: none;
+  box-shadow: 0 0 20px rgba(255, 122, 26, 0.75);
+}
+
+.form select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  padding: 12px 14px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255, 179, 71, 0.18);
+
+  background: rgba(18, 11, 7, 0.15);
+  color: white;
+
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.form select option {
+  background: #482c1c;
+  color: white;
+}

@@ -56,10 +56,10 @@ function MyCarsPage() {
         )}
 
         {cars.map((car) => (
-          <article key={car.id} className="mock-card">
+          <article key={car.id} className="du-card">
             <h2>{car.name}</h2>
             <p>{car.brand}</p>
-            <span>{car.horsePower} HP</span>
+            <span className="du-badge">{car.horsePower} HP</span>
           </article>
         ))}
 

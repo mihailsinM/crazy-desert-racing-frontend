@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createMyRaceCar } from "../services/raceCarService";
 
 import "../styles/mock-pages.css";
-import "../styles/add-form.css";
+import "../styles/form-page.css";
 
 function AddCarPage() {
   const navigate = useNavigate();
@@ -33,17 +33,18 @@ function AddCarPage() {
 
   return (
     <section className="mock-page">
-      <section className="add-form-panel">
+      <section className="form-panel du-panel">
         <header className="page-header">
           <p>🏎 Add New Car</p>
         </header>
 
-        <p className="add-form-subtitle">
+        <p className="form-subtitle">
           Connect a new racing vehicle to your driver profile.
         </p>
 
-        <form className="add-form" onSubmit={handleCreateCar}>
+        <form className="form" onSubmit={handleCreateCar}>
           <input
+            className="du-input"
             type="text"
             placeholder="Car name"
             value={name}
@@ -51,6 +52,7 @@ function AddCarPage() {
           />
 
           <input
+            className="du-input"
             type="text"
             placeholder="Brand"
             value={brand}
@@ -58,6 +60,7 @@ function AddCarPage() {
           />
 
           <input
+            className="du-input"
             type="number"
             placeholder="Horse power"
             value={horsePower}
@@ -65,6 +68,7 @@ function AddCarPage() {
           />
 
           <input
+            className="du-input"
             type="text"
             placeholder="Image URL"
             value={imageUrl}
@@ -77,7 +81,7 @@ function AddCarPage() {
             Cancel
           </button>
 
-          {error && <p className="add-form-error">{error}</p>}
+          {error && <p className="form-error">{error}</p>}
         </form>
       </section>
     </section>

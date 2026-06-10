@@ -1,0 +1,30 @@
+.du-status {
+  display: inline-block;
+  margin-top: auto;
+  padding: 8px 14px;
+
+  border-radius: var(--du-radius-pill);
+
+  font-weight: bold;
+  width: fit-content;
+}
+
+.du-status.du-status-upcoming {
+  background: var(--du-status-upcoming-bg);
+  color: var(--du-status-upcoming-text);
+}
+
+.du-status.du-status-postponed {
+  background: var(--du-status-postponed-bg);
+  color: var(--du-status-postponed-text);
+}
+
+.du-status.du-status-canceled {
+  background: var(--du-status-canceled-bg);
+  color: var(--du-status-canceled-text);
+}
+
+.du-status.du-status-past {
+  background: var(--du-status-past-bg);
+  color: var(--du-status-past-text);
+}

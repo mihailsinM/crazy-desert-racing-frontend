@@ -1,0 +1,58 @@
+@import "./forms.css";
+
+.du-input {
+  padding: 12px 14px;
+
+  border-radius: var(--du-radius-input);
+
+  border: 1px solid var(--du-border-orange);
+
+  background: var(--du-glass-input);
+
+  color: var(--du-text-main);
+
+  font-size: 15px;
+}
+
+.du-input::placeholder {
+  color: var(--du-text-muted);
+}
+
+.du-input:focus {
+  outline: none;
+
+  border-color: var(--du-orange-focus);
+
+  box-shadow: var(--du-shadow-focus);
+}
+
+.du-select,
+.du-textarea {
+  padding: 12px 14px;
+  border-radius: var(--du-radius-input);
+  border: 1px solid var(--du-border-orange);
+  background: var(--du-glass-input);
+  color: var(--du-text-main);
+  font-size: 15px;
+}
+
+.du-select:focus,
+.du-textarea:focus {
+  outline: none;
+  border-color: var(--du-orange-focus);
+  box-shadow: var(--du-shadow-focus);
+}
+
+.du-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.du-select {
+  cursor: pointer;
+}
+
+.du-select option {
+  background: #482c1c;
+  color: white;
+}

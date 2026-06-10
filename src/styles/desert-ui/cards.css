@@ -1,0 +1,41 @@
+.du-card {
+  min-height: 230px;
+  padding: 26px;
+
+  border-radius: var(--du-radius-card);
+
+  background: var(--du-glass-card);
+  border: 1px solid var(--du-border-light);
+
+  backdrop-filter: blur(var(--du-blur-card));
+
+  display: flex;
+  flex-direction: column;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.du-badge {
+  display: inline-block;
+  margin-top: auto;
+  padding: 8px 14px;
+
+  border-radius: var(--du-radius-pill);
+
+  background: rgba(255, 179, 71, 0.18);
+  color: var(--du-orange-soft);
+
+  font-weight: bold;
+  width: fit-content;
+}
+
+.du-card:hover {
+  transform: translateY(-8px) scale(1.02);
+
+  box-shadow: var(--du-shadow-card);
+
+  border-color: var(--du-border-orange-strong);
+}

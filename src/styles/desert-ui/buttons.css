@@ -1,0 +1,29 @@
+.du-button {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--du-radius-pill);
+
+  background: transparent;
+  border: 1px solid var(--du-border-orange);
+
+  color: var(--du-text-main);
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.du-button:hover {
+  border-color: rgba(255, 179, 71, 0.55);
+  box-shadow: 0 0 12px rgba(255, 179, 71, 0.18);
+}
+
+.du-button-primary {
+  background: var(--du-orange-main);
+  color: var(--du-bg-dark);
+  border: none;
+}
+
+.du-button-primary:hover {
+  box-shadow: 0 0 18px rgba(255, 122, 26, 0.35);
+}

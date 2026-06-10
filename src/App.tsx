@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
+import "./styles/desert-ui/index.css";
 
 import DashboardPage from "./pages/DashboardPage";
 import DashboardLayout from "./components/DashboardLayout";
@@ -13,6 +14,7 @@ import RegisterPage from "./pages/UserRegistrationPage";
 import RaceDetailsPage from "./pages/RaceDetailsPage";
 import AddRacePage from "./pages/AddRacePage";
 import AddCarPage from "./pages/AddCarPage";
+import EditRacePage from "./pages/EditRacePage";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -49,6 +51,7 @@ function App() {
             <Route path="/races" element={<RacesPage />} />
             <Route path="/races/new" element={<AddRacePage />} />
             <Route path="/races/:id" element={<RaceDetailsPage />} />
+            <Route path="/races/:id/edit" element={<EditRacePage />} />
             <Route path="/vip" element={<VipClubPage />} />
           </Route>
         </Routes>

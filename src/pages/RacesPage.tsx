@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getAllRaces } from "../services/raceService";
 import type { Race } from "../types/race";
 import { useNavigate } from "react-router-dom";
 import { getMyRaceCars } from "../services/raceCarService";
@@ -7,6 +6,7 @@ import { registerMyCarForRace } from "../services/raceRegistrationService";
 import type { RaceCar } from "../types/raceCar";
 import { getCurrentUser } from "../services/userService";
 import type { UserResponse } from "../types/user";
+import { getAllRaces, updateRace } from "../services/raceService";
 
 import "../styles/mock-pages.css";
 import "../styles/animations.css";
@@ -18,17 +18,6 @@ function RacesPage() {
   const navigate = useNavigate();
   const [myCars, setMyCars] = useState<RaceCar[]>([]);
   const [currentUser, setCurrentUser] = useState<UserResponse | null>(null);
-
-  function getRaceStatus(startDate: string) {
-    const today = new Date();
-    const raceDate = new Date(startDate);
-
-    if (raceDate < today) {
-      return "PAST";
-    }
-
-    return "UPCOMING";
-  }
 
   function formatRaceDate(startDate: string) {
     const date = new Date(startDate);
@@ -85,6 +74,67 @@ function RacesPage() {
       }
     }
   }
+  async function handleCancelRace(race: Race) {
+    try {
+      await updateRace(race.id, {
+        name: race.name,
+        location: race.location,
+        startDate: race.startDate,
+        maxParticipants: race.maxParticipants,
+        status: "CANCELED",
+        adminMessage: "Race canceled by organizer.",
+      });
+
+      const updatedRaces = races.map((currentRace) =>
+        currentRace.id === race.id
+          ? {
+              ...currentRace,
+              status: "CANCELED",
+              adminMessage: "Race canceled by organizer.",
+            }
+          : currentRace,
+      );
+
+      setRaces(updatedRaces);
+
+      alert("Race canceled successfully");
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    }
+  }
+
+  async function handlePostponeRace(race: Race) {
+    try {
+      await updateRace(race.id, {
+        name: race.name,
+        location: race.location,
+        startDate: race.startDate,
+        maxParticipants: race.maxParticipants,
+        status: "POSTPONED",
+        adminMessage: "Race postponed by organizer.",
+      });
+
+      const updatedRaces = races.map((currentRace) =>
+        currentRace.id === race.id
+          ? {
+              ...currentRace,
+              status: "POSTPONED",
+              adminMessage: "Race postponed by organizer.",
+            }
+          : currentRace,
+      );
+
+      setRaces(updatedRaces);
+
+      alert("Race postponed successfully");
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    }
+  }
   return (
     <section className="mock-page">
       <header className="page-header">
@@ -95,7 +145,7 @@ function RacesPage() {
       {currentUser?.role === "ADMIN" && (
         <div style={{ marginBottom: "20px" }}>
           <button
-            className="race-action-button"
+            className="du-button"
             onClick={() => navigate("/races/new")}
           >
             Add New Race
@@ -105,35 +155,54 @@ function RacesPage() {
 
       <div className="mock-grid">
         {races.map((race) => {
-          const status = getRaceStatus(race.startDate);
+          const status = race.status ?? "UPCOMING";
           const formattedDate = formatRaceDate(race.startDate);
 
           return (
-            <article key={race.id} className="mock-card race-card">
+            <article key={race.id} className="du-card race-card">
               <h2>{race.name}</h2>
 
               <p>📍 {race.location}</p>
 
               <p>📅 {formattedDate}</p>
 
-              <p>👥 Max Participants: {race.maxParticipants}</p>
-
-              <span className={`race-status ${status.toLowerCase()}`}>
+              {/* <p>👥 Max Participants: {race.maxParticipants}</p> */}
+              <span className={`du-status du-status-${status.toLowerCase()}`}>
                 {status}
               </span>
+
               <div className="race-actions">
-                {/* <button>Edit</button>
-                <button>Postpone</button>
-                <button>Cancel</button> */}
+                {currentUser?.role === "ADMIN" && (
+                  <>
+                    <button
+                      className="du-button"
+                      onClick={() => navigate(`/races/${race.id}/edit`)}
+                    >
+                      Edit Race
+                    </button>
+                    <button
+                      className="du-button"
+                      onClick={() => handlePostponeRace(race)}
+                    >
+                      Postpone Race
+                    </button>
+                    <button
+                      className="du-button"
+                      onClick={() => handleCancelRace(race)}
+                    >
+                      Cancel Race
+                    </button>
+                  </>
+                )}
                 <button
-                  className="race-action-button"
+                  className="du-button"
                   onClick={() => navigate(`/races/${race.id}`)}
                 >
-                  View Race Details
+                  View Details
                 </button>
 
                 <button
-                  className="race-action-button primary"
+                  className="du-button du-button-primary"
                   onClick={() => handleRegisterForRace(race.id)}
                 >
                   Register For Race

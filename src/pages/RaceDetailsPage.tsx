@@ -86,13 +86,20 @@ function RaceDetailsPage() {
             <p>👥 Max Participants: {race.maxParticipants}</p>
           </div>
 
-          <p className="race-details-description">
-            A premium desert racing experience with powerful cars, open roads,
-            community energy and festival atmosphere under the Negev sky.
-          </p>
+          {race.adminMessage ? (
+            <div className="race-details-admin-message">
+              <p className="race-details-message-title">Organizer Message</p>
+              <p>{race.adminMessage}</p>
+            </div>
+          ) : (
+            <p className="race-details-description">
+              A premium desert racing experience with powerful cars, open roads,
+              community energy and festival atmosphere under the Negev sky.
+            </p>
+          )}
 
           <button
-            className="race-details-register-button"
+            className="du-button-primary"
             onClick={handleRegister}
           >
             🏁 Register For Race

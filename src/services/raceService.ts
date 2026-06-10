@@ -28,9 +28,16 @@ export type RaceCreateRequest = {
   maxParticipants: number;
 };
 
-export async function createRace(
-  request: RaceCreateRequest
-): Promise<Race> {
+export type RaceUpdateRequest = {
+  name: string;
+  location: string;
+  startDate: string;
+  maxParticipants: number;
+  status: string;
+  adminMessage: string | null;
+};
+
+export async function createRace(request: RaceCreateRequest): Promise<Race> {
   const token = localStorage.getItem("token");
 
   const response = await fetch(`${API_BASE_URL}/races`, {
@@ -44,6 +51,28 @@ export async function createRace(
 
   if (!response.ok) {
     throw new Error("Failed to create race");
+  }
+
+  return response.json();
+}
+
+export async function updateRace(
+  id: number,
+  request: RaceUpdateRequest,
+): Promise<Race> {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_BASE_URL}/races/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update race");
   }
 
   return response.json();
