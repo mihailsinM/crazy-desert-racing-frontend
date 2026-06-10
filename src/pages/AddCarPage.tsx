@@ -75,9 +75,10 @@ function AddCarPage() {
             onChange={(event) => setImageUrl(event.target.value)}
           />
 
-          <button type="submit">Create Car</button>
+          <button className="du-button du-button-primary"
+          type="submit">Create Car</button>
 
-          <button type="button" onClick={() => navigate("/cars")}>
+          <button className="du-button" type="button" onClick={() => navigate("/cars")}>
             Cancel
           </button>
 

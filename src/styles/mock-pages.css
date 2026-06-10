@@ -91,7 +91,6 @@
   margin: 8px 0;
 }
 
-
 .race-actions {
   display: flex;
   flex-direction: column;
@@ -191,25 +190,6 @@
   }
 }
 
-.race-status.upcoming {
-  background: rgba(50, 205, 50, 0.18);
-  color: #7CFC00;
-}
-
-.race-status.postponed {
-  background: rgba(255, 165, 0, 0.18);
-  color: #ffb347;
-}
-
-.race-status.canceled {
-  background: rgba(255, 80, 80, 0.18);
-  color: #751111;
-}
-
-.race-status.past {
-  background: rgba(120, 120, 120, 0.18);
-  color: #cfcfcf;
-}
 .race-details-admin-message {
   max-width: 620px;
   margin-top: 10px;

@@ -142,7 +142,8 @@ function EditRacePage() {
             Save Changes
           </button>
 
-          <button type="button" onClick={() => navigate("/races")}>
+          <button className="du-button"
+          type="button" onClick={() => navigate("/races")}>
             Cancel
           </button>
         </form>
