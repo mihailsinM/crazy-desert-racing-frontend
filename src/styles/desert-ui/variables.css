@@ -25,6 +25,8 @@
   --du-border-auth: rgba(255, 255, 255, 0.16);
   --du-border-orange: rgba(255, 179, 71, 0.18);
   --du-border-orange-strong: rgba(255, 179, 71, 0.6);
+  --du-nav-active-bg: rgba(240, 227, 209, 0.18);
+  --du-nav-active-border: rgba(230, 193, 144, 0.55);
 
   /* Shadows */
   --du-shadow-card: 0 18px 40px rgba(0, 0, 0, 0.35);
@@ -40,9 +42,9 @@
   --du-radius-pill: 999px;
 
   /* Blur */
-  --du-blur-card: 14px;
-  --du-blur-panel: 2px;
-  --du-blur-auth: 16px;
+  --du-blur-card: 7px;
+  --du-blur-panel: 1px;
+  --du-blur-auth: 8px;
 
   /* Status */
   --du-status-upcoming-bg: rgba(50, 205, 50, 0.18);

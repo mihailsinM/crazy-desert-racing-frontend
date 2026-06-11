@@ -55,3 +55,44 @@
   background: #482c1c;
   color: white;
 }
+.du-form {
+   display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.du-form-panel {
+  max-width: 650px;
+  margin: 40px auto;
+}
+
+.du-form-header {
+  margin-bottom: 28px;
+}
+
+.du-form-eyebrow {
+  color: #ffb347;
+
+  text-transform: uppercase;
+  letter-spacing: 2px;
+
+  font-size: 14px;
+  font-weight: bold;
+
+  margin-bottom: 24px;
+}
+
+.du-form-subtitle {
+  color: #f0ddd0;
+
+  font-size: 18px;
+  line-height: 1.6;
+
+  margin-bottom: 28px;
+}
+
+.du-error {
+  color: #ffb3b3;
+  margin-top: 8px;
+}

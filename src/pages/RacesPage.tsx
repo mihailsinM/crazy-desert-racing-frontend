@@ -8,7 +8,7 @@ import { getCurrentUser } from "../services/userService";
 import type { UserResponse } from "../types/user";
 import { getAllRaces, updateRace } from "../services/raceService";
 
-import "../styles/mock-pages.css";
+import "../styles/race-pages.css";
 import "../styles/animations.css";
 
 function RacesPage() {
@@ -136,24 +136,21 @@ function RacesPage() {
     }
   }
   return (
-    <section className="mock-page">
-      <header className="page-header">
-        <p>Race Calendar</p>
-        <h1>🏁 Races</h1>
+    <section className="du-page">
+      <header className="du-page-header">
+        <p className="du-page-eyebrow">Race Calendar</p>
+<h1 className="du-page-title">🏁 Races</h1>
       </header>
 
       {currentUser?.role === "ADMIN" && (
-        <div style={{ marginBottom: "20px" }}>
-          <button
-            className="du-button"
-            onClick={() => navigate("/races/new")}
-          >
+        <div className="du-page-actions">
+          <button className="du-button" onClick={() => navigate("/races/new")}>
             Add New Race
           </button>
         </div>
       )}
 
-      <div className="mock-grid">
+      <div className="du-grid">
         {races.map((race) => {
           const status = race.status ?? "UPCOMING";
           const formattedDate = formatRaceDate(race.startDate);

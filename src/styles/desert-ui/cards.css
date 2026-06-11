@@ -39,3 +39,15 @@
 
   border-color: var(--du-border-orange-strong);
 }
+
+.du-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+@media (max-width: 800px) {
+  .du-grid {
+    grid-template-columns: 1fr;
+  }
+}

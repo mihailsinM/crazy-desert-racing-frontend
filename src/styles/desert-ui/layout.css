@@ -1,0 +1,37 @@
+.du-page {
+  width: 100%;
+}
+
+.du-container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.du-section {
+  padding: 40px 0;
+}
+
+.du-page-header {
+  margin-bottom: 32px;
+}
+
+.du-page-eyebrow {
+  color: var(--du-orange-soft);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0 0 14px;
+}
+
+.du-page-title {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.1;
+  color: var(--du-text-main);
+}
+
+.du-page-actions {
+  margin-bottom: 20px;
+}

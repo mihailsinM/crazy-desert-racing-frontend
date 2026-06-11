@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { getMyRaceCars } from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
 
-import "../styles/mock-pages.css";
 import "../styles/animations.css";
 
 function MyCarsPage() {
@@ -37,21 +36,21 @@ function MyCarsPage() {
   }
 
   return (
-    <section className="mock-page">
-      <header className="page-header">
-        <p>Garage</p>
-        <h1>🏎 My Cars</h1>
+    <section className="du-page">
+      <header className="du-page-header">
+        <p className="du-page-eyebrow">Garage</p>
+        <h1 className="du-page-title">🏎 My Cars</h1>
       </header>
 
-      <div className="mock-grid">
+      <div className="du-grid">
         {cars.length === 0 && (
-          <article className="mock-card">
+          <article className="du-card">
             <h2>No cars yet</h2>
             <p>
               Your garage is empty. Soon you will be able to add your first
               racing car.
             </p>
-            <span>Empty garage</span>
+            <span className="du-badge">Empty garage</span>
           </article>
         )}
 
@@ -63,13 +62,10 @@ function MyCarsPage() {
           </article>
         ))}
 
-        <article
-          className="mock-card add-card"
-          onClick={() => navigate("/cars/new")}
-        >
+        <article className="du-card" onClick={() => navigate("/cars/new")}>
           <h2>+ Add New Car</h2>
           <p>Connect your next racing vehicle to your driver profile.</p>
-          <span>Open form</span>
+          <span className="du-badge">Open form</span>
         </article>
       </div>
     </section>

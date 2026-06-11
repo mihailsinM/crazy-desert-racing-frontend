@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createRace } from "../services/raceService";
-import "../styles/form-page.css";
 
 function AddRacePage() {
   const navigate = useNavigate();
@@ -30,17 +29,18 @@ function AddRacePage() {
   }
 
   return (
-    <section className="mock-page">
-      <section className="form-panel du-panel">
-        <header className="form-header">
-          <p>🏁 Add New Race</p>
-        </header>
+    <section className="du-page">
+      <section className="du-form-panel du-panel">
+        <div className="du-form-header">
+          <p className="du-form-eyebrow">🏁 ADD RACE</p>
 
-        <p className="form-subtitle">
-          Create a new desert racing event for the Crazy Desert Racing calendar.
-        </p>
+          <p className="du-form-subtitle">
+            Create a new desert racing event for the Crazy Desert Racing
+            calendar.
+          </p>
+        </div>
 
-        <form className="form" onSubmit={handleSubmit}>
+        <form className="du-form" onSubmit={handleSubmit}>
           <input
             className="du-input"
             type="text"
@@ -72,17 +72,19 @@ function AddRacePage() {
             onChange={(e) => setMaxParticipants(Number(e.target.value))}
           />
 
-          <button type="submit">Create Race</button>
+          <button className="du-button du-button-primary" type="submit">
+            Create Race
+          </button>
 
           <button
             type="button"
-            className="secondary-button"
+            className="du-button"
             onClick={() => navigate("/races")}
           >
             Cancel
           </button>
 
-          {error && <p className="form-error">{error}</p>}
+          {error && <p className="du-error">{error}</p>}
         </form>
       </section>
     </section>

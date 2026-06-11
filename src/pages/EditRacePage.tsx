@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getRaceById, updateRace } from "../services/raceService";
 
-import "../styles/mock-pages.css";
-import "../styles/form-page.css";
 
 function EditRacePage() {
   const { id } = useParams();
@@ -78,17 +76,16 @@ function EditRacePage() {
   }
 
   return (
-    <section className="mock-page">
-      <section className="form-panel du-panel">
-        <header className="page-header">
-          <p>🛠 Edit Race</p>
-        </header>
+    <section className="du-page">
+      <section className="du-form-panel du-panel">
+        <div className="du-form-header">
+          <p className="du-form-eyebrow">🛠 EDIT RACE</p>
+          <p className="du-form-subtitle">
+            Update race details, status and organizer message.
+          </p>
+        </div>
 
-        <p className="form-subtitle">
-          Update race details, status and organizer message.
-        </p>
-
-        <form className="form" onSubmit={handleSubmit}>
+        <form className="du-form" onSubmit={handleSubmit}>
           <input
             className="du-input"
             type="text"
@@ -142,8 +139,11 @@ function EditRacePage() {
             Save Changes
           </button>
 
-          <button className="du-button"
-          type="button" onClick={() => navigate("/races")}>
+          <button
+            className="du-button"
+            type="button"
+            onClick={() => navigate("/races")}
+          >
             Cancel
           </button>
         </form>

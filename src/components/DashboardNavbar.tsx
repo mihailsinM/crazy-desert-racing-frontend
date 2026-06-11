@@ -8,41 +8,51 @@ type DashboardNavbarProps = {
 
 function DashboardNavbar({ title, onLogout }: DashboardNavbarProps) {
   return (
-    <nav className="dashboard-navbar">
+    <nav className="dashboard-navbar du-navbar">
       <div className="dashboard-logo">{title}</div>
 
-      <div className="dashboard-menu">
+      <div className="dashboard-menu du-navbar-links">
         <NavLink
           to="/"
-          className={({ isActive }) => (isActive ? "active" : "")}
+          className={({ isActive }) =>
+            isActive ? "du-nav-link du-nav-link-active" : "du-nav-link"
+          }
         >
           Home
         </NavLink>
 
         <NavLink
           to="/dashboard"
-          className={({ isActive }) => (isActive ? "active" : "")}
+          className={({ isActive }) =>
+            isActive ? "du-nav-link du-nav-link-active" : "du-nav-link"
+          }
         >
           Dashboard
         </NavLink>
 
         <NavLink
           to="/cars"
-          className={({ isActive }) => (isActive ? "active" : "")}
+          className={({ isActive }) =>
+            isActive ? "du-nav-link du-nav-link-active" : "du-nav-link"
+          }
         >
           My Cars
         </NavLink>
 
         <NavLink
           to="/races"
-          className={({ isActive }) => (isActive ? "active" : "")}
+          className={({ isActive }) =>
+            isActive ? "du-nav-link du-nav-link-active" : "du-nav-link"
+          }
         >
           Races
         </NavLink>
 
         <NavLink
           to="/vip"
-          className={({ isActive }) => (isActive ? "active" : "")}
+          className={({ isActive }) =>
+            isActive ? "du-nav-link du-nav-link-active" : "du-nav-link"
+          }
         >
           VIP Club
         </NavLink>

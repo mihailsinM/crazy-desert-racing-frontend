@@ -6,7 +6,7 @@ import { getMyRaceCars } from "../services/raceCarService";
 import { registerMyCarForRace } from "../services/raceRegistrationService";
 import type { RaceCar } from "../types/raceCar";
 
-import "../styles/mock-pages.css";
+import "../styles/race-pages.css";
 import "../styles/animations.css";
 
 function RaceDetailsPage() {
@@ -87,7 +87,7 @@ function RaceDetailsPage() {
           </div>
 
           {race.adminMessage ? (
-            <div className="race-details-admin-message">
+            <div className="du-panel race-details-admin-message">
               <p className="race-details-message-title">Organizer Message</p>
               <p>{race.adminMessage}</p>
             </div>
@@ -99,7 +99,7 @@ function RaceDetailsPage() {
           )}
 
           <button
-            className="du-button-primary"
+            className="du-button du-button-primary"
             onClick={handleRegister}
           >
             🏁 Register For Race

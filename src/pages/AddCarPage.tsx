@@ -2,9 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createMyRaceCar } from "../services/raceCarService";
 
-import "../styles/mock-pages.css";
-import "../styles/form-page.css";
-
 function AddCarPage() {
   const navigate = useNavigate();
 
@@ -32,17 +29,16 @@ function AddCarPage() {
   }
 
   return (
-    <section className="mock-page">
-      <section className="form-panel du-panel">
-        <header className="page-header">
-          <p>🏎 Add New Car</p>
-        </header>
+    <section className="du-page">
+      <section className="du-form-panel du-panel">
+        <div className="du-form-header">
+          <p className="du-form-eyebrow">🏎 ADD CAR</p>
+          <p className="du-form-subtitle">
+            Connect a new racing vehicle to your driver profile.
+          </p>
+        </div>
 
-        <p className="form-subtitle">
-          Connect a new racing vehicle to your driver profile.
-        </p>
-
-        <form className="form" onSubmit={handleCreateCar}>
+        <form className="du-form" onSubmit={handleCreateCar}>
           <input
             className="du-input"
             type="text"
@@ -75,14 +71,19 @@ function AddCarPage() {
             onChange={(event) => setImageUrl(event.target.value)}
           />
 
-          <button className="du-button du-button-primary"
-          type="submit">Create Car</button>
+          <button className="du-button du-button-primary" type="submit">
+            Create Car
+          </button>
 
-          <button className="du-button" type="button" onClick={() => navigate("/cars")}>
+          <button
+            className="du-button"
+            type="button"
+            onClick={() => navigate("/cars")}
+          >
             Cancel
           </button>
 
-          {error && <p className="form-error">{error}</p>}
+          {error && <p className="du-error">{error}</p>}
         </form>
       </section>
     </section>

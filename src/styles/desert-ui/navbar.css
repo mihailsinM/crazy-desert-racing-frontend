@@ -1,0 +1,51 @@
+.du-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 20px 24px;
+
+  border-radius: var(--du-radius-panel);
+
+  background: var(--du-glass-card-strong);
+  border: 1px solid var(--du-border-light);
+
+  backdrop-filter: blur(var(--du-blur-panel));
+}
+
+.du-navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.du-nav-link {
+  padding: 10px 18px;
+
+  border-radius: var(--du-radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  color: var(--du-text-main);
+  text-decoration: none;
+
+  transition: all 0.25s ease;
+}
+
+.du-nav-link:hover {
+  border-color: rgba(255, 179, 71, 0.55);
+  box-shadow: 0 0 12px rgba(255, 179, 71, 0.18);
+}
+
+.du-nav-link.du-nav-link-active {
+  background: var(--du-nav-active-bg);
+  border-color: var(--du-nav-active-border);
+
+  box-shadow:
+    0 0 16px rgba(255, 179, 71, 0.18),
+    inset 0 0 0 1px rgba(255, 179, 71, 0.15);
+}
+
+.du-nav-link-active {
+  font-weight: 700;
+}
