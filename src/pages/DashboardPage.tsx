@@ -4,7 +4,6 @@ import type { UserResponse } from "../types/user";
 import "../styles/dashboard-page.css";
 import "../styles/dashboard-page.css";
 import "../styles/dashboard-hero.css";
-import "../styles/race-pages.css";
 import "../styles/animations.css";
 
 function DashboardPage() {

@@ -1,4 +1,3 @@
-
 .du-input {
   padding: 12px 14px;
 
@@ -56,7 +55,7 @@
   color: white;
 }
 .du-form {
-   display: flex;
+  display: flex;
   flex-direction: column;
   gap: 12px;
   margin-top: 16px;

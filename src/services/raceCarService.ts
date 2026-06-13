@@ -32,6 +32,7 @@ export async function createMyRaceCar(raceCar: {
   brand: string;
   horsePower: number;
   imageUrl: string;
+  imagePosition: string;
 }) {
   const token = localStorage.getItem("token");
 
@@ -46,6 +47,50 @@ export async function createMyRaceCar(raceCar: {
 
   if (!response.ok) {
     throw new Error("Failed to create race car");
+  }
+
+  return response.json();
+}
+
+export async function getRaceCarById(id: number): Promise<RaceCar> {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_BASE_URL}/race-cars/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to load race car details");
+  }
+
+  return response.json();
+}
+
+export async function updateRaceCar(
+  id: number,
+  raceCar: {
+    name: string;
+    brand: string;
+    horsePower: number;
+    imageUrl: string;
+    imagePosition: string;
+  },
+): Promise<RaceCar> {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_BASE_URL}/race-cars/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(raceCar),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update race car");
   }
 
   return response.json();

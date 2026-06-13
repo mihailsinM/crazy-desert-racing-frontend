@@ -6,7 +6,6 @@ import { getMyRaceCars } from "../services/raceCarService";
 import { registerMyCarForRace } from "../services/raceRegistrationService";
 import type { RaceCar } from "../types/raceCar";
 
-import "../styles/race-pages.css";
 import "../styles/animations.css";
 
 function RaceDetailsPage() {
@@ -73,37 +72,44 @@ function RaceDetailsPage() {
   }
 
   return (
-    <section className="mock-page">
-      <article className="race-details-hero">
-        <div className="race-details-overlay">
-          <p className="race-details-eyebrow">Race Details</p>
+    <section className="du-page">
+      <article
+        className="du-details-card"
+        style={{
+          backgroundImage: `url("/src/assets/race.png")`,
+        }}
+      >
+        <div className="du-details-overlay">
+          <p className="du-details-eyebrow">Race Details</p>
 
-          <h1>🏁 {race.name}</h1>
+          <h1 className="du-details-title">🏁 {race.name}</h1>
 
-          <div className="race-details-info">
+          <div className="du-details-info">
             <p>📍 {race.location}</p>
             <p>📅 {race.startDate}</p>
             <p>👥 Max Participants: {race.maxParticipants}</p>
           </div>
 
           {race.adminMessage ? (
-            <div className="du-panel race-details-admin-message">
-              <p className="race-details-message-title">Organizer Message</p>
+            <div className="du-panel du-details-message">
+              <p className="du-details-message-title">Organizer Message</p>
               <p>{race.adminMessage}</p>
             </div>
           ) : (
-            <p className="race-details-description">
+            <p className="du-details-description">
               A premium desert racing experience with powerful cars, open roads,
               community energy and festival atmosphere under the Negev sky.
             </p>
           )}
 
-          <button
-            className="du-button du-button-primary"
-            onClick={handleRegister}
-          >
-            🏁 Register For Race
-          </button>
+          <div className="du-details-actions">
+            <button
+              className="du-button du-button-primary"
+              onClick={handleRegister}
+            >
+              🏁 Register For Race
+            </button>
+          </div>
         </div>
       </article>
     </section>

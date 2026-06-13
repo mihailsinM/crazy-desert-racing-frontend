@@ -8,7 +8,6 @@ import { getCurrentUser } from "../services/userService";
 import type { UserResponse } from "../types/user";
 import { getAllRaces, updateRace } from "../services/raceService";
 
-import "../styles/race-pages.css";
 import "../styles/animations.css";
 
 function RacesPage() {
@@ -139,7 +138,7 @@ function RacesPage() {
     <section className="du-page">
       <header className="du-page-header">
         <p className="du-page-eyebrow">Race Calendar</p>
-<h1 className="du-page-title">🏁 Races</h1>
+        <h1 className="du-page-title">🏁 Races</h1>
       </header>
 
       {currentUser?.role === "ADMIN" && (
@@ -156,7 +155,7 @@ function RacesPage() {
           const formattedDate = formatRaceDate(race.startDate);
 
           return (
-            <article key={race.id} className="du-card race-card">
+            <article key={race.id} className="du-card du-entity-card">
               <h2>{race.name}</h2>
 
               <p>📍 {race.location}</p>
@@ -168,7 +167,7 @@ function RacesPage() {
                 {status}
               </span>
 
-              <div className="race-actions">
+              <div className="du-entity-actions">
                 {currentUser?.role === "ADMIN" && (
                   <>
                     <button

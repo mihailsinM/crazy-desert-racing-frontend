@@ -15,6 +15,8 @@ import RaceDetailsPage from "./pages/RaceDetailsPage";
 import AddRacePage from "./pages/AddRacePage";
 import AddCarPage from "./pages/AddCarPage";
 import EditRacePage from "./pages/EditRacePage";
+import CarDetailsPage from "./pages/CarDetailsPage";
+import EditCarPage from "./pages/EditCarPage";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -46,6 +48,8 @@ function App() {
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/cars/:id/edit" element={<EditCarPage />} />
+            <Route path="/cars/:id" element={<CarDetailsPage />} />
             <Route path="/cars" element={<MyCarsPage />} />
             <Route path="/cars/new" element={<AddCarPage />} />
             <Route path="/races" element={<RacesPage />} />

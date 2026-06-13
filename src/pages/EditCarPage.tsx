@@ -1,22 +1,48 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createMyRaceCar } from "../services/raceCarService";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getRaceCarById, updateRaceCar } from "../services/raceCarService";
 
-function AddCarPage() {
+function EditCarPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [horsePower, setHorsePower] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
-  const [imageUrl, setImageUrl] = useState("/images/ioniq.png");
+  const [loading, setLoading] = useState(true);
   const [imagePosition, setImagePosition] = useState("CENTER");
 
-  async function handleCreateCar(event: React.FormEvent) {
+  useEffect(() => {
+    async function loadCar() {
+      try {
+        if (!id) return;
+
+        const car = await getRaceCarById(Number(id));
+
+        setName(car.name);
+        setBrand(car.brand);
+        setHorsePower(String(car.horsePower));
+        setImageUrl(car.imageUrl);
+        setImagePosition(car.imagePosition || "CENTER");
+      } catch {
+        setError("Failed to load car");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadCar();
+  }, [id]);
+
+  async function handleUpdateCar(event: React.FormEvent) {
     event.preventDefault();
 
     try {
-      await createMyRaceCar({
+      if (!id) return;
+
+      await updateRaceCar(Number(id), {
         name,
         brand,
         horsePower: Number(horsePower),
@@ -24,23 +50,27 @@ function AddCarPage() {
         imagePosition,
       });
 
-      navigate("/cars");
+      navigate(`/cars/${id}`);
     } catch {
-      setError("Failed to create car");
+      setError("Failed to update car");
     }
+  }
+
+  if (loading) {
+    return <p>Loading car...</p>;
   }
 
   return (
     <section className="du-page">
       <section className="du-form-panel du-panel">
         <div className="du-form-header">
-          <p className="du-form-eyebrow">🏎 ADD CAR</p>
+          <p className="du-form-eyebrow">🛠 EDIT CAR</p>
           <p className="du-form-subtitle">
-            Connect a new racing vehicle to your driver profile.
+            Update your racing vehicle details.
           </p>
         </div>
 
-        <form className="du-form" onSubmit={handleCreateCar}>
+        <form className="du-form" onSubmit={handleUpdateCar}>
           <input
             className="du-input"
             type="text"
@@ -72,6 +102,7 @@ function AddCarPage() {
             value={imageUrl}
             onChange={(event) => setImageUrl(event.target.value)}
           />
+
           <select
             className="du-input"
             value={imagePosition}
@@ -85,13 +116,13 @@ function AddCarPage() {
           </select>
 
           <button className="du-button du-button-primary" type="submit">
-            Create Car
+            Save Changes
           </button>
 
           <button
             className="du-button"
             type="button"
-            onClick={() => navigate("/cars")}
+            onClick={() => navigate(`/cars/${id}`)}
           >
             Cancel
           </button>
@@ -103,4 +134,4 @@ function AddCarPage() {
   );
 }
 
-export default AddCarPage;
+export default EditCarPage;

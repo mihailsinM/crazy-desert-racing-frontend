@@ -42,7 +42,7 @@ function MyCarsPage() {
         <h1 className="du-page-title">🏎 My Cars</h1>
       </header>
 
-      <div className="du-grid">
+      <div className="du-showcase-grid">
         {cars.length === 0 && (
           <article className="du-card">
             <h2>No cars yet</h2>
@@ -55,13 +55,37 @@ function MyCarsPage() {
         )}
 
         {cars.map((car) => (
-          <article key={car.id} className="du-card">
-            <h2>{car.name}</h2>
-            <p>{car.brand}</p>
-            <span className="du-badge">{car.horsePower} HP</span>
+          <article
+            key={car.id}
+            className="du-card du-showcase-card"
+            
+            onClick={() => navigate(`/cars/${car.id}`)}
+            style={{
+              backgroundImage: `url(${car.imageUrl})`,
+            }}
+          >
+            <div className="du-showcase-content">
+              <p className="du-showcase-eyebrow">{car.brand}</p>
+
+              <h2 className="du-showcase-title">{car.name}</h2>
+
+              <div className="du-showcase-meta">
+                <span className="du-badge">{car.horsePower} HP</span>
+              </div>
+
+              <button
+                className="du-button du-button-primary du-showcase-action"
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  navigate(`/cars/${car.id}`);
+                }}
+              >
+                View Details →
+              </button>
+            </div>
           </article>
         ))}
-
         <article className="du-card" onClick={() => navigate("/cars/new")}>
           <h2>+ Add New Car</h2>
           <p>Connect your next racing vehicle to your driver profile.</p>

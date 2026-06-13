@@ -1,0 +1,79 @@
+.du-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(360px, 1fr));
+  gap: 28px;
+}
+
+.du-showcase-card {
+  position: relative;
+  min-height: 380px;
+  padding: 30px;
+  overflow: hidden;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  background-clip: padding-box;
+}
+
+.du-showcase-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 6, 3, 0.92) 0%,
+    rgba(10, 6, 3, 0.74) 34%,
+    rgba(10, 6, 3, 0.28) 62%,
+    rgba(10, 6, 3, 0.05) 100%
+  );
+  z-index: 0;
+}
+
+.du-showcase-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  width: 240px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.du-showcase-eyebrow {
+  color: #ffb347;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 13px;
+  font-weight: 800;
+  margin: 0 0 16px;
+}
+
+.du-showcase-title {
+  font-size: 42px;
+  margin: 0 0 22px;
+  color: var(--du-text-main);
+}
+
+.du-showcase-meta {
+  margin-bottom: auto;
+}
+
+.du-showcase-action {
+  width: auto;
+  min-width: 190px;
+  margin-top: auto;
+}
+
+.du-showcase-add-card {
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .du-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+}
