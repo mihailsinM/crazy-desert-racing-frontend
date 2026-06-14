@@ -95,3 +95,18 @@ export async function updateRaceCar(
 
   return response.json();
 }
+
+export async function deleteRaceCar(id: number): Promise<void> {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_BASE_URL}/race-cars/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete race car");
+  }
+}

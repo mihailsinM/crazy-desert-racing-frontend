@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getRaceCarById } from "../services/raceCarService";
+import { getRaceCarById, deleteRaceCar } from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
 
 import "../styles/animations.css";
@@ -56,6 +56,23 @@ function CarDetailsPage() {
         return "center center";
     }
   }
+
+  async function handleDeleteCar() {
+    if (!car) return;
+
+    const confirmDelete = window.confirm(
+      `Delete ${car.name}? This action cannot be undone.`,
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await deleteRaceCar(car.id);
+      navigate("/cars");
+    } catch {
+      setError("Failed to delete car");
+    }
+  }
   return (
     <section className="du-page">
       <article
@@ -81,12 +98,17 @@ function CarDetailsPage() {
             can be used for future race registrations.
           </p>
           <div className="du-details-actions">
-            
             <button
               className="du-button du-button-secondary"
               onClick={() => navigate("/cars")}
             >
               ← Back To My Cars
+            </button>
+            <button
+              className="du-button du-button-secondary"
+              onClick={handleDeleteCar}
+            >
+              Delete Car
             </button>
             <button
               className="du-button du-button-primary"
