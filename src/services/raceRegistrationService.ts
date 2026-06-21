@@ -22,3 +22,33 @@ export async function registerMyCarForRace(data: {
 
   return response.json();
 }
+
+export type RaceParticipant = {
+  registrationId: number;
+  userId: number;
+  userName: string;
+  raceCarId: number;
+  carName: string;
+  carBrand: string;
+};
+
+export async function getRaceParticipants(
+  raceId: number,
+): Promise<RaceParticipant[]> {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `${API_BASE_URL}/registrations/race/${raceId}/participants`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to load race participants");
+  }
+
+  return response.json();
+}

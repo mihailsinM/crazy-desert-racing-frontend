@@ -1,0 +1,17 @@
+
+.du-card-list {
+  display: grid;
+  gap: var(--du-list-gap, 14px);
+
+  padding:
+    var(--du-list-padding-top, 10px)
+    22px
+    var(--du-list-padding-bottom, 16px)
+    22px;
+
+  box-sizing: border-box;
+}
+
+.du-card-list > * {
+  scroll-snap-align: start;
+}

@@ -27,3 +27,13 @@
 .du-button-primary:hover {
   box-shadow: 0 0 18px rgba(255, 122, 26, 0.35);
 }
+
+.du-button-small {
+  width: auto;
+  min-width: unset;
+
+  padding: 10px 16px;
+
+  font-size: 14px;
+  font-weight: 600;
+}

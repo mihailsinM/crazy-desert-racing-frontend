@@ -1,12 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../services/userService";
 import type { UserResponse } from "../types/user";
-import "../styles/dashboard-page.css";
+
 import "../styles/dashboard-page.css";
 import "../styles/dashboard-hero.css";
 import "../styles/animations.css";
 
+type HubItem = {
+  title: string;
+  text: string;
+  path: string;
+};
+
 function DashboardPage() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState<UserResponse | null>(null);
   const [error, setError] = useState("");
 
@@ -23,10 +32,50 @@ function DashboardPage() {
     loadUser();
   }, []);
 
+  const hubItems = useMemo<HubItem[]>(() => {
+    if (!user) return [];
+
+    return [
+      {
+        title: "🏁 Upcoming Races",
+        text: "Open upcoming desert race events.",
+        path: "/races",
+      },
+      {
+        title: "🏎 My Cars",
+        text: "Add and manage your desert racing vehicles.",
+        path: "/cars",
+      },
+      {
+        title: "⭐ VIP Club",
+        text: "Unlock premium festival and racing experiences.",
+        path: "/vip",
+      },
+      {
+        title: "🛒 Marketplace",
+        text: "Browse racing cars, parts and desert offers.",
+        path: "/marketplace",
+      },
+      ...(user.role === "ADMIN"
+        ? [
+            {
+              title: "👥 Users Management",
+              text: "View users, verify licenses and manage roles.",
+              path: "/admin/users",
+            },
+            {
+              title: "🏁 Create Race",
+              text: "Create new race events for the club.",
+              path: "/add-race",
+            },
+          ]
+        : []),
+    ];
+  }, [user]);
+
   if (error) {
     localStorage.removeItem("token");
     window.location.reload();
-
     return null;
   }
 
@@ -38,7 +87,7 @@ function DashboardPage() {
     <div>
       <section className="dashboard-hero">
         <div>
-          <p className="dashboard-hero-eyebrow">🏜 Crazy Desert Racing Club</p>
+          <p className="du-details-eyebrow">🏜 Crazy Desert Racing Club</p>
           <h1>Welcome back, {user.name}</h1>
           <p className="dashboard-hero-text">
             Your racing profile, upcoming events, cars and VIP access are ready.
@@ -93,24 +142,32 @@ function DashboardPage() {
         </article>
 
         <aside className="dashboard-card">
-          <h2>🏁 Upcoming Race</h2>
+          <div className="du-hub-header">
+            <h2>⚡ Desert Hub</h2>
 
-          <div className="quick-actions">
-            <div className="action-card featured-action">
-              <h3>Negev Desert Challenge</h3>
-              <p>Three-day desert race across dunes, rocks and open tracks.</p>
-              <span>April 15, 2027</span>
-            </div>
+            {user.role === "ADMIN" && (
+              <button
+                className="du-button du-button-small"
+                onClick={() => navigate("/admin/hub/new")}
+              >
+                + Add
+              </button>
+            )}
+          </div>
 
-            <div className="action-card">
-              <h3>🏎 My Cars</h3>
-              <p>Add and manage your desert racing vehicles.</p>
-            </div>
-
-            <div className="action-card">
-              <h3>⭐ VIP Club</h3>
-              <p>Unlock premium festival and racing experiences.</p>
-            </div>
+          <div className="du-hub-list du-card-list du-soft-scroll du-scroll-3">
+            {hubItems.map((item) => (
+              <div
+                key={item.title}
+                className="du-hub-card"
+                onClick={() => navigate(item.path)}
+              >
+                <h3>
+                  <span className="du-sand-text">{item.title}</span>
+                </h3>
+                <p>{item.text}</p>
+              </div>
+            ))}
           </div>
         </aside>
       </div>

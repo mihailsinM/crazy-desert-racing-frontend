@@ -1,0 +1,59 @@
+.du-soft-scroll {
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 179, 71, 0.22) transparent;
+}
+
+.du-soft-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.du-soft-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.du-soft-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 179, 71, 0.22);
+  border-radius: 999px;
+}
+
+.du-scroll-3 {
+  --du-item-height: 96px;
+  --du-list-gap: 14px;
+  --du-list-padding-top: 10px;
+  --du-list-padding-bottom: 16px;
+
+  height: calc(
+    (var(--du-item-height) * 3) + (var(--du-list-gap) * 2) +
+      var(--du-list-padding-top) + var(--du-list-padding-bottom)
+  );
+}
+
+.du-scroll-4 {
+  --du-item-height: 96px;
+  --du-list-gap: 14px;
+  --du-list-padding-top: 10px;
+  --du-list-padding-bottom: 16px;
+
+  height: calc(
+    (var(--du-item-height) * 4) + (var(--du-list-gap) * 3) +
+      var(--du-list-padding-top) + var(--du-list-padding-bottom)
+  );
+}
+
+.du-scroll-5 {
+  --du-item-height: 96px;
+  --du-list-gap: 14px;
+  --du-list-padding-top: 10px;
+  --du-list-padding-bottom: 16px;
+
+  height: calc(
+    (var(--du-item-height) * 5) + (var(--du-list-gap) * 4) +
+      var(--du-list-padding-top) + var(--du-list-padding-bottom)
+  );
+}
+
+.du-scroll-large {
+  height: 520px;
+}

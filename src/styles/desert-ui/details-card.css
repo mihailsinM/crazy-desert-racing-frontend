@@ -103,6 +103,20 @@
   font-size: 17px;
 }
 
+.du-details-overlay-top {
+  justify-content: flex-start;
+}
+
+.du-push-bottom {
+  margin-top: auto;
+}
+
+.du-scroll-area {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
 @media (max-width: 800px) {
   .du-details-card,
   .du-details-overlay {

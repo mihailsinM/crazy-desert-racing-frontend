@@ -58,4 +58,18 @@
 
   --du-status-past-bg: rgba(120, 120, 120, 0.18);
   --du-status-past-text: #cfcfcf;
+
+  .du-sand-text {
+    color: var(--du-orange-soft);
+    letter-spacing: 2px;
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  .du-warm-text {
+    color: var(--du-text-warm);
+    letter-spacing: 2px;
+    font-size: 15px;
+    font-weight: bold;
+  }
 }

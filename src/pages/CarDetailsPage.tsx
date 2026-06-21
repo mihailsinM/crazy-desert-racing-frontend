@@ -99,13 +99,13 @@ function CarDetailsPage() {
           </p>
           <div className="du-details-actions">
             <button
-              className="du-button du-button-secondary"
+              className="du-button du-button-secondary du-sand-text"
               onClick={() => navigate("/cars")}
             >
               ← Back To My Cars
             </button>
             <button
-              className="du-button du-button-secondary"
+              className="du-button du-button-secondary du-sand-text"
               onClick={handleDeleteCar}
             >
               Delete Car
