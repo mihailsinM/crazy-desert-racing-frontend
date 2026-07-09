@@ -1,17 +1,58 @@
-
 .du-card-list {
+  --du-card-height: 96px;
+  --du-list-gap: 14px;
+  --du-list-count: 3;
+
   display: grid;
-  gap: var(--du-list-gap, 14px);
+  grid-auto-rows: var(--du-card-height);
+  gap: var(--du-list-gap);
+  column-gap: 0;
 
-  padding:
-    var(--du-list-padding-top, 10px)
-    22px
-    var(--du-list-padding-bottom, 16px)
-    22px;
+  height: calc(
+    (var(--du-card-height) * var(--du-list-count)) +
+      (var(--du-list-gap) * (var(--du-list-count) - 1)) + 2px
+  );
 
+  padding: 0 6px 0 0;
   box-sizing: border-box;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  align-content: start;
 }
 
 .du-card-list > * {
+  height: var(--du-card-height);
+  box-sizing: border-box;
+  margin: 0;
   scroll-snap-align: start;
+   scroll-margin-top: 1px;
+}
+
+.du-list-3 {
+  --du-list-count: 3;
+}
+
+.du-list-4 {
+  --du-list-count: 4;
+}
+
+.du-list-5 {
+  --du-list-count: 5;
+}
+
+.du-list-6 {
+  --du-list-count: 6;
+}
+
+.du-list-row-medium {
+  --du-card-height: 96px;
+}
+
+.du-list-row-large {
+  --du-card-height: 118px;
+}
+
+.du-card-list > .du-row-panel {
+  margin-bottom: 0;
 }

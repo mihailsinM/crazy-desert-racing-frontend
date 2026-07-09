@@ -1,13 +1,20 @@
 .du-status {
-  display: inline-block;
-  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   padding: 8px 14px;
-
   border-radius: var(--du-radius-pill);
-
-  font-weight: bold;
+  font-weight: 700;
   width: fit-content;
 }
+
+.du-status.du-status-small {
+  padding: 6px 13px;
+  font-size: 14px;
+  line-height: 1;
+}
+
 
 .du-status.du-status-upcoming {
   background: var(--du-status-upcoming-bg);
@@ -27,4 +34,14 @@
 .du-status.du-status-past {
   background: var(--du-status-past-bg);
   color: var(--du-status-past-text);
+}
+
+.du-status.du-status-verified {
+  background: rgba(255, 122, 26, 0.18);
+  color: var(--du-orange-soft);
+}
+
+.du-status.du-status-not-verified {
+  background: rgba(255, 80, 80, 0.14);
+  color: var(--du-text-muted);
 }

@@ -18,6 +18,7 @@ import EditRacePage from "./pages/EditRacePage";
 import CarDetailsPage from "./pages/CarDetailsPage";
 import EditCarPage from "./pages/EditCarPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
+import AdminRoute from "./routes/AdminRoute";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -48,8 +49,14 @@ function App() {
               token ? <DashboardLayout /> : <Navigate to="/login" replace />
             }
           >
-            <Route path="/admin/users" element={<AdminUsersPage />} />
-    
+            <Route
+              path="/admin/users"
+              element={
+                <AdminRoute>
+                  <AdminUsersPage />
+                </AdminRoute>
+              }
+            />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/cars/:id/edit" element={<EditCarPage />} />
             <Route path="/cars/:id" element={<CarDetailsPage />} />

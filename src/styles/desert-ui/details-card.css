@@ -30,12 +30,15 @@
 .du-details-overlay {
   min-height: 720px;
   padding: 56px;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
   z-index: 1;
+}
+
+.du-details-overlay.du-scroll {
+  padding-right: 39px;
 }
 
 .du-details-eyebrow {

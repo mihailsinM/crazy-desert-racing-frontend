@@ -10,6 +10,7 @@ function AdminUsersPage() {
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function loadUsers() {
@@ -46,6 +47,17 @@ function AdminUsersPage() {
     setUsers(data);
   }
 
+  const filteredUsers = users.filter((user) => {
+    const search = searchTerm.toLowerCase().trim();
+
+    return (
+      user.name.toLowerCase().includes(search) ||
+      user.email.toLowerCase().includes(search) ||
+      user.role.toLowerCase().includes(search) ||
+      user.licenseCategory.toLowerCase().includes(search)
+    );
+  });
+
   return (
     <section className="du-page">
       <article
@@ -54,13 +66,32 @@ function AdminUsersPage() {
           backgroundImage: `url("/src/assets/race.png")`,
         }}
       >
-        <div className="du-details-overlay du-details-overlay-top">
-          <p className="du-details-eyebrow">Admin Panel</p>
+        <div className="du-details-overlay du-scroll du-details-overlay-top">
+          <div className="du-page-header">
+            <div>
+              <p className="du-details-eyebrow">Admin Panel</p>
+              <h1 className="du-details-title">All Users</h1>
+            </div>
 
-          <h1 className="du-details-title">All Users</h1>
+            <div className="du-search-box">
+              {!searchTerm && (
+                <span className="du-search-icon" aria-hidden="true">
+                  ⌕
+                </span>
+              )}
 
-          <div className="du-card-list du-soft-scroll du-scroll-large">
-            {users.map((user) => (
+              <input
+                className="du-search-input"
+                type="text"
+                placeholder="Search by name or email..."
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="du-card-list du-soft-scroll du-list-4 du-list-row-large">
+            {filteredUsers.map((user) => (
               <div key={user.id} className="du-row-panel">
                 <div className="du-row-main">
                   <span className="du-row-title">

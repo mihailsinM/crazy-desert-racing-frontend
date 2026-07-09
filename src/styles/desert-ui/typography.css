@@ -1,0 +1,79 @@
+.du-eyebrow {
+  color: var(--du-status-postponed-text);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.du-title-xl {
+  font-size: 40px;
+  margin: 8px 0;
+}
+
+.du-title-lg {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.du-title-md {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.du-text {
+  color: var(--du-text-main);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.du-text-soft {
+  color: var(--du-text-soft);
+  font-size: 17px;
+  line-height: 1.6;
+  font-size: 17px;
+}
+
+.du-caption {
+  color: var(--du-text-soft);
+  font-size: 14px;
+}
+.du-info-list {
+  display: grid;
+}
+
+.du-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.du-info-label {
+  color: var(--du-text-warm);
+  font-size: 15px;
+   font-weight: 400;
+}
+
+.du-info-value {
+  color: var(--du-text-main);
+  text-align: right;
+  font-weight: 600;
+}
+
+.du-sand-text {
+  color: var(--du-orange-soft);
+  letter-spacing: 2px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.du-warm-text {
+  color: var(--du-text-warm);
+  letter-spacing: 2px;
+  font-size: 15px;
+  font-weight: bold;
+}
+

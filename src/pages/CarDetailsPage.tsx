@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getRaceCarById, deleteRaceCar } from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
 
-import "../styles/animations.css";
 
 function CarDetailsPage() {
   const { id } = useParams();

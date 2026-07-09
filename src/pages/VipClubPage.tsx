@@ -1,5 +1,4 @@
 import "../styles/vip-club-page.css";
-import "../styles/animations.css";
 
 const memberships = [
   {

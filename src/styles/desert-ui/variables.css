@@ -27,6 +27,9 @@
   --du-border-orange-strong: rgba(255, 179, 71, 0.6);
   --du-nav-active-bg: rgba(240, 227, 209, 0.18);
   --du-nav-active-border: rgba(230, 193, 144, 0.55);
+  
+  --du-highlight-bg: rgba(255, 122, 26, 0.13);
+  --du-highlight-border: rgba(255, 179, 71, 0.48);
 
   /* Shadows */
   --du-shadow-card: 0 18px 40px rgba(0, 0, 0, 0.35);
@@ -34,6 +37,10 @@
   --du-shadow-auth: 0 24px 70px rgba(0, 0, 0, 0.35);
   --du-shadow-focus: 0 0 20px rgba(255, 122, 26, 0.75);
   --du-shadow-button: 0 0 20px rgba(255, 122, 26, 0.45);
+
+  --du-shadow-glow-soft: 0 0 18px rgba(255, 179, 71, 0.28);
+  --du-shadow-glow-empty: 0 0 0 rgba(255, 179, 71, 0);
+
 
   /* Radius */
   --du-radius-card: 24px;
@@ -58,18 +65,5 @@
 
   --du-status-past-bg: rgba(120, 120, 120, 0.18);
   --du-status-past-text: #cfcfcf;
-
-  .du-sand-text {
-    color: var(--du-orange-soft);
-    letter-spacing: 2px;
-    font-size: 15px;
-    font-weight: bold;
-  }
-
-  .du-warm-text {
-    color: var(--du-text-warm);
-    letter-spacing: 2px;
-    font-size: 15px;
-    font-weight: bold;
-  }
+  
 }

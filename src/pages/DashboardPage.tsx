@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../services/userService";
 import type { UserResponse } from "../types/user";
 
-import "../styles/dashboard-page.css";
 import "../styles/dashboard-hero.css";
-import "../styles/animations.css";
 
 type HubItem = {
   title: string;
@@ -85,63 +83,69 @@ function DashboardPage() {
 
   return (
     <div>
-      <section className="dashboard-hero">
+      <section className="du-hero">
         <div>
-          <p className="du-details-eyebrow">🏜 Crazy Desert Racing Club</p>
-          <h1>Welcome back, {user.name}</h1>
-          <p className="dashboard-hero-text">
+          <p className="du-eyebrow">🏜 Crazy Desert Racing Club</p>
+          <h1 className="du-title-xl">Welcome back, {user.name}</h1>
+          <p className="du-text-soft">
             Your racing profile, upcoming events, cars and VIP access are ready.
           </p>
         </div>
 
         <div className="dashboard-hero-stats">
           <div>
-            <span>Next Event</span>
-            <strong>Negev Desert Challenge</strong>
+            <span className="du-eyebrow">Next Event</span>
+            <strong className="du-stat-value">Negev Desert Challenge</strong>
           </div>
 
           <div>
-            <span>VIP Status</span>
-            <strong>Standard Member</strong>
+            <span className="du-eyebrow">VIP Status</span>
+            <strong className="du-stat-value">Standard Member</strong>
           </div>
         </div>
       </section>
 
-      <div className="dashboard-grid">
-        <article className="dashboard-card">
-          <h2>Driver Profile</h2>
+      <div className="du-dashboard-grid">
+        <article className="du-dashboard-card">
+          <h2 className="du-eyebrow">Driver Profile</h2>
 
-          <div className="user-info">
-            <div className="info-row">
-              <span className="info-label">Name</span>
-              <span className="info-value">{user.name}</span>
+          <div className="du-info">
+            <div className="du-info-row">
+              <span className="du-info-label">Name</span>
+              <span className="du-info-value">{user.name}</span>
             </div>
 
-            <div className="info-row">
-              <span className="info-label">Email</span>
-              <span className="info-value">{user.email}</span>
+            <div className="du-info-row">
+              <span className="du-info-label">Email</span>
+              <span className="du-info-value">{user.email}</span>
             </div>
 
-            <div className="info-row">
-              <span className="info-label">Role</span>
-              <span className="info-value">{user.role}</span>
+            <div className="du-info-row">
+              <span className="du-info-label">Role</span>
+              <span className="du-info-value">{user.role}</span>
             </div>
 
-            <div className="info-row">
-              <span className="info-label">License category</span>
-              <span className="info-value">{user.licenseCategory}</span>
+            <div className="du-info-row">
+              <span className="du-info-label">License category</span>
+              <span className="du-info-value">{user.licenseCategory}</span>
             </div>
 
-            <div className="info-row">
-              <span className="info-label">License status</span>
-              <span className="status-badge">
+            <div className="du-info-row">
+              <span className="du-info-label">License status</span>
+              <span
+                className={
+                  user.licenseVerified
+                    ? "du-status du-status-small du-status-verified"
+                    : "du-status du-status-small du-status-not-verified"
+                }
+              >
                 {user.licenseVerified ? "Verified" : "Not verified"}
               </span>
             </div>
           </div>
         </article>
 
-        <aside className="dashboard-card">
+        <aside className="du-dashboard-card du-card-scroll">
           <div className="du-hub-header">
             <h2>⚡ Desert Hub</h2>
 
@@ -155,7 +159,7 @@ function DashboardPage() {
             )}
           </div>
 
-          <div className="du-hub-list du-card-list du-soft-scroll du-scroll-3">
+          <div className="du-card-list du-soft-scroll du-list-3 du-list-row-medium">
             {hubItems.map((item) => (
               <div
                 key={item.title}

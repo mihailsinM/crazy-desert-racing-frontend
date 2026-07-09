@@ -8,7 +8,6 @@ import { getCurrentUser } from "../services/userService";
 import type { UserResponse } from "../types/user";
 import { getAllRaces, updateRace } from "../services/raceService";
 
-import "../styles/animations.css";
 
 function RacesPage() {
   const [races, setRaces] = useState<Race[]>([]);
@@ -137,13 +136,13 @@ function RacesPage() {
   return (
     <section className="du-page">
       <header className="du-page-header">
-        <p className="du-page-eyebrow">Race Calendar</p>
-        <h1 className="du-page-title">🏁 Races</h1>
+        <p className="du-eyebrow">Race Calendar</p>
+        <h1 className="du-title-xl">🏁 Races</h1>
       </header>
 
       {currentUser?.role === "ADMIN" && (
         <div className="du-page-actions">
-          <button className="du-button" onClick={() => navigate("/races/new")}>
+          <button className="du-button du-eyebrow" onClick={() => navigate("/races/new")}>
             Add New Race
           </button>
         </div>

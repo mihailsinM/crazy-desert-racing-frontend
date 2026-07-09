@@ -10,7 +10,6 @@ import {
   type RaceParticipant,
 } from "../services/raceRegistrationService";
 
-import "../styles/animations.css";
 
 function RaceDetailsPage() {
   const { id } = useParams();

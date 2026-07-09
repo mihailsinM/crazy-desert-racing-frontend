@@ -25,8 +25,8 @@ function DashboardLayout() {
   }
 
   return (
-    <section className="dashboard-page">
-      <div className="dashboard-container">
+    <section className="dashboard-page du-page-shell">
+      <div className="du-container">
         <DashboardNavbar title={pageTitle} onLogout={handleLogout} />
         <Outlet />
       </div>

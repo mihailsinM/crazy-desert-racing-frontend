@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { getMyRaceCars } from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
 
-import "../styles/animations.css";
 
 function MyCarsPage() {
   const [cars, setCars] = useState<RaceCar[]>([]);
@@ -38,8 +37,8 @@ function MyCarsPage() {
   return (
     <section className="du-page">
       <header className="du-page-header">
-        <p className="du-page-eyebrow">Garage</p>
-        <h1 className="du-page-title">🏎 My Cars</h1>
+        <p className="du-eyebrow">Garage</p>
+        <h1 className="du-title-xl">🏎 My Cars</h1>
       </header>
 
       <div className="du-showcase-grid">
@@ -65,7 +64,7 @@ function MyCarsPage() {
             }}
           >
             <div className="du-showcase-content">
-              <p className="du-showcase-eyebrow">{car.brand}</p>
+              <p className="du-eyebrow du-showcase-eyebrow">{car.brand}</p>
 
               <h2 className="du-showcase-title">{car.name}</h2>
 
