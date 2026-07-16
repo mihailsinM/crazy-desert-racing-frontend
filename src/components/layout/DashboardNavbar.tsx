@@ -1,4 +1,4 @@
-import "../styles/dashboard-navbar.css";
+import "../../styles/dashboard-navbar.css";
 import { NavLink } from "react-router-dom";
 
 type DashboardNavbarProps = {

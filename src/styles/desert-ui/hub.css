@@ -51,3 +51,136 @@
   overflow: hidden;
 }
 
+.du-dashboard-hub-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.du-dashboard-admin-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 418px;
+}
+
+.du-dashboard-hub-grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  min-height: 0;
+  margin-top: 18px;
+}
+
+.du-dashboard-hub-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.du-dashboard-hub-item h3 {
+  margin: 0 0 7px;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.du-dashboard-hub-item p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.dashboard-hero-main {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.dashboard-hero-avatar {
+  display: grid;
+  flex: 0 0 76px;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  border: 1px solid rgba(255, 190, 110, 0.35);
+  border-radius: 50%;
+  background: rgba(61, 30, 13, 0.7);
+  font-size: 32px;
+}
+
+@media (max-width: 1100px) {
+  .du-dashboard-hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .du-dashboard-hub-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-hero-main {
+    align-items: flex-start;
+  }
+
+  .dashboard-hero-avatar {
+    flex-basis: 60px;
+    width: 60px;
+    height: 60px;
+  }
+}
+
+.du-dashboard-activity-list {
+  height: 292px;
+  min-height: 292px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding-right: 10px;
+}
+
+.du-dashboard-activity-list-empty {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  overflow-y: hidden;
+}
+
+.du-dashboard-empty-state {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  margin: 0;
+  text-align: center;
+}
+
+.du-dashboard-activity-header {
+  padding-inline: 4px 20px;
+}
+
+.du-dashboard-activity-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 2px;
+}
+
+.du-dashboard-main-panel {
+  display: flex;
+  flex-direction: column;
+  height: 418px;
+  min-height: 418px;
+  overflow: hidden;
+}

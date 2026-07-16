@@ -4,7 +4,7 @@ import "./App.css";
 import "./styles/desert-ui/index.css";
 
 import DashboardPage from "./pages/DashboardPage";
-import DashboardLayout from "./components/DashboardLayout";
+import DashboardLayout from "./components/layout/DashboardLayout";
 import LoginPage from "./pages/LoginPage";
 import MyCarsPage from "./pages/MyCarsPage";
 import RacesPage from "./pages/RacesPage";

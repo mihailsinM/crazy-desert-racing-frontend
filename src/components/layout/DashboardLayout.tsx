@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import DashboardNavbar from "./DashboardNavbar";
-import "../styles/dashboard-page.css";
+import "../../styles/dashboard-page.css";
 
 function DashboardLayout() {
   const location = useLocation();
