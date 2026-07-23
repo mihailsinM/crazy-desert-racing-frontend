@@ -123,64 +123,6 @@
   }
 }
 
-@media (max-width: 720px) {
-  .du-dashboard-hub-grid {
-    grid-template-columns: 1fr;
-  }
 
-  .dashboard-hero-main {
-    align-items: flex-start;
-  }
 
-  .dashboard-hero-avatar {
-    flex-basis: 60px;
-    width: 60px;
-    height: 60px;
-  }
-}
 
-.du-dashboard-activity-list {
-  height: 292px;
-  min-height: 292px;
-  overflow-y: auto;
-  scrollbar-gutter: stable;
-  padding-right: 10px;
-}
-
-.du-dashboard-activity-list-empty {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  overflow-y: hidden;
-}
-
-.du-dashboard-empty-state {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  place-items: center;
-  align-content: center;
-  gap: 8px;
-  margin: 0;
-  text-align: center;
-}
-
-.du-dashboard-activity-header {
-  padding-inline: 4px 20px;
-}
-
-.du-dashboard-activity-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-right: 2px;
-}
-
-.du-dashboard-main-panel {
-  display: flex;
-  flex-direction: column;
-  height: 418px;
-  min-height: 418px;
-  overflow: hidden;
-}

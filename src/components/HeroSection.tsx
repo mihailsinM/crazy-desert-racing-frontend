@@ -3,36 +3,41 @@ import { Link } from "react-router-dom";
 
 function HeroSection() {
   return (
-    <section className="hero-section">
-      <div className="hero-layout">
+    <section className="hero-section du-page-shell">
+      <div className="hero-layout du-container">
         <div className="hero-content">
-          <p className="eyebrow">Negev Desert • Israel</p>
+          <p className="du-eyebrow">Negev Desert • Israel</p>
 
           <h1>Crazy Desert Racing</h1>
 
           <p className="hero-subtitle">A dream born in the Negev Desert.</p>
 
-          <p className="hero-text">
+          <p className="du-text-soft du-text-large du-text-readable">
             A future community for people who love desert adventures, powerful
             cars, racing culture, music, friendship and unforgettable nights
             under the open sky.
           </p>
 
           <div className="hero-actions">
-
-            <Link to="/register" className="primary-button">
+            <Link
+              to="/register"
+              className="du-button du-button-primary du-button-inline du-button-pulse"
+            >
               Join The Journey
             </Link>
 
-            <Link to="/races" className="secondary-button">
+            <Link to="/races" className="du-button du-button-inline">
               Explore Races
             </Link>
-            
+
+            <Link to="/races" className="du-button du-button-inline">
+              Explore Festival
+            </Link>
           </div>
         </div>
 
-        <aside className="hero-story-card">
-          <p className="story-eyebrow">The Story</p>
+        <aside className="hero-story-card du-panel">
+          <p className="du-eyebrow">The Story</p>
 
           <h2>Why Crazy Desert Racing?</h2>
 

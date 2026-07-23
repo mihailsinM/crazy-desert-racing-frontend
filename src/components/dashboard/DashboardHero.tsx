@@ -45,10 +45,10 @@ function DashboardHero({
         </div>
       </div>
 
-      <div className="dashboard-hero-stats">
+      <div className="du-hero-stats">
         {stats.map((stat) => (
-          <div key={stat.label}>
-            <span className="du-eyebrow">{stat.label}</span>
+          <div key={stat.label}className="du-hero-stat">
+            <span className="du-hero-stat-label">{stat.label}</span>
             <strong className="du-stat-value">{stat.value}</strong>
           </div>
         ))}

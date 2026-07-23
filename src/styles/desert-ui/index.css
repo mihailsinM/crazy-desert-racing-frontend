@@ -14,5 +14,7 @@
 @import "./scroll.css";
 @import "./lists.css";
 @import "./dashboard.css";
+@import "./dashboard-hero.css";
+@import "./dashboard-activity.css";
 @import "./typography.css";
 @import "./filters.css";

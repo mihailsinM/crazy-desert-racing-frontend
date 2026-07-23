@@ -1,5 +1,5 @@
 .du-eyebrow {
-  color: var(--du-status-postponed-text);
+  color: var(--du-orange-soft);
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 14px;
@@ -29,9 +29,17 @@
 
 .du-text-soft {
   color: var(--du-text-soft);
-  font-size: 17px;
   line-height: 1.6;
   font-size: 17px;
+}
+
+.du-text-large {
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.du-text-readable {
+  max-width: 620px;
 }
 
 .du-caption {
@@ -40,15 +48,6 @@
 }
 .du-info-list {
   display: grid;
-}
-
-.du-info-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .du-info-label {

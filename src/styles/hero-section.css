@@ -1,21 +1,8 @@
 .hero-section {
-  min-height: 100vh;
-  padding: 110px 7% 60px;
+  /* min-height: 100vh; */
+  /* padding: 110px 7% 60px; */
   display: flex;
   align-items: center;
-
-  /* background:
-    linear-gradient(
-      90deg,
-      rgba(18, 11, 7, 0.52) 0%,
-      rgba(18, 11, 7, 0.45) 48%,
-      rgba(18, 11, 7, 0.25) 100%
-    ),
-    url("/src/assets/home_page.jpg");
-
-  background-size: cover;
-  background-position: center;
-  color: white; */
 }
 
 .hero-layout {
@@ -28,15 +15,6 @@
 
 .hero-content {
   max-width: 700px;
-}
-
-.eyebrow,
-.story-eyebrow {
-  color: #ffb347;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 13px;
 }
 
 .hero-content h1 {
@@ -52,13 +30,6 @@
   font-weight: 700;
   color: #ffffff;
   margin-bottom: 20px;
-}
-
-.hero-text {
-  font-size: 18px;
-  line-height: 1.8;
-  color: #f0ddd0;
-  max-width: 620px;
 }
 
 .hero-story-card {
@@ -82,7 +53,7 @@
 }
 
 .hero-story-card p {
-  color: #f0ddd0;
+
   font-size: 17px;
   line-height: 1.7;
   margin-bottom: 18px;
@@ -108,12 +79,6 @@
 
   text-decoration: none;
   cursor: pointer;
-}
-
-.secondary-button {
-  background: transparent;
-  color: white;
-  border: 1px solid #ffffff70;
 }
 
 @media (max-width: 900px) {
@@ -203,32 +168,4 @@
 
 .story-highlight {
   margin-left: 100px;
-}
-
-.primary-button {
-  background: #ff7a1a;
-  color: #120b07;
-  animation: callToActionPulse 3.5s ease-in-out infinite;
-}
-
-@keyframes callToActionPulse {
-  0%,
-  70%,
-  100% {
-    transform: translateY(0);
-    box-shadow: none;
-  }
-
-  78% {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 28px rgba(255, 122, 26, 0.55);
-  }
-
-  86% {
-    transform: translateY(0);
-  }
-
-  92% {
-    transform: translateY(-3px);
-  }
 }

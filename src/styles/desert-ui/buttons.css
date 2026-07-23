@@ -37,3 +37,38 @@
   font-size: 14px;
   font-weight: 600;
 }
+
+.du-button-inline {
+  width: auto;
+  min-width: unset;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.du-button-pulse {
+  animation: duButtonPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes duButtonPulse {
+  0%,
+  70%,
+  100% {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  78% {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(255, 122, 26, 0.55);
+  }
+
+  86% {
+    transform: translateY(0);
+  }
+
+  92% {
+    transform: translateY(-3px);
+  }
+}

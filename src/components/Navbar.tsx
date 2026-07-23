@@ -1,23 +1,74 @@
-import { Link } from "react-router-dom";
-import "../styles/navbar.css";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const navigate = useNavigate();
+  const isAuthenticated = Boolean(localStorage.getItem("token"));
+
+  function getNavLinkClass({ isActive }: { isActive: boolean }) {
+    return isActive ? "du-nav-link du-nav-link-active" : "du-nav-link";
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    navigate("/login");
+    window.location.reload();
+  }
+
   return (
-    <header className="navbar">
-      <Link to="/" className="navbar-logo">
+    <header className="du-navbar">
+      <NavLink to="/" className="du-navbar-logo">
         🏜 Crazy Desert Racing
-      </Link>
+      </NavLink>
 
-      <nav className="navbar-links">
-        <Link to="/races">Racing</Link>
+      <nav className="du-navbar-links">
+        {isAuthenticated ? (
+          <>
+            <NavLink to="/dashboard" className={getNavLinkClass}>
+              Dashboard
+            </NavLink>
 
-        <Link to="/vip" className="vip-nav-link">
-          VIP Club
-        </Link>
+            <NavLink to="/cars" className={getNavLinkClass}>
+              My Cars
+            </NavLink>
 
-        <a href="#">Festival</a>
+            <NavLink to="/races" className={getNavLinkClass}>
+              Races
+            </NavLink>
 
-        <Link to="/login">Login</Link>
+            <NavLink to="/vip" className={getNavLinkClass}>
+              VIP Club
+            </NavLink>
+
+            <button
+              type="button"
+              className="du-button du-button-primary du-button-small"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <NavLink to="/races" className={getNavLinkClass}>
+              Racing
+            </NavLink>
+
+            <NavLink to="/vip" className={getNavLinkClass}>
+              VIP Club
+            </NavLink>
+
+            <NavLink to="/festival" className={getNavLinkClass}>
+              Festival
+            </NavLink>
+
+            <NavLink
+              to="/login"
+              className="du-button du-button-primary du-button-small"
+            >
+              Login
+            </NavLink>
+          </>
+        )}
       </nav>
     </header>
   );

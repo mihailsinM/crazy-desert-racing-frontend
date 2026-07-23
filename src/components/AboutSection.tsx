@@ -1,4 +1,4 @@
-import "../styles/about-section.css";
+
 import "../styles/about-section.css";
 import homePageImage from "../assets/home_page.jpg";
 
@@ -19,7 +19,7 @@ function AboutSection() {
       }}
     >
       <div className="about-content">
-        <p className="about-eyebrow">The Story</p>
+        <p className="du-eyebrow">The Story</p>
 
         <h2>Why Crazy Desert Racing?</h2>
 
