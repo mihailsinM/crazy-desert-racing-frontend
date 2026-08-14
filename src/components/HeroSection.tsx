@@ -10,7 +10,7 @@ function HeroSection() {
 
           <h1>Crazy Desert Racing</h1>
 
-          <p className="hero-subtitle">A dream born in the Negev Desert.</p>
+          <p className="du-title-md du-page-actions">A dream born in the Negev Desert.</p>
 
           <p className="du-text-soft du-text-large du-text-readable">
             A future community for people who love desert adventures, powerful
@@ -18,7 +18,7 @@ function HeroSection() {
             under the open sky.
           </p>
 
-          <div className="hero-actions">
+          <div className="du-inline du-inline-sm du-inline-wrap du-mt-lg du-inline-mobile-stack">
             <Link
               to="/register"
               className="du-button du-button-primary du-button-inline du-button-pulse"
@@ -39,7 +39,7 @@ function HeroSection() {
         <aside className="hero-story-card du-panel">
           <p className="du-eyebrow">The Story</p>
 
-          <h2>Why Crazy Desert Racing?</h2>
+          <h2 className="du-title-lg" >Why Crazy Desert Racing?</h2>
 
           <div className="story-slider">
             <div className="story-slider-track">
@@ -57,7 +57,7 @@ function HeroSection() {
               <p className="story-final">
                 <span>Today it is a project.</span>
                 <span className="story-highlight">
-                  Tomorrow it becomes reality.
+                  Tomorrow... reality.
                 </span>
               </p>
             </div>

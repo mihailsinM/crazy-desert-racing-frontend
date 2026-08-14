@@ -39,6 +39,30 @@
   gap: 24px;
 }
 
+.du-inline {
+  display: flex;
+  align-items: center;
+}
+
+.du-inline-sm {
+  gap: 12px;
+}
+
+.du-inline-wrap {
+  flex-wrap: wrap;
+}
+
+.du-mt-lg {
+  margin-top: 32px;
+}
+
+@media (max-width: 600px) {
+  .du-inline-mobile-stack {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
 @media (max-width: 800px) {
   .du-two-column-grid {
     grid-template-columns: 1fr;
