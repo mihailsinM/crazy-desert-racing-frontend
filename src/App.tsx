@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import "./styles/desert-ui/index.css";
@@ -19,13 +19,56 @@ import CarDetailsPage from "./pages/CarDetailsPage";
 import EditCarPage from "./pages/EditCarPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminRoute from "./routes/AdminRoute";
-import { getToken } from "./services/authService";
+import {
+  getToken,
+  hasToken,
+  subscribeToAuthChanges,
+} from "./services/authService";
+import { getCurrentUser } from "./services/userService";
 
 function App() {
   const [token, setToken] = useState(getToken());
+  const [sessionChecked, setSessionChecked] = useState(!hasToken());
+
+  useEffect(() => {
+    return subscribeToAuthChanges(() => {
+      setToken(getToken());
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!getToken()) {
+      return;
+    }
+
+    let active = true;
+
+    async function validateSession() {
+      try {
+        await getCurrentUser();
+      } catch {
+        // Invalid sessions are cleared and redirected by authenticatedFetch.
+      } finally {
+        if (active) {
+          setToken(getToken());
+          setSessionChecked(true);
+        }
+      }
+    }
+
+    void validateSession();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function handleLoginSuccess() {
     setToken(getToken());
+  }
+
+  if (!sessionChecked) {
+    return <p className="du-sand-text">Checking your session...</p>;
   }
 
   return (

@@ -1,14 +1,13 @@
 import API_BASE_URL from "./api";
-import { getAuthorizationHeaders } from "./authService";
+import { authenticatedFetch } from "./authService";
 
 export async function registerMyCarForRace(data: {
   raceCarId: number;
   raceId: number;
 }) {
-  const response = await fetch(`${API_BASE_URL}/registrations/my`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/registrations/my`, {
     method: "POST",
     headers: {
-      ...getAuthorizationHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
@@ -34,11 +33,8 @@ export type RaceParticipant = {
 export async function getRaceParticipants(
   raceId: number,
 ): Promise<RaceParticipant[]> {
-  const response = await fetch(
+  const response = await authenticatedFetch(
     `${API_BASE_URL}/registrations/race/${raceId}/participants`,
-    {
-      headers: getAuthorizationHeaders(),
-    },
   );
 
   if (!response.ok) {

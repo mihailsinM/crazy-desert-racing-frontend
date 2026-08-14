@@ -11,8 +11,7 @@ function Navbar() {
 
   function handleLogout() {
     removeToken();
-    navigate("/login");
-    window.location.reload();
+    navigate("/login", { replace: true });
   }
 
   return (

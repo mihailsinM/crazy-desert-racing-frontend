@@ -1,5 +1,5 @@
 import API_BASE_URL from "./api";
-import { getAuthorizationHeaders } from "./authService";
+import { authenticatedFetch } from "./authService";
 import type { Race } from "../types/race";
 
 export async function getAllRaces(): Promise<Race[]> {
@@ -39,10 +39,9 @@ export type RaceUpdateRequest = {
 };
 
 export async function createRace(request: RaceCreateRequest): Promise<Race> {
-  const response = await fetch(`${API_BASE_URL}/races`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/races`, {
     method: "POST",
     headers: {
-      ...getAuthorizationHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(request),
@@ -59,10 +58,9 @@ export async function updateRace(
   id: number,
   request: RaceUpdateRequest,
 ): Promise<Race> {
-  const response = await fetch(`${API_BASE_URL}/races/${id}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/races/${id}`, {
     method: "PUT",
     headers: {
-      ...getAuthorizationHeaders(),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(request),

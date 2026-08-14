@@ -1,11 +1,9 @@
 import API_BASE_URL from "./api";
-import { getAuthorizationHeaders } from "./authService";
+import { authenticatedFetch } from "./authService";
 import type { UserResponse } from "../types/user";
 
 export async function getCurrentUser(): Promise<UserResponse> {
-  const response = await fetch(`${API_BASE_URL}/users/me`, {
-    headers: getAuthorizationHeaders(),
-  });
+  const response = await authenticatedFetch(`${API_BASE_URL}/users/me`);
 
   if (!response.ok) {
     throw new Error("Failed to load current user");
@@ -15,9 +13,7 @@ export async function getCurrentUser(): Promise<UserResponse> {
 }
 
 export async function getAllUsers(): Promise<UserResponse[]> {
-  const response = await fetch(`${API_BASE_URL}/users`, {
-    headers: getAuthorizationHeaders(),
-  });
+  const response = await authenticatedFetch(`${API_BASE_URL}/users`);
 
   if (!response.ok) {
     throw new Error("Failed to load users");
@@ -27,11 +23,10 @@ export async function getAllUsers(): Promise<UserResponse[]> {
 }
 
 export async function verifyUserLicense(userId: number): Promise<UserResponse> {
-  const response = await fetch(
+  const response = await authenticatedFetch(
     `${API_BASE_URL}/users/${userId}/verify-license`,
     {
       method: "PUT",
-      headers: getAuthorizationHeaders(),
     },
   );
 
@@ -43,10 +38,12 @@ export async function verifyUserLicense(userId: number): Promise<UserResponse> {
 }
 
 export async function makeUserAdmin(userId: number): Promise<UserResponse> {
-  const response = await fetch(`${API_BASE_URL}/users/${userId}/make-admin`, {
-    method: "PUT",
-    headers: getAuthorizationHeaders(),
-  });
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/users/${userId}/make-admin`,
+    {
+      method: "PUT",
+    },
+  );
 
   if (!response.ok) {
     throw new Error("Failed to make admin");
