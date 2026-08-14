@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { removeToken } from "../services/authService";
 import { getCurrentUser } from "../services/userService";
 import type { UserResponse } from "../types/user";
 import UserDashboard from "./dashboards/UserDashboard";
@@ -22,7 +23,7 @@ function DashboardPage() {
   }, []);
 
   if (error) {
-    localStorage.removeItem("token");
+    removeToken();
     window.location.reload();
     return null;
   }

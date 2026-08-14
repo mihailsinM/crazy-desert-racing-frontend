@@ -1,16 +1,15 @@
 import API_BASE_URL from "./api";
+import { getAuthorizationHeaders } from "./authService";
 
 export async function registerMyCarForRace(data: {
   raceCarId: number;
   raceId: number;
 }) {
-  const token = localStorage.getItem("token");
-
   const response = await fetch(`${API_BASE_URL}/registrations/my`, {
     method: "POST",
     headers: {
+      ...getAuthorizationHeaders(),
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -35,14 +34,10 @@ export type RaceParticipant = {
 export async function getRaceParticipants(
   raceId: number,
 ): Promise<RaceParticipant[]> {
-  const token = localStorage.getItem("token");
-
   const response = await fetch(
     `${API_BASE_URL}/registrations/race/${raceId}/participants`,
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthorizationHeaders(),
     },
   );
 

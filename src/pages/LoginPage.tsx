@@ -16,11 +16,7 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
     event.preventDefault();
 
     try {
-      const response = await login({ email, password });
-
-      console.log(response.token);
-
-      localStorage.setItem("token", response.token);
+      await login({ email, password });
 
       onLoginSuccess();
     } catch {

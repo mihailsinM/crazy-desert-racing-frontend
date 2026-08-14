@@ -1,4 +1,5 @@
 import API_BASE_URL from "./api";
+import { getAuthorizationHeaders } from "./authService";
 import type { RaceCar } from "../types/raceCar";
 
 export async function getAllRaceCars(): Promise<RaceCar[]> {
@@ -12,12 +13,8 @@ export async function getAllRaceCars(): Promise<RaceCar[]> {
 }
 
 export async function getMyRaceCars(): Promise<RaceCar[]> {
-  const token = localStorage.getItem("token");
-
   const response = await fetch(`${API_BASE_URL}/race-cars/my`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: getAuthorizationHeaders(),
   });
 
   if (!response.ok) {
@@ -34,13 +31,11 @@ export async function createMyRaceCar(raceCar: {
   imageUrl: string;
   imagePosition: string;
 }) {
-  const token = localStorage.getItem("token");
-
   const response = await fetch(`${API_BASE_URL}/race-cars/my`, {
     method: "POST",
     headers: {
+      ...getAuthorizationHeaders(),
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(raceCar),
   });
@@ -53,12 +48,8 @@ export async function createMyRaceCar(raceCar: {
 }
 
 export async function getRaceCarById(id: number): Promise<RaceCar> {
-  const token = localStorage.getItem("token");
-
   const response = await fetch(`${API_BASE_URL}/race-cars/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: getAuthorizationHeaders(),
   });
 
   if (!response.ok) {
@@ -78,13 +69,11 @@ export async function updateRaceCar(
     imagePosition: string;
   },
 ): Promise<RaceCar> {
-  const token = localStorage.getItem("token");
-
   const response = await fetch(`${API_BASE_URL}/race-cars/${id}`, {
     method: "PUT",
     headers: {
+      ...getAuthorizationHeaders(),
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(raceCar),
   });
@@ -97,13 +86,9 @@ export async function updateRaceCar(
 }
 
 export async function deleteRaceCar(id: number): Promise<void> {
-  const token = localStorage.getItem("token");
-
   const response = await fetch(`${API_BASE_URL}/race-cars/${id}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: getAuthorizationHeaders(),
   });
 
   if (!response.ok) {

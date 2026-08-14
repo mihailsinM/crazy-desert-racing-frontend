@@ -19,12 +19,13 @@ import CarDetailsPage from "./pages/CarDetailsPage";
 import EditCarPage from "./pages/EditCarPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import AdminRoute from "./routes/AdminRoute";
+import { getToken } from "./services/authService";
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(getToken());
 
   function handleLoginSuccess() {
-    setToken(localStorage.getItem("token"));
+    setToken(getToken());
   }
 
   return (

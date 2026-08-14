@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { removeToken } from "../services/authService";
 import { registerUser } from "../services/userRegistrationService";
 import logo from "../assets/logo.png";
 import "../styles/auth-page.css";
@@ -30,7 +31,7 @@ function RegisterPage() {
 
       setMessage("Account created successfully. Redirecting to login...");
 
-      localStorage.removeItem("token");
+      removeToken();
 
       setTimeout(() => {
         navigate("/login");
