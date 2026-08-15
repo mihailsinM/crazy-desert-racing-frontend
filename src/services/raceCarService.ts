@@ -1,8 +1,9 @@
 import API_BASE_URL from "./api";
+import { authenticatedFetch } from "./authService";
 import type { RaceCar } from "../types/raceCar";
 
 export async function getAllRaceCars(): Promise<RaceCar[]> {
-  const response = await fetch(`${API_BASE_URL}/race-cars`);
+  const response = await authenticatedFetch(`${API_BASE_URL}/race-cars`);
 
   if (!response.ok) {
     throw new Error("Failed to load race cars");
@@ -12,13 +13,7 @@ export async function getAllRaceCars(): Promise<RaceCar[]> {
 }
 
 export async function getMyRaceCars(): Promise<RaceCar[]> {
-  const token = localStorage.getItem("token");
-
-  const response = await fetch(`${API_BASE_URL}/race-cars/my`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await authenticatedFetch(`${API_BASE_URL}/race-cars/my`);
 
   if (!response.ok) {
     throw new Error("Failed to load your race cars");
@@ -34,13 +29,10 @@ export async function createMyRaceCar(raceCar: {
   imageUrl: string;
   imagePosition: string;
 }) {
-  const token = localStorage.getItem("token");
-
-  const response = await fetch(`${API_BASE_URL}/race-cars/my`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/race-cars/my`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(raceCar),
   });
@@ -53,13 +45,9 @@ export async function createMyRaceCar(raceCar: {
 }
 
 export async function getRaceCarById(id: number): Promise<RaceCar> {
-  const token = localStorage.getItem("token");
-
-  const response = await fetch(`${API_BASE_URL}/race-cars/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/race-cars/${id}`,
+  );
 
   if (!response.ok) {
     throw new Error("Failed to load race car details");
@@ -78,13 +66,10 @@ export async function updateRaceCar(
     imagePosition: string;
   },
 ): Promise<RaceCar> {
-  const token = localStorage.getItem("token");
-
-  const response = await fetch(`${API_BASE_URL}/race-cars/${id}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/race-cars/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(raceCar),
   });
@@ -97,13 +82,8 @@ export async function updateRaceCar(
 }
 
 export async function deleteRaceCar(id: number): Promise<void> {
-  const token = localStorage.getItem("token");
-
-  const response = await fetch(`${API_BASE_URL}/race-cars/${id}`, {
+  const response = await authenticatedFetch(`${API_BASE_URL}/race-cars/${id}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
 
   if (!response.ok) {

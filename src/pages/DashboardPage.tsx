@@ -22,9 +22,7 @@ function DashboardPage() {
   }, []);
 
   if (error) {
-    localStorage.removeItem("token");
-    window.location.reload();
-    return null;
+    return <p className="du-sand-text">{error}</p>;
   }
 
   if (!user) {
