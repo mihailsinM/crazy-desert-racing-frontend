@@ -4,18 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { getMyRaceCars } from "../services/raceCarService";
 import { registerMyCarForRace } from "../services/raceRegistrationService";
 import type { RaceCar } from "../types/raceCar";
-import { getCurrentUser } from "../services/userService";
-import type { UserResponse } from "../types/user";
 import { getAllRaces, updateRace } from "../services/raceService";
+import { useAuth } from "../context/authContext";
 
 
 function RacesPage() {
+  const { currentUser } = useAuth();
   const [races, setRaces] = useState<Race[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [myCars, setMyCars] = useState<RaceCar[]>([]);
-  const [currentUser, setCurrentUser] = useState<UserResponse | null>(null);
 
   function formatRaceDate(startDate: string) {
     const date = new Date(startDate);
@@ -34,8 +33,6 @@ function RacesPage() {
         setRaces(data);
         const cars = await getMyRaceCars();
         setMyCars(cars);
-        const user = await getCurrentUser();
-        setCurrentUser(user);
       } catch {
         setError("Failed to load races");
       } finally {

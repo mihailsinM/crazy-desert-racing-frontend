@@ -7,18 +7,19 @@ import DashboardWorkspace, {
   type DashboardWorkspaceView,
 } from "../../components/dashboard/DashboardWorkspace";
 import { createUserDashboardConfig } from "../../components/dashboard/config/userDashboardConfig";
+import { useAuth } from "../../context/authContext";
 
-import type { UserResponse } from "../../types/user";
-
-type UserDashboardProps = {
-  user: UserResponse;
-};
-
-function UserDashboard({ user }: UserDashboardProps) {
-  const config = createUserDashboardConfig(user);
+function UserDashboard() {
+  const { currentUser } = useAuth();
 
   const [workspaceView, setWorkspaceView] =
     useState<DashboardWorkspaceView>("HUB");
+
+  if (!currentUser) {
+    return null;
+  }
+
+  const config = createUserDashboardConfig(currentUser);
 
   return (
     <DashboardShell>
@@ -32,7 +33,6 @@ function UserDashboard({ user }: UserDashboardProps) {
 
       <section className="du-dashboard-grid">
         <DashboardWorkspace
-          user={user}
           activeView={workspaceView}
           profileTitle={config.profile.title}
           hubTitle={config.hub.title}

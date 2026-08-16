@@ -2,12 +2,10 @@ import DashboardHub from "./DashboardHub";
 import DashboardProfile from "./DashboardProfile";
 
 import type { DashboardHubItem } from "./DashboardHub";
-import type { UserResponse } from "../../types/user";
 
 export type DashboardWorkspaceView = "HUB" | "PROFILE";
 
 type DashboardWorkspaceProps = {
-  user: UserResponse;
   activeView: DashboardWorkspaceView;
   profileTitle: string;
   hubTitle: string;
@@ -18,7 +16,6 @@ type DashboardWorkspaceProps = {
 };
 
 function DashboardWorkspace({
-  user,
   activeView,
   profileTitle,
   hubTitle,
@@ -31,7 +28,6 @@ function DashboardWorkspace({
     return (
       <DashboardProfile
         title={profileTitle}
-        user={user}
         onBack={onCloseProfile}
       />
     );
