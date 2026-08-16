@@ -61,6 +61,24 @@
   margin-top: 16px;
 }
 
+.du-field {
+  display: grid;
+  gap: 8px;
+}
+
+.du-field-label {
+  color: var(--du-text-warm);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.du-field .du-input,
+.du-field .du-select,
+.du-field .du-textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .du-form-panel {
   max-width: 650px;
   margin: 40px auto;

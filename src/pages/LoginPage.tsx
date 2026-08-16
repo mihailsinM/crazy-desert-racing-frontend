@@ -3,11 +3,7 @@ import { login } from "../services/authService";
 import logo from "../assets/logo.png";
 import "../styles/auth-page.css";
 
-type LoginPageProps = {
-  onLoginSuccess: () => void;
-};
-
-function LoginPage({ onLoginSuccess }: LoginPageProps) {
+function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -17,8 +13,6 @@ function LoginPage({ onLoginSuccess }: LoginPageProps) {
 
     try {
       await login({ email, password });
-
-      onLoginSuccess();
     } catch {
       setMessage("Login failed. Check email or password.");
     }

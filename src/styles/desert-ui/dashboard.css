@@ -16,3 +16,8 @@
   gap: 24px;
 }
 
+@media (max-width: 900px) {
+  .du-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}

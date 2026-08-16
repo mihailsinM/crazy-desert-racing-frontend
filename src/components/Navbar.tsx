@@ -1,16 +1,16 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { hasToken, removeToken } from "../services/authService";
+import { useAuth } from "../context/authContext";
 
 function Navbar() {
   const navigate = useNavigate();
-  const isAuthenticated = hasToken();
+  const { isAuthenticated, logout } = useAuth();
 
   function getNavLinkClass({ isActive }: { isActive: boolean }) {
     return isActive ? "du-nav-link du-nav-link-active" : "du-nav-link";
   }
 
   function handleLogout() {
-    removeToken();
+    logout();
     navigate("/login", { replace: true });
   }
 
