@@ -67,36 +67,6 @@ export function createAdminDashboardConfig(
     activity: {
       title: "🔥 Desert Live",
       viewAllPath: "/activity",
-      items: [
-        {
-          id: "admin-race-1",
-          type: "RACE",
-          title: "🏁 Negev Desert Challenge",
-          text: "Registration is now open for the next desert race.",
-          path: "/races",
-        },
-        {
-          id: "admin-festival-1",
-          type: "FESTIVAL",
-          title: "🎵 Desert Night Festival",
-          text: "A new festival event has been added.",
-          path: "/festivals",
-        },
-        {
-          id: "admin-marketplace-1",
-          type: "MARKETPLACE",
-          title: "🛒 New vehicle listed",
-          text: "A member published a new racing vehicle for sale.",
-          path: "/marketplace",
-        },
-        {
-          id: "admin-marketplace-2",
-          type: "MARKETPLACE",
-          title: "💰 Marketplace price updated",
-          text: "The price of a listed vehicle has changed.",
-          path: "/marketplace",
-        },
-      ],
     },
   };
 }

@@ -1,4 +1,3 @@
-import type { DashboardActivityItem } from "../DashboardActivity";
 import type { DashboardHubItem } from "../DashboardHub";
 
 export type DashboardHeroStat = {
@@ -27,7 +26,6 @@ export type DashboardConfig = {
 
   activity: {
     title: string;
-    items: DashboardActivityItem[];
     viewAllPath: string;
   };
 };

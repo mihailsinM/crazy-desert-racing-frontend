@@ -18,6 +18,32 @@
   box-shadow: 0 0 12px rgba(255, 179, 71, 0.18);
 }
 
+.du-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.du-button-rect {
+  border-radius: var(--du-radius-button);
+}
+
+.du-button-back {
+  background: rgba(18, 11, 7, 0.2);
+}
+
+.du-button-danger {
+  border-color: rgba(255, 116, 92, 0.42);
+  background: rgba(126, 42, 27, 0.35);
+  color: #ffd0c7;
+}
+
+.du-button-danger:hover {
+  border-color: rgba(255, 138, 116, 0.72);
+  background: rgba(149, 48, 31, 0.52);
+  box-shadow: 0 0 16px rgba(255, 91, 61, 0.18);
+}
+
 .du-button-primary {
   background: var(--du-orange-main);
   color: var(--du-bg-dark);

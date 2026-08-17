@@ -35,7 +35,7 @@
   gap: 18px;
   padding: 16px 18px;
   margin-bottom: 12px;
-  border-radius: var(--du-radius-input);
+  border-radius: var(--du-radius-row);
   background: var(--du-glass-input);
   border: 1px solid var(--du-border-orange);
 }

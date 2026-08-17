@@ -27,7 +27,7 @@
   --du-border-orange-strong: rgba(255, 179, 71, 0.6);
   --du-nav-active-bg: rgba(240, 227, 209, 0.18);
   --du-nav-active-border: rgba(230, 193, 144, 0.55);
-  
+
   --du-highlight-bg: rgba(255, 122, 26, 0.13);
   --du-highlight-border: rgba(255, 179, 71, 0.48);
 
@@ -41,12 +41,13 @@
   --du-shadow-glow-soft: 0 0 18px rgba(255, 179, 71, 0.28);
   --du-shadow-glow-empty: 0 0 0 rgba(255, 179, 71, 0);
 
-
   /* Radius */
   --du-radius-card: 24px;
   --du-radius-panel: 28px;
   --du-radius-input: 12px;
   --du-radius-pill: 999px;
+  --du-radius-button: 9px;
+  --du-radius-row: 9px;
 
   /* Blur */
   --du-blur-card: 7px;
@@ -65,5 +66,4 @@
 
   --du-status-past-bg: rgba(120, 120, 120, 0.18);
   --du-status-past-text: #cfcfcf;
-  
 }

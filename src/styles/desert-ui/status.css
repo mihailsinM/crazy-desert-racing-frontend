@@ -45,3 +45,18 @@
   background: rgba(255, 80, 80, 0.14);
   color: var(--du-text-muted);
 }
+
+.du-status.du-status-pending {
+  background: rgba(255, 179, 71, 0.16);
+  color: #ffd29a;
+}
+
+.du-status.du-status-approved {
+  background: rgba(102, 205, 129, 0.16);
+  color: #baf0c8;
+}
+
+.du-status.du-status-rejected {
+  background: rgba(255, 103, 84, 0.16);
+  color: #ffc0b7;
+}

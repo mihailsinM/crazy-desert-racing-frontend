@@ -44,8 +44,8 @@ function UserDashboard() {
 
         <DashboardActivity
           title={config.activity.title}
-          items={config.activity.items}
           viewAllPath={config.activity.viewAllPath}
+          visibleItemCount={workspaceView === "PROFILE" ? 4 : 3}
         />
       </section>
     </DashboardShell>
