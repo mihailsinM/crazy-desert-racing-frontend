@@ -17,6 +17,10 @@ import {
 } from "../services/desertLiveService";
 import type { DesertLiveItem } from "../types/desertLive";
 import raceBackground from "../assets/race.png";
+import {
+  createImageFocusPoint,
+  getImageObjectPosition,
+} from "../utils/imageFocus";
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString("en-US", {
@@ -110,6 +114,9 @@ function DesertLiveDetailsPage({
   }
 
   const itemImageUrl = getDesertLiveAssetUrl(item.imageUrl);
+  const itemImagePosition = getImageObjectPosition(
+    createImageFocusPoint(item.imageFocusX, item.imageFocusY),
+  );
   const canManage = isAdmin || currentUser?.id === item.authorId;
   const hasAllowedTargetUrl = Boolean(
     item.targetUrl && isDesertLiveTargetUrlAllowed(item.targetUrl),
@@ -160,6 +167,7 @@ function DesertLiveDetailsPage({
         className="du-details-card du-desert-live-details"
         style={{
           backgroundImage: `url(${itemImageUrl ?? raceBackground})`,
+          backgroundPosition: itemImageUrl ? itemImagePosition : "center",
         }}
       >
         <div className="du-details-overlay du-details-overlay-top du-desert-live-details-overlay">

@@ -28,6 +28,8 @@ export type DesertLiveItem = {
   activeUntil: string | null;
   createdAt: string;
   updatedAt: string;
+  imageFocusX: number;
+  imageFocusY: number;
   imageUrl: string | null;
 };
 

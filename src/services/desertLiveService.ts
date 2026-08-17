@@ -7,6 +7,7 @@ import type {
   DesertLivePageQuery,
   DesertLiveWriteRequest,
 } from "../types/desertLive";
+import type { ImageFocusPoint } from "../utils/imageFocus";
 
 async function getResponseError(
   response: Response,
@@ -75,7 +76,11 @@ function writeRequestInit(
   };
 }
 
-function imageRequestInit(method: "PUT" | "DELETE", image?: File): RequestInit {
+function imageRequestInit(
+  method: "PUT" | "DELETE",
+  image?: File,
+  focus?: ImageFocusPoint,
+): RequestInit {
   if (method === "DELETE") {
     return { method };
   }
@@ -83,9 +88,27 @@ function imageRequestInit(method: "PUT" | "DELETE", image?: File): RequestInit {
   const formData = new FormData();
   formData.append("file", image as File);
 
+  if (focus) {
+    formData.append("focusX", String(focus.x));
+    formData.append("focusY", String(focus.y));
+  }
+
   return {
     method,
     body: formData,
+  };
+}
+
+function imageFocusRequestInit(focus: ImageFocusPoint): RequestInit {
+  return {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      focusX: focus.x,
+      focusY: focus.y,
+    }),
   };
 }
 
@@ -192,13 +215,26 @@ export async function deleteMyDesertLiveItem(id: number): Promise<void> {
 export async function updateMyDesertLiveImage(
   id: number,
   image: File,
+  focus: ImageFocusPoint,
 ): Promise<DesertLiveItem> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/desert-live/my/${id}/image`,
-    imageRequestInit("PUT", image),
+    imageRequestInit("PUT", image, focus),
   );
 
   return readJson(response, "Failed to update publication image");
+}
+
+export async function updateMyDesertLiveImageFocus(
+  id: number,
+  focus: ImageFocusPoint,
+): Promise<DesertLiveItem> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/desert-live/my/${id}/image/focus`,
+    imageFocusRequestInit(focus),
+  );
+
+  return readJson(response, "Failed to update publication image focus");
 }
 
 export async function deleteMyDesertLiveImage(
@@ -287,13 +323,26 @@ export async function rejectDesertLiveItem(
 export async function updateAdminDesertLiveImage(
   id: number,
   image: File,
+  focus: ImageFocusPoint,
 ): Promise<DesertLiveItem> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/desert-live/admin/${id}/image`,
-    imageRequestInit("PUT", image),
+    imageRequestInit("PUT", image, focus),
   );
 
   return readJson(response, "Failed to update publication image");
+}
+
+export async function updateAdminDesertLiveImageFocus(
+  id: number,
+  focus: ImageFocusPoint,
+): Promise<DesertLiveItem> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/desert-live/admin/${id}/image/focus`,
+    imageFocusRequestInit(focus),
+  );
+
+  return readJson(response, "Failed to update publication image focus");
 }
 
 export async function deleteAdminDesertLiveImage(
