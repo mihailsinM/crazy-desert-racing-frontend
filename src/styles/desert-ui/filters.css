@@ -103,6 +103,33 @@
   text-align: right;
 }
 
+.du-menu-select {
+  width: 100%;
+}
+
+.du-menu-select .du-filter-trigger {
+  width: 100%;
+  min-height: 44px;
+  justify-content: flex-start;
+  padding: 12px 14px;
+  background: var(--du-glass-input);
+  font-size: 15px;
+  font-weight: 400;
+  text-align: left;
+}
+
+.du-menu-select-chevron {
+  margin-left: auto;
+  color: var(--du-orange-soft);
+}
+
+.du-menu-select .du-filter-menu {
+  right: auto;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 @media (max-width: 720px) {
   .du-filter-menu {
     right: auto;

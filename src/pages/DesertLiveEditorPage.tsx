@@ -3,8 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import {
   desertLiveCategoryIcons,
-  desertLiveCategoryLabels,
+  desertLiveCategorySelectOptions,
 } from "../components/desert-live/desertLiveOptions";
+import DesertLiveMenuFilter from "../components/desert-live/DesertLiveMenuFilter";
 import { isDesertLiveTargetUrlAllowed } from "../components/desert-live/desertLiveLinks";
 import { useAuth } from "../context/authContext";
 import {
@@ -26,12 +27,11 @@ import type {
   DesertLiveWriteRequest,
 } from "../types/desertLive";
 import raceBackground from "../assets/race.png";
+import { compressImageForUpload } from "../utils/imageCompression";
 
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
+const MAX_SOURCE_IMAGE_SIZE_BYTES = 20 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const categories = Object.keys(
-  desertLiveCategoryLabels,
-) as DesertLiveCategory[];
 
 type DesertLiveEditorPageProps = {
   editScope?: "MY" | "ADMIN";
@@ -49,6 +49,14 @@ function toLocalDateTime(value: string | null): string {
 
 function toApiDateTime(value: string): string | null {
   return value ? new Date(value).toISOString() : null;
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes >= 1024 * 1024) {
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  }
+
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
 function DesertLiveEditorPage({
@@ -74,6 +82,8 @@ function DesertLiveEditorPage({
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [imageSaving, setImageSaving] = useState(false);
+  const [imageOptimizing, setImageOptimizing] = useState(false);
+  const [imageOptimizationMessage, setImageOptimizationMessage] = useState("");
   const [error, setError] = useState("");
 
   const selectedImagePreview = useMemo(
@@ -139,7 +149,7 @@ function DesertLiveEditorPage({
     };
   }, [isEditing, itemId, usesAdminApi]);
 
-  function selectImage(event: React.ChangeEvent<HTMLInputElement>) {
+  async function selectImage(event: React.ChangeEvent<HTMLInputElement>) {
     const image = event.currentTarget.files?.[0] ?? null;
     event.currentTarget.value = "";
 
@@ -152,13 +162,39 @@ function DesertLiveEditorPage({
       return;
     }
 
-    if (image.size > MAX_IMAGE_SIZE_BYTES) {
-      setError("Publication image must be 2 MB or smaller.");
+    if (image.size > MAX_SOURCE_IMAGE_SIZE_BYTES) {
+      setError("Choose an image smaller than 20 MB.");
       return;
     }
 
+    setImageOptimizing(true);
     setError("");
-    setSelectedImage(image);
+
+    try {
+      const optimizedImage = await compressImageForUpload(image, {
+        maxBytes: MAX_IMAGE_SIZE_BYTES,
+        maxDimension: 1600,
+        maxSourceBytes: MAX_SOURCE_IMAGE_SIZE_BYTES,
+        outputType: "image/webp",
+      });
+
+      setSelectedImage(optimizedImage);
+      setImageOptimizationMessage(
+        optimizedImage === image
+          ? `Ready to upload · ${formatFileSize(optimizedImage.size)}`
+          : `Optimized ${formatFileSize(image.size)} → ${formatFileSize(optimizedImage.size)}`,
+      );
+    } catch (caughtError) {
+      setSelectedImage(null);
+      setImageOptimizationMessage("");
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Failed to optimize the selected image.",
+      );
+    } finally {
+      setImageOptimizing(false);
+    }
   }
 
   function createRequest(): DesertLiveWriteRequest {
@@ -301,22 +337,17 @@ function DesertLiveEditorPage({
 
           <form className="du-form du-desert-live-editor" onSubmit={handleSubmit}>
             <div className="du-desert-live-editor-fields">
-              <label className="du-field">
+              <div className="du-field">
                 <span className="du-field-label">Category</span>
-                <select
-                  className="du-select"
+                <DesertLiveMenuFilter
+                  buttonLabel="Category"
+                  menuLabel="Choose category"
                   value={category}
-                  onChange={(event) =>
-                    setCategory(event.target.value as DesertLiveCategory)
-                  }
-                >
-                  {categories.map((categoryOption) => (
-                    <option key={categoryOption} value={categoryOption}>
-                      {desertLiveCategoryLabels[categoryOption]}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  options={desertLiveCategorySelectOptions}
+                  onChange={setCategory}
+                  variant="SELECT"
+                />
+              </div>
 
               <label className="du-field">
                 <span className="du-field-label">Title</span>
@@ -385,14 +416,33 @@ function DesertLiveEditorPage({
 
               <div>
                 <p className="du-field-label">Publication image</p>
-                <p className="du-caption">JPG, PNG, or WebP · maximum 2 MB</p>
+                <p className="du-caption">
+                  JPG, PNG, or WebP · photos up to 20 MB are optimized automatically
+                </p>
+                {imageOptimizationMessage && (
+                  <p className="du-image-optimization-message">
+                    {imageOptimizationMessage}
+                  </p>
+                )}
                 <div className="du-inline du-inline-sm du-inline-wrap">
-                  <label className="du-button du-button-small du-button-rect du-button-inline du-file-button">
-                    {previewUrl ? "Change Image" : "Add Image"}
+                  <label
+                    className={
+                      imageOptimizing
+                        ? "du-button du-button-small du-button-rect du-button-inline du-file-button du-file-button-disabled"
+                        : "du-button du-button-small du-button-rect du-button-inline du-file-button"
+                    }
+                    aria-disabled={imageOptimizing}
+                  >
+                    {imageOptimizing
+                      ? "Optimizing..."
+                      : previewUrl
+                        ? "Change Image"
+                        : "Add Image"}
                     <input
                       hidden
                       type="file"
                       accept="image/jpeg,image/png,image/webp"
+                      disabled={imageOptimizing}
                       onChange={selectImage}
                     />
                   </label>
@@ -401,7 +451,10 @@ function DesertLiveEditorPage({
                     <button
                       type="button"
                       className="du-button du-button-small du-button-rect"
-                      onClick={() => setSelectedImage(null)}
+                      onClick={() => {
+                        setSelectedImage(null);
+                        setImageOptimizationMessage("");
+                      }}
                     >
                       Undo Selection
                     </button>
@@ -433,7 +486,7 @@ function DesertLiveEditorPage({
               <button
                 type="submit"
                 className="du-button du-button-primary du-button-small du-button-rect"
-                disabled={saving}
+                disabled={saving || imageOptimizing}
               >
                 {saving
                   ? "Saving..."
@@ -444,7 +497,7 @@ function DesertLiveEditorPage({
               <button
                 type="button"
                 className="du-button du-button-small du-button-rect"
-                disabled={saving}
+                disabled={saving || imageOptimizing}
                 onClick={() => navigate(-1)}
               >
                 Cancel

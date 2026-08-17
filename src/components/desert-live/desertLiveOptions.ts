@@ -6,13 +6,26 @@ import type {
 export type DesertLiveCategoryFilter = "ALL" | DesertLiveCategory;
 export type DesertLiveStatusFilter = "ALL" | DesertLiveModerationStatus;
 
-export const desertLiveCategoryOptions = [
-  { value: "ALL", label: "All updates", icon: "✨" },
-  { value: "RACE", label: "Races", icon: "🏁" },
-  { value: "FESTIVAL", label: "Festivals", icon: "🎵" },
+export const desertLiveCategorySelectOptions = [
+  { value: "RACE", label: "Race", icon: "🏁" },
+  { value: "FESTIVAL", label: "Festival", icon: "🎵" },
   { value: "MARKETPLACE", label: "Marketplace", icon: "🛒" },
   { value: "COMMUNITY", label: "Community", icon: "👥" },
   { value: "NEWS", label: "News", icon: "🔥" },
+] satisfies Array<{
+  value: DesertLiveCategory;
+  label: string;
+  icon: string;
+}>;
+
+export const desertLiveCategoryOptions = [
+  { value: "ALL", label: "All updates", icon: "✨" },
+  ...desertLiveCategorySelectOptions.map((option) => ({
+    ...option,
+    label: option.value === "RACE" || option.value === "FESTIVAL"
+      ? `${option.label}s`
+      : option.label,
+  })),
 ] satisfies Array<{
   value: DesertLiveCategoryFilter;
   label: string;
@@ -30,18 +43,10 @@ export const desertLiveStatusOptions = [
   icon: string;
 }>;
 
-export const desertLiveCategoryIcons: Record<DesertLiveCategory, string> = {
-  RACE: "🏁",
-  FESTIVAL: "🎵",
-  MARKETPLACE: "🛒",
-  COMMUNITY: "👥",
-  NEWS: "🔥",
-};
+export const desertLiveCategoryIcons = Object.fromEntries(
+  desertLiveCategorySelectOptions.map((option) => [option.value, option.icon]),
+) as Record<DesertLiveCategory, string>;
 
-export const desertLiveCategoryLabels: Record<DesertLiveCategory, string> = {
-  RACE: "Race",
-  FESTIVAL: "Festival",
-  MARKETPLACE: "Marketplace",
-  COMMUNITY: "Community",
-  NEWS: "News",
-};
+export const desertLiveCategoryLabels = Object.fromEntries(
+  desertLiveCategorySelectOptions.map((option) => [option.value, option.label]),
+) as Record<DesertLiveCategory, string>;

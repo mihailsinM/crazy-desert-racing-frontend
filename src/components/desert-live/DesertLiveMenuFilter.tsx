@@ -12,6 +12,7 @@ type DesertLiveMenuFilterProps<T extends string> = {
   value: T;
   options: readonly DesertLiveFilterOption<T>[];
   onChange: (value: T) => void;
+  variant?: "FILTER" | "SELECT";
 };
 
 function DesertLiveMenuFilter<T extends string>({
@@ -20,10 +21,12 @@ function DesertLiveMenuFilter<T extends string>({
   value,
   options,
   onChange,
+  variant = "FILTER",
 }: DesertLiveMenuFilterProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const activeOption = options.find((option) => option.value === value);
+  const isSelect = variant === "SELECT";
 
   useEffect(() => {
     function handleOutsideClick(event: MouseEvent) {
@@ -48,7 +51,14 @@ function DesertLiveMenuFilter<T extends string>({
   }
 
   return (
-    <div ref={containerRef} className="du-dashboard-filter">
+    <div
+      ref={containerRef}
+      className={
+        isSelect
+          ? "du-dashboard-filter du-menu-select"
+          : "du-dashboard-filter"
+      }
+    >
       <button
         type="button"
         className="du-button du-button-small du-button-rect du-filter-trigger"
@@ -56,8 +66,15 @@ function DesertLiveMenuFilter<T extends string>({
         aria-haspopup="menu"
         onClick={() => setIsOpen((current) => !current)}
       >
-        <span aria-hidden="true">⏷</span>
-        {buttonLabel}
+        <span aria-hidden="true">
+          {isSelect ? activeOption?.icon : "⏷"}
+        </span>
+        <span>{isSelect ? activeOption?.label : buttonLabel}</span>
+        {isSelect && (
+          <span className="du-menu-select-chevron" aria-hidden="true">
+            ⌄
+          </span>
+        )}
       </button>
 
       {isOpen && (

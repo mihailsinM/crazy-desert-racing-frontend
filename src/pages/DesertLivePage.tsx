@@ -218,7 +218,7 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
                   className="du-button du-button-small du-button-rect"
                   onClick={() => navigate("/activity/my")}
                 >
-                  My Posts
+                  My Publications
                 </button>
               )}
               <button
