@@ -6,7 +6,7 @@ export type ImageCompressionOptions = {
 };
 
 const DEFAULT_MAX_DIMENSION = 1600;
-const DEFAULT_MAX_SOURCE_BYTES = 20 * 1024 * 1024;
+export const DEFAULT_MAX_SOURCE_IMAGE_BYTES = 50 * 1024 * 1024;
 const DEFAULT_OUTPUT_TYPE = "image/webp";
 const MIN_DIMENSION = 640;
 const INITIAL_QUALITY = 0.86;
@@ -101,7 +101,8 @@ export async function compressImageForUpload(
   options: ImageCompressionOptions,
 ): Promise<File> {
   const maxDimension = options.maxDimension ?? DEFAULT_MAX_DIMENSION;
-  const maxSourceBytes = options.maxSourceBytes ?? DEFAULT_MAX_SOURCE_BYTES;
+  const maxSourceBytes =
+    options.maxSourceBytes ?? DEFAULT_MAX_SOURCE_IMAGE_BYTES;
   const outputType = options.outputType ?? DEFAULT_OUTPUT_TYPE;
 
   if (file.size > maxSourceBytes) {

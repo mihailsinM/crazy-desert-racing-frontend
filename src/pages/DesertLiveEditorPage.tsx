@@ -27,11 +27,16 @@ import type {
   DesertLiveWriteRequest,
 } from "../types/desertLive";
 import raceBackground from "../assets/race.png";
-import { compressImageForUpload } from "../utils/imageCompression";
+import {
+  compressImageForUpload,
+  DEFAULT_MAX_SOURCE_IMAGE_BYTES,
+} from "../utils/imageCompression";
 
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
-const MAX_SOURCE_IMAGE_SIZE_BYTES = 20 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_SOURCE_IMAGE_SIZE_MB = Math.round(
+  DEFAULT_MAX_SOURCE_IMAGE_BYTES / 1024 / 1024,
+);
 
 type DesertLiveEditorPageProps = {
   editScope?: "MY" | "ADMIN";
@@ -162,8 +167,8 @@ function DesertLiveEditorPage({
       return;
     }
 
-    if (image.size > MAX_SOURCE_IMAGE_SIZE_BYTES) {
-      setError("Choose an image smaller than 20 MB.");
+    if (image.size > DEFAULT_MAX_SOURCE_IMAGE_BYTES) {
+      setError(`Choose an image smaller than ${MAX_SOURCE_IMAGE_SIZE_MB} MB.`);
       return;
     }
 
@@ -174,7 +179,7 @@ function DesertLiveEditorPage({
       const optimizedImage = await compressImageForUpload(image, {
         maxBytes: MAX_IMAGE_SIZE_BYTES,
         maxDimension: 1600,
-        maxSourceBytes: MAX_SOURCE_IMAGE_SIZE_BYTES,
+        maxSourceBytes: DEFAULT_MAX_SOURCE_IMAGE_BYTES,
         outputType: "image/webp",
       });
 
@@ -417,7 +422,8 @@ function DesertLiveEditorPage({
               <div>
                 <p className="du-field-label">Publication image</p>
                 <p className="du-caption">
-                  JPG, PNG, or WebP · photos up to 20 MB are optimized automatically
+                  JPG, PNG, or WebP · photos up to {MAX_SOURCE_IMAGE_SIZE_MB} MB
+                  are optimized automatically
                 </p>
                 {imageOptimizationMessage && (
                   <p className="du-image-optimization-message">
