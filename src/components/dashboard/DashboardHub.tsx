@@ -30,7 +30,7 @@ function DashboardHub({
           {viewAllPath && (
             <button
               type="button"
-              className="du-button du-button-small"
+              className="du-button du-button-small du-button-rect"
               onClick={() => navigate(viewAllPath)}
             >
               View All
@@ -40,7 +40,7 @@ function DashboardHub({
           {addPath && (
             <button
               type="button"
-              className="du-button du-button-small"
+              className="du-button du-button-small du-button-rect"
               onClick={() => navigate(addPath)}
             >
               + Add
