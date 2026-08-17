@@ -17,6 +17,9 @@ import EditRacePage from "./pages/EditRacePage";
 import CarDetailsPage from "./pages/CarDetailsPage";
 import EditCarPage from "./pages/EditCarPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
+import DesertLiveDetailsPage from "./pages/DesertLiveDetailsPage";
+import DesertLiveEditorPage from "./pages/DesertLiveEditorPage";
+import DesertLivePage from "./pages/DesertLivePage";
 import AdminRoute from "./routes/AdminRoute";
 import { useAuth } from "./context/authContext";
 
@@ -71,6 +74,26 @@ function App() {
             <Route path="/races/:id" element={<RaceDetailsPage />} />
             <Route path="/races/:id/edit" element={<EditRacePage />} />
             <Route path="/vip" element={<VipClubPage />} />
+            <Route path="/activity" element={<DesertLivePage />} />
+            <Route path="/activity/my" element={<DesertLivePage scope="MY" />} />
+            <Route path="/activity/new" element={<DesertLiveEditorPage />} />
+            <Route
+              path="/activity/admin/:id/edit"
+              element={
+                <AdminRoute>
+                  <DesertLiveEditorPage editScope="ADMIN" />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/activity/my/:id/edit"
+              element={<DesertLiveEditorPage editScope="MY" />}
+            />
+            <Route
+              path="/activity/my/:id"
+              element={<DesertLiveDetailsPage itemScope="MY" />}
+            />
+            <Route path="/activity/:id" element={<DesertLiveDetailsPage />} />
           </Route>
         </Routes>
       </main>

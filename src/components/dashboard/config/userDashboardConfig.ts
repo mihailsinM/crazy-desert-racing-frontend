@@ -54,36 +54,6 @@ export function createUserDashboardConfig(user: UserResponse): DashboardConfig {
     activity: {
       title: "🔥 Desert Live",
       viewAllPath: "/activity",
-      items: [
-        {
-          id: "user-race-1",
-          type: "RACE",
-          title: "🏁 Negev Desert Challenge",
-          text: "Registration is open for the upcoming race.",
-          path: "/races",
-        },
-        {
-          id: "user-festival-1",
-          type: "FESTIVAL",
-          title: "🎵 Desert Night Festival",
-          text: "Discover the next music and racing festival.",
-          path: "/festivals",
-        },
-        {
-          id: "user-marketplace-1",
-          type: "MARKETPLACE",
-          title: "🛒 New racing car listed",
-          text: "A new vehicle is available in the Marketplace.",
-          path: "/marketplace",
-        },
-        {
-          id: "user-news-1",
-          type: "NEWS",
-          title: "🔥 Club update",
-          text: "New Crazy Desert Racing features are coming soon.",
-          path: "/activity",
-        },
-      ],
     },
   };
 }

@@ -1,184 +1,105 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export type DashboardActivityType =
-  | "RACE"
-  | "FESTIVAL"
-  | "MARKETPLACE"
-  | "COMMUNITY"
-  | "NEWS";
-
-export type DashboardActivityItem = {
-  id: string;
-  type: DashboardActivityType;
-  title: string;
-  text: string;
-  path: string;
-};
-
-type DashboardActivityFilter = "ALL" | DashboardActivityType;
+import DesertLiveMenuFilter from "../desert-live/DesertLiveMenuFilter";
+import {
+  desertLiveCategoryIcons,
+  desertLiveCategoryOptions,
+  type DesertLiveCategoryFilter,
+} from "../desert-live/desertLiveOptions";
+import { getRandomDesertLiveItems } from "../../services/desertLiveService";
+import type { DesertLiveItem } from "../../types/desertLive";
 
 type DashboardActivityProps = {
   title: string;
-  items: DashboardActivityItem[];
   viewAllPath: string;
+  visibleItemCount: 3 | 4;
 };
 
-type FilterOption = {
-  value: DashboardActivityFilter;
-  label: string;
-  icon: string;
-};
-
-const filterOptions: FilterOption[] = [
-  {
-    value: "ALL",
-    label: "All updates",
-    icon: "✨",
-  },
-  {
-    value: "RACE",
-    label: "Races",
-    icon: "🏁",
-  },
-  {
-    value: "FESTIVAL",
-    label: "Festivals",
-    icon: "🎵",
-  },
-  {
-    value: "MARKETPLACE",
-    label: "Marketplace",
-    icon: "🛒",
-  },
-  {
-    value: "COMMUNITY",
-    label: "Community",
-    icon: "👥",
-  },
-  {
-    value: "NEWS",
-    label: "News",
-    icon: "🔥",
-  },
-];
+const DASHBOARD_ROTATION_ITEM_LIMIT = 12;
 
 function DashboardActivity({
   title,
-  items,
   viewAllPath,
+  visibleItemCount,
 }: DashboardActivityProps) {
   const navigate = useNavigate();
+  const listRef = useRef<HTMLDivElement>(null);
 
-  const filterRef = useRef<HTMLDivElement>(null);
+  const [items, setItems] = useState<DesertLiveItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [activeFilter, setActiveFilter] =
-    useState<DashboardActivityFilter>("ALL");
-
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  const visibleItems = useMemo(() => {
-    if (activeFilter === "ALL") {
-      return items;
-    }
-    return items.filter((item) => item.type === activeFilter);
-  }, [activeFilter, items]);
-
-  const activeFilterLabel =
-    filterOptions.find((option) => option.value === activeFilter)?.label ??
-    "All updates";
+    useState<DesertLiveCategoryFilter>("ALL");
 
   useEffect(() => {
-    function handleOutsideClick(event: MouseEvent) {
-      if (
-        filterRef.current &&
-        !filterRef.current.contains(event.target as Node)
-      ) {
-        setIsFilterOpen(false);
+    let active = true;
+
+    if (listRef.current) {
+      listRef.current.scrollTop = 0;
+    }
+
+    async function loadItems(showLoading: boolean) {
+      if (showLoading) {
+        setIsLoading(true);
+      }
+
+      try {
+        const category = activeFilter === "ALL" ? undefined : activeFilter;
+        const loadedItems = await getRandomDesertLiveItems(
+          category,
+          DASHBOARD_ROTATION_ITEM_LIMIT,
+        );
+
+        if (active) {
+          setItems(loadedItems);
+          setError("");
+        }
+      } catch (caughtError) {
+        if (active) {
+          setError(
+            caughtError instanceof Error
+              ? caughtError.message
+              : "Failed to load Desert Live updates",
+          );
+        }
+      } finally {
+        if (active && showLoading) {
+          setIsLoading(false);
+        }
       }
     }
 
-    document.addEventListener("mousedown", handleOutsideClick);
+    void loadItems(true);
+
+    const rotationTimer = window.setInterval(() => {
+      void loadItems(false);
+    }, 30_000);
 
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+      active = false;
+      window.clearInterval(rotationTimer);
     };
-  }, []);
-
-  function selectFilter(filter: DashboardActivityFilter) {
-    setActiveFilter(filter);
-    setIsFilterOpen(false);
-  }
+  }, [activeFilter, visibleItemCount]);
 
   return (
-    <aside className="du-dashboard-card du-card-scroll">
+    <aside className="du-dashboard-card du-card-scroll du-dashboard-activity-panel">
       <div className="du-hub-header du-dashboard-activity-header">
         <h2>{title}</h2>
 
         <div className="du-dashboard-activity-actions">
-          <div ref={filterRef} className="du-dashboard-filter">
-            <button
-              type="button"
-              className="du-button du-button-small du-filter-trigger"
-              aria-expanded={isFilterOpen}
-              aria-haspopup="menu"
-              onClick={() => setIsFilterOpen((current) => !current)}
-            >
-              <span aria-hidden="true">⏷</span>
-              Filter
-            </button>
-
-            {isFilterOpen && (
-              <div
-                className="du-filter-menu"
-                role="menu"
-                aria-label="Filter Desert Live"
-              >
-                <div className="du-filter-menu-header">
-                  <span>Show activity</span>
-                  <strong>{activeFilterLabel}</strong>
-                </div>
-
-                {filterOptions.map((option) => {
-                  const isActive = option.value === activeFilter;
-
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      role="menuitemradio"
-                      aria-checked={isActive}
-                      className={
-                        isActive
-                          ? "du-filter-option du-filter-option-active"
-                          : "du-filter-option"
-                      }
-                      onClick={() => selectFilter(option.value)}
-                    >
-                      <span className="du-filter-option-icon">
-                        {option.icon}
-                      </span>
-
-                      <span>{option.label}</span>
-
-                      {isActive && (
-                        <span
-                          className="du-filter-option-check"
-                          aria-hidden="true"
-                        >
-                          ✓
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          <DesertLiveMenuFilter
+            buttonLabel="Filter"
+            menuLabel="Show activity"
+            value={activeFilter}
+            options={desertLiveCategoryOptions}
+            onChange={setActiveFilter}
+          />
 
           <button
             type="button"
-            className="du-button du-button-small"
+            className="du-button du-button-small du-button-rect"
             onClick={() => navigate(viewAllPath)}
           >
             View All
@@ -187,31 +108,39 @@ function DashboardActivity({
       </div>
 
       <div
+        ref={listRef}
         className={
-          visibleItems.length === 0
-            ? "du-card-list du-soft-scroll du-dashboard-activity-list du-dashboard-activity-list-empty"
-            : "du-card-list du-soft-scroll du-list-3 du-list-row-medium du-dashboard-activity-list"
+          items.length === 0
+            ? `du-card-list du-soft-scroll du-list-${visibleItemCount} du-dashboard-activity-list du-dashboard-activity-list-empty`
+            : `du-card-list du-soft-scroll du-list-${visibleItemCount} du-list-row-medium du-dashboard-activity-list`
         }
       >
-        {visibleItems.map((item) => (
+        {items.map((item) => (
           <button
             key={item.id}
             type="button"
             className="du-hub-card du-dashboard-activity-item"
-            onClick={() => navigate(item.path)}
+            onClick={() => navigate(`/activity/${item.id}`)}
           >
             <h3>
+              <span aria-hidden="true">
+                {desertLiveCategoryIcons[item.category]}
+              </span>{" "}
               <span className="du-sand-text">{item.title}</span>
             </h3>
 
-            <p>{item.text}</p>
+            <p>{item.description}</p>
           </button>
         ))}
 
-        {visibleItems.length === 0 && (
+        {items.length === 0 && (
           <div className="du-dashboard-empty-state">
             <span aria-hidden="true">🏜</span>
-            <p>No updates in this category yet.</p>
+            <p>
+              {isLoading
+                ? "Loading Desert Live..."
+                : error || "No updates in this category yet."}
+            </p>
           </div>
         )}
       </div>

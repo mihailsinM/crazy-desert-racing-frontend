@@ -1,4 +1,11 @@
+.du-dashboard-activity-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 418px;
+}
+
 .du-dashboard-activity-list {
+  margin-top: 20px;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-gutter: stable;
