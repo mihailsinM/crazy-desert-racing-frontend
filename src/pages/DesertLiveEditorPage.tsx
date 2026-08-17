@@ -127,6 +127,7 @@ function DesertLiveEditorPage({
   const [imageSaving, setImageSaving] = useState(false);
   const [imageOptimizing, setImageOptimizing] = useState(false);
   const [imageOptimizationMessage, setImageOptimizationMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
 
   const selectedImagePreview = useMemo(
@@ -212,6 +213,7 @@ function DesertLiveEditorPage({
     }
 
     setImageOptimizing(true);
+    setSuccessMessage("");
     setError("");
 
     try {
@@ -274,6 +276,7 @@ function DesertLiveEditorPage({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSuccessMessage("");
     setError("");
 
     if (!title.trim() || !description.trim()) {
@@ -320,6 +323,14 @@ function DesertLiveEditorPage({
       setExistingItem(savedItem);
       savedItem = await saveImage(savedItem);
       setExistingItem(savedItem);
+      setImageFocus(getItemImageFocus(savedItem));
+      setSelectedImage(null);
+      setImageOptimizationMessage("");
+
+      if (isEditing) {
+        setSuccessMessage("Changes saved.");
+        return;
+      }
 
       navigate(
         usesAdminApi || savedItem.moderationStatus === "APPROVED"
@@ -343,6 +354,7 @@ function DesertLiveEditorPage({
     }
 
     setImageSaving(true);
+    setSuccessMessage("");
     setError("");
 
     try {
@@ -352,6 +364,7 @@ function DesertLiveEditorPage({
 
       setExistingItem(updatedItem);
       setImageFocus(getItemImageFocus(updatedItem));
+      setSuccessMessage("Image removed.");
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -574,6 +587,12 @@ function DesertLiveEditorPage({
                 />
               )}
             </div>
+
+            {successMessage && (
+              <p className="du-image-optimization-message">
+                {successMessage}
+              </p>
+            )}
 
             {error && <p className="du-error">{error}</p>}
 
