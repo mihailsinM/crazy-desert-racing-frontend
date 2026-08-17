@@ -25,7 +25,7 @@
 }
 
 .du-button-rect {
-  border-radius: var(--du-radius-input);
+  border-radius: var(--du-radius-button);
 }
 
 .du-button-back {
