@@ -12,6 +12,10 @@ import {
   getRandomDesertLiveItems,
 } from "../../services/desertLiveService";
 import type { DesertLiveItem } from "../../types/desertLive";
+import {
+  createImageFocusPoint,
+  getImageObjectPosition,
+} from "../../utils/imageFocus";
 
 type DashboardActivityProps = {
   title: string;
@@ -33,6 +37,9 @@ function DashboardActivityItem({
   const imageUrl = getDesertLiveAssetUrl(item.imageUrl);
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const showImage = imageUrl !== null && imageUrl !== failedImageUrl;
+  const imageObjectPosition = getImageObjectPosition(
+    createImageFocusPoint(item.imageFocusX, item.imageFocusY),
+  );
 
   return (
     <button
@@ -45,6 +52,7 @@ function DashboardActivityItem({
           <img
             src={imageUrl}
             alt=""
+            style={{ objectPosition: imageObjectPosition }}
             onError={() => setFailedImageUrl(imageUrl)}
           />
         ) : (

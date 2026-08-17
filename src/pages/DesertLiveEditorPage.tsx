@@ -6,6 +6,7 @@ import {
   desertLiveCategorySelectOptions,
 } from "../components/desert-live/desertLiveOptions";
 import DesertLiveMenuFilter from "../components/desert-live/DesertLiveMenuFilter";
+import ImageFocusPicker from "../components/images/ImageFocusPicker";
 import { isDesertLiveTargetUrlAllowed } from "../components/desert-live/desertLiveLinks";
 import { useAuth } from "../context/authContext";
 import {
@@ -17,8 +18,10 @@ import {
   getDesertLiveAssetUrl,
   getMyDesertLiveItem,
   updateAdminDesertLiveImage,
+  updateAdminDesertLiveImageFocus,
   updateAdminDesertLiveItem,
   updateMyDesertLiveImage,
+  updateMyDesertLiveImageFocus,
   updateMyDesertLiveItem,
 } from "../services/desertLiveService";
 import type {
@@ -31,6 +34,13 @@ import {
   compressImageForUpload,
   DEFAULT_MAX_SOURCE_IMAGE_BYTES,
 } from "../utils/imageCompression";
+import {
+  CENTER_IMAGE_FOCUS,
+  createImageFocusPoint,
+  getImageObjectPosition,
+  imageFocusPointsEqual,
+  type ImageFocusPoint,
+} from "../utils/imageFocus";
 
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -64,6 +74,31 @@ function formatFileSize(bytes: number): string {
   return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
+function getItemImageFocus(item: DesertLiveItem): ImageFocusPoint {
+  return createImageFocusPoint(item.imageFocusX, item.imageFocusY);
+}
+
+function dateTimesEqual(
+  first: string | null,
+  second: string | null,
+): boolean {
+  return toLocalDateTime(first) === toLocalDateTime(second);
+}
+
+function itemMatchesRequest(
+  item: DesertLiveItem,
+  request: DesertLiveWriteRequest,
+): boolean {
+  return (
+    item.category === request.category &&
+    item.title === request.title &&
+    item.description === request.description &&
+    item.targetUrl === request.targetUrl &&
+    dateTimesEqual(item.activeFrom, request.activeFrom) &&
+    dateTimesEqual(item.activeUntil, request.activeUntil)
+  );
+}
+
 function DesertLiveEditorPage({
   editScope = "MY",
 }: DesertLiveEditorPageProps) {
@@ -84,11 +119,15 @@ function DesertLiveEditorPage({
   const [activeFrom, setActiveFrom] = useState("");
   const [activeUntil, setActiveUntil] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imageFocus, setImageFocus] = useState<ImageFocusPoint>({
+    ...CENTER_IMAGE_FOCUS,
+  });
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [imageSaving, setImageSaving] = useState(false);
   const [imageOptimizing, setImageOptimizing] = useState(false);
   const [imageOptimizationMessage, setImageOptimizationMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
 
   const selectedImagePreview = useMemo(
@@ -131,6 +170,7 @@ function DesertLiveEditorPage({
           setTargetUrl(item.targetUrl ?? "");
           setActiveFrom(toLocalDateTime(item.activeFrom));
           setActiveUntil(toLocalDateTime(item.activeUntil));
+          setImageFocus(getItemImageFocus(item));
         }
       } catch (caughtError) {
         if (active) {
@@ -173,6 +213,7 @@ function DesertLiveEditorPage({
     }
 
     setImageOptimizing(true);
+    setSuccessMessage("");
     setError("");
 
     try {
@@ -184,6 +225,7 @@ function DesertLiveEditorPage({
       });
 
       setSelectedImage(optimizedImage);
+      setImageFocus({ ...CENTER_IMAGE_FOCUS });
       setImageOptimizationMessage(
         optimizedImage === image
           ? `Ready to upload · ${formatFileSize(optimizedImage.size)}`
@@ -214,17 +256,27 @@ function DesertLiveEditorPage({
   }
 
   async function saveImage(item: DesertLiveItem): Promise<DesertLiveItem> {
-    if (!selectedImage) {
-      return item;
+    if (selectedImage) {
+      return usesAdminApi
+        ? updateAdminDesertLiveImage(item.id, selectedImage, imageFocus)
+        : updateMyDesertLiveImage(item.id, selectedImage, imageFocus);
     }
 
-    return usesAdminApi
-      ? updateAdminDesertLiveImage(item.id, selectedImage)
-      : updateMyDesertLiveImage(item.id, selectedImage);
+    if (
+      item.imageUrl &&
+      !imageFocusPointsEqual(imageFocus, getItemImageFocus(item))
+    ) {
+      return usesAdminApi
+        ? updateAdminDesertLiveImageFocus(item.id, imageFocus)
+        : updateMyDesertLiveImageFocus(item.id, imageFocus);
+    }
+
+    return item;
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSuccessMessage("");
     setError("");
 
     if (!title.trim() || !description.trim()) {
@@ -255,9 +307,13 @@ function DesertLiveEditorPage({
       const persistedItemId = itemId ?? existingItem?.id ?? null;
 
       if (persistedItemId !== null) {
-        savedItem = usesAdminApi
-          ? await updateAdminDesertLiveItem(persistedItemId, request)
-          : await updateMyDesertLiveItem(persistedItemId, request);
+        if (existingItem && itemMatchesRequest(existingItem, request)) {
+          savedItem = existingItem;
+        } else {
+          savedItem = usesAdminApi
+            ? await updateAdminDesertLiveItem(persistedItemId, request)
+            : await updateMyDesertLiveItem(persistedItemId, request);
+        }
       } else {
         savedItem = usesAdminApi
           ? await createAdminDesertLiveItem(request)
@@ -266,6 +322,15 @@ function DesertLiveEditorPage({
 
       setExistingItem(savedItem);
       savedItem = await saveImage(savedItem);
+      setExistingItem(savedItem);
+      setImageFocus(getItemImageFocus(savedItem));
+      setSelectedImage(null);
+      setImageOptimizationMessage("");
+
+      if (isEditing) {
+        setSuccessMessage("Changes saved.");
+        return;
+      }
 
       navigate(
         usesAdminApi || savedItem.moderationStatus === "APPROVED"
@@ -289,6 +354,7 @@ function DesertLiveEditorPage({
     }
 
     setImageSaving(true);
+    setSuccessMessage("");
     setError("");
 
     try {
@@ -297,6 +363,8 @@ function DesertLiveEditorPage({
         : await deleteMyDesertLiveImage(existingItem.id);
 
       setExistingItem(updatedItem);
+      setImageFocus(getItemImageFocus(updatedItem));
+      setSuccessMessage("Image removed.");
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -314,6 +382,26 @@ function DesertLiveEditorPage({
 
   const currentImageUrl = getDesertLiveAssetUrl(existingItem?.imageUrl ?? null);
   const previewUrl = selectedImagePreview ?? currentImageUrl;
+  const previewObjectPosition = getImageObjectPosition(imageFocus);
+  const hasContentChanges = existingItem
+    ? !itemMatchesRequest(existingItem, createRequest())
+    : true;
+  const hasFocusChanges = existingItem
+    ? !imageFocusPointsEqual(imageFocus, getItemImageFocus(existingItem))
+    : false;
+  const isFocusOnlySave = Boolean(
+    existingItem?.imageUrl &&
+    !selectedImage &&
+    !hasContentChanges &&
+    hasFocusChanges,
+  );
+  let submitLabel = usesAdminApi ? "Publish Now" : "Submit for Review";
+
+  if (isFocusOnlySave) {
+    submitLabel = "Save Image Focus";
+  } else if (isEditing) {
+    submitLabel = usesAdminApi ? "Save Changes" : "Submit Changes";
+  }
 
   return (
     <section className="du-page">
@@ -411,7 +499,11 @@ function DesertLiveEditorPage({
             <div className="du-desert-live-image-editor">
               <div className="du-desert-live-image-preview">
                 {previewUrl ? (
-                  <img src={previewUrl} alt="Publication preview" />
+                  <img
+                    src={previewUrl}
+                    alt="Publication preview"
+                    style={{ objectPosition: previewObjectPosition }}
+                  />
                 ) : (
                   <span aria-hidden="true">
                     {desertLiveCategoryIcons[category]}
@@ -419,7 +511,7 @@ function DesertLiveEditorPage({
                 )}
               </div>
 
-              <div>
+              <div className="du-desert-live-image-controls">
                 <p className="du-field-label">Publication image</p>
                 <p className="du-caption">
                   JPG, PNG, or WebP · photos up to {MAX_SOURCE_IMAGE_SIZE_MB} MB
@@ -460,6 +552,11 @@ function DesertLiveEditorPage({
                       onClick={() => {
                         setSelectedImage(null);
                         setImageOptimizationMessage("");
+                        setImageFocus(
+                          existingItem
+                            ? getItemImageFocus(existingItem)
+                            : { ...CENTER_IMAGE_FOCUS },
+                        );
                       }}
                     >
                       {existingItem?.imageUrl
@@ -480,13 +577,30 @@ function DesertLiveEditorPage({
                   )}
                 </div>
               </div>
+
+              {previewUrl && (
+                <ImageFocusPicker
+                  imageUrl={previewUrl}
+                  value={imageFocus}
+                  onChange={setImageFocus}
+                  disabled={saving || imageSaving || imageOptimizing}
+                />
+              )}
             </div>
+
+            {successMessage && (
+              <p className="du-image-optimization-message">
+                {successMessage}
+              </p>
+            )}
 
             {error && <p className="du-error">{error}</p>}
 
             {!usesAdminApi && (
               <p className="du-caption">
-                New and edited user publications are sent to an administrator for review.
+                New publications, replaced images, and content changes are sent
+                to an administrator for review. Changing only the image focus
+                keeps the current moderation status.
               </p>
             )}
 
@@ -496,11 +610,7 @@ function DesertLiveEditorPage({
                 className="du-button du-button-primary du-button-small du-button-rect"
                 disabled={saving || imageOptimizing}
               >
-                {saving
-                  ? "Saving..."
-                  : usesAdminApi
-                    ? "Publish Now"
-                    : "Submit for Review"}
+                {saving ? "Saving..." : submitLabel}
               </button>
               <button
                 type="button"
