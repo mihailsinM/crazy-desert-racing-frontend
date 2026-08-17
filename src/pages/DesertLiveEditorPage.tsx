@@ -456,7 +456,9 @@ function DesertLiveEditorPage({
                         setImageOptimizationMessage("");
                       }}
                     >
-                      Undo Selection
+                      {existingItem?.imageUrl
+                        ? "Keep Current Image"
+                        : "Remove Image"}
                     </button>
                   )}
 

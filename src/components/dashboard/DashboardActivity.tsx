@@ -7,7 +7,10 @@ import {
   desertLiveCategoryOptions,
   type DesertLiveCategoryFilter,
 } from "../desert-live/desertLiveOptions";
-import { getRandomDesertLiveItems } from "../../services/desertLiveService";
+import {
+  getDesertLiveAssetUrl,
+  getRandomDesertLiveItems,
+} from "../../services/desertLiveService";
 import type { DesertLiveItem } from "../../types/desertLive";
 
 type DashboardActivityProps = {
@@ -17,6 +20,49 @@ type DashboardActivityProps = {
 };
 
 const DASHBOARD_ROTATION_ITEM_LIMIT = 12;
+
+type DashboardActivityItemProps = {
+  item: DesertLiveItem;
+  onOpen: () => void;
+};
+
+function DashboardActivityItem({
+  item,
+  onOpen,
+}: DashboardActivityItemProps) {
+  const imageUrl = getDesertLiveAssetUrl(item.imageUrl);
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
+  const showImage = imageUrl !== null && imageUrl !== failedImageUrl;
+
+  return (
+    <button
+      type="button"
+      className="du-hub-card du-dashboard-activity-item"
+      onClick={onOpen}
+    >
+      <span className="du-dashboard-activity-media" aria-hidden="true">
+        {showImage ? (
+          <img
+            src={imageUrl}
+            alt=""
+            onError={() => setFailedImageUrl(imageUrl)}
+          />
+        ) : (
+          <span>{desertLiveCategoryIcons[item.category]}</span>
+        )}
+      </span>
+
+      <span className="du-dashboard-activity-content">
+        <span className="du-dashboard-activity-title du-sand-text">
+          {item.title}
+        </span>
+        <span className="du-dashboard-activity-description">
+          {item.description}
+        </span>
+      </span>
+    </button>
+  );
+}
 
 function DashboardActivity({
   title,
@@ -116,21 +162,11 @@ function DashboardActivity({
         }
       >
         {items.map((item) => (
-          <button
+          <DashboardActivityItem
             key={item.id}
-            type="button"
-            className="du-hub-card du-dashboard-activity-item"
-            onClick={() => navigate(`/activity/${item.id}`)}
-          >
-            <h3>
-              <span aria-hidden="true">
-                {desertLiveCategoryIcons[item.category]}
-              </span>{" "}
-              <span className="du-sand-text">{item.title}</span>
-            </h3>
-
-            <p>{item.description}</p>
-          </button>
+            item={item}
+            onOpen={() => navigate(`/activity/${item.id}`)}
+          />
         ))}
 
         {items.length === 0 && (
