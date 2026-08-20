@@ -2,10 +2,7 @@ import { useState } from "react";
 
 import { getDesertLiveAssetUrl } from "../../services/desertLiveService";
 import type { DesertLiveItem } from "../../types/desertLive";
-import {
-  createImageFocusPoint,
-  getImageObjectPosition,
-} from "../../utils/imageFocus";
+import FocalImage from "../images/FocalImage";
 import {
   desertLiveCategoryIcons,
   desertLiveCategoryLabels,
@@ -45,18 +42,16 @@ function DesertLiveRow({
   const [imageFailed, setImageFailed] = useState(false);
   const imageUrl = getDesertLiveAssetUrl(item.imageUrl);
   const showImage = imageUrl !== null && !imageFailed;
-  const imageObjectPosition = getImageObjectPosition(
-    createImageFocusPoint(item.imageFocusX, item.imageFocusY),
-  );
 
   return (
     <article className="du-row-panel du-desert-live-row">
       <div className="du-desert-live-row-media" aria-hidden={!showImage}>
         {showImage ? (
-          <img
+          <FocalImage
             src={imageUrl}
             alt=""
-            style={{ objectPosition: imageObjectPosition }}
+            focusX={item.imageFocusX}
+            focusY={item.imageFocusY}
             onError={() => setImageFailed(true)}
           />
         ) : (

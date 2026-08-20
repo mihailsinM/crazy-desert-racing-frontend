@@ -1,6 +1,31 @@
-import { useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import { useNavigate } from "react-router-dom";
-import { createMyRaceCar } from "../services/raceCarService";
+
+import ImageFocusPicker from "../components/images/ImageFocusPicker";
+import {
+  createMyRaceCar,
+  updateRaceCar,
+  updateRaceCarImage,
+} from "../services/raceCarService";
+import {
+  CENTER_IMAGE_FOCUS,
+  DEFAULT_IMAGE_CROP_PERCENT,
+  type ImageFocusPoint,
+} from "../utils/imageFocus";
+import {
+  formatImageFileSize,
+  IMAGE_UPLOAD_ACCEPT,
+  MAX_SOURCE_IMAGE_SIZE_MB,
+  prepareImageForUpload,
+} from "../utils/imageUpload";
+
+const CAR_IMAGE_PREVIEW_VARIANTS = ["circle", "wide"] as const;
 
 function AddCarPage() {
   const navigate = useNavigate();
@@ -8,25 +33,111 @@ function AddCarPage() {
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [horsePower, setHorsePower] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imageFocus, setImageFocus] = useState<ImageFocusPoint>({
+    ...CENTER_IMAGE_FOCUS,
+  });
+  const [imageCropPercent, setImageCropPercent] = useState(
+    DEFAULT_IMAGE_CROP_PERCENT,
+  );
+  const [createdCarId, setCreatedCarId] = useState<number | null>(null);
+  const [imageOptimizing, setImageOptimizing] = useState(false);
+  const [imageOptimizationMessage, setImageOptimizationMessage] = useState("");
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [imageUrl, setImageUrl] = useState("/images/ioniq.png");
-  const [imagePosition, setImagePosition] = useState("CENTER");
 
-  async function handleCreateCar(event: React.FormEvent) {
-    event.preventDefault();
+  const selectedImagePreview = useMemo(
+    () => (selectedImage ? URL.createObjectURL(selectedImage) : null),
+    [selectedImage],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (selectedImagePreview) {
+        URL.revokeObjectURL(selectedImagePreview);
+      }
+    };
+  }, [selectedImagePreview]);
+
+  async function selectImage(event: ChangeEvent<HTMLInputElement>) {
+    const image = event.currentTarget.files?.[0] ?? null;
+    event.currentTarget.value = "";
+
+    if (!image) {
+      return;
+    }
+
+    setImageOptimizing(true);
+    setError("");
 
     try {
-      await createMyRaceCar({
-        name,
-        brand,
+      const optimizedImage = await prepareImageForUpload(image);
+
+      setSelectedImage(optimizedImage);
+      setImageFocus({ ...CENTER_IMAGE_FOCUS });
+      setImageCropPercent(DEFAULT_IMAGE_CROP_PERCENT);
+      setImageOptimizationMessage(
+        optimizedImage === image
+          ? `Ready to upload · ${formatImageFileSize(optimizedImage.size)}`
+          : `Optimized ${formatImageFileSize(image.size)} → ${formatImageFileSize(optimizedImage.size)}`,
+      );
+    } catch (caughtError) {
+      setSelectedImage(null);
+      setImageOptimizationMessage("");
+      setError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Failed to optimize the selected image.",
+      );
+    } finally {
+      setImageOptimizing(false);
+    }
+  }
+
+  async function handleCreateCar(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (!selectedImage) {
+      setError("Choose a race car image before creating the car.");
+      return;
+    }
+
+    setSaving(true);
+    let savedCarId = createdCarId;
+
+    try {
+      const request = {
+        name: name.trim(),
+        brand: brand.trim(),
         horsePower: Number(horsePower),
-        imageUrl,
-        imagePosition,
+      };
+      const savedCar = savedCarId === null
+        ? await createMyRaceCar(request)
+        : await updateRaceCar(savedCarId, request);
+
+      savedCarId = savedCar.id;
+      setCreatedCarId(savedCar.id);
+
+      await updateRaceCarImage(savedCar.id, selectedImage, {
+        focusX: imageFocus.x,
+        focusY: imageFocus.y,
+        cropPercent: imageCropPercent,
       });
 
-      navigate("/cars");
-    } catch {
-      setError("Failed to create car");
+      navigate(`/cars/${savedCar.id}`);
+    } catch (caughtError) {
+      const message = caughtError instanceof Error
+        ? caughtError.message
+        : "Failed to create car";
+
+      setError(
+        savedCarId === null
+          ? message
+          : `Car details were saved, but the image was not. ${message}. You can retry without creating a duplicate.`,
+      );
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -45,6 +156,7 @@ function AddCarPage() {
             className="du-input"
             type="text"
             placeholder="Car name"
+            required
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
@@ -53,6 +165,7 @@ function AddCarPage() {
             className="du-input"
             type="text"
             placeholder="Brand"
+            required
             value={brand}
             onChange={(event) => setBrand(event.target.value)}
           />
@@ -60,37 +173,78 @@ function AddCarPage() {
           <input
             className="du-input"
             type="number"
+            min={1}
             placeholder="Horse power"
+            required
             value={horsePower}
             onChange={(event) => setHorsePower(event.target.value)}
           />
 
-          <input
-            className="du-input"
-            type="text"
-            placeholder="Image URL"
-            value={imageUrl}
-            onChange={(event) => setImageUrl(event.target.value)}
-          />
-          <select
-            className="du-input"
-            value={imagePosition}
-            onChange={(event) => setImagePosition(event.target.value)}
-          >
-            <option value="CENTER">Center</option>
-            <option value="LEFT">Left</option>
-            <option value="RIGHT">Right</option>
-            <option value="TOP">Top</option>
-            <option value="BOTTOM">Bottom</option>
-          </select>
+          <div className="du-field">
+            <span className="du-field-label">Race car image</span>
+            <span className="du-caption">
+              JPG, PNG, or WebP · photos up to {MAX_SOURCE_IMAGE_SIZE_MB} MB
+              are optimized automatically
+            </span>
+            {imageOptimizationMessage && (
+              <p className="du-image-optimization-message">
+                {imageOptimizationMessage}
+              </p>
+            )}
+            <div className="du-inline du-inline-sm du-inline-wrap">
+              <label
+                className={
+                  imageOptimizing
+                    ? "du-button du-button-small du-button-rect du-button-inline du-file-button du-file-button-disabled"
+                    : "du-button du-button-small du-button-rect du-button-inline du-file-button"
+                }
+                aria-disabled={imageOptimizing}
+              >
+                {imageOptimizing
+                  ? "Optimizing..."
+                  : selectedImage
+                    ? "Change Image"
+                    : "Choose Image"}
+                <input
+                  hidden
+                  type="file"
+                  accept={IMAGE_UPLOAD_ACCEPT}
+                  disabled={imageOptimizing || saving}
+                  onChange={selectImage}
+                />
+              </label>
+            </div>
+          </div>
 
-          <button className="du-button du-button-primary" type="submit">
-            Create Car
+          {selectedImagePreview && (
+            <ImageFocusPicker
+              imageUrl={selectedImagePreview}
+              value={imageFocus}
+              onChange={setImageFocus}
+              cropPercent={imageCropPercent}
+              onCropPercentChange={setImageCropPercent}
+              imageAlt="Race car image"
+              previewVariants={CAR_IMAGE_PREVIEW_VARIANTS}
+              disabled={saving || imageOptimizing}
+            />
+          )}
+
+          <button
+            className="du-button du-button-primary"
+            type="submit"
+            disabled={saving || imageOptimizing}
+          >
+            {saving
+              ? "Saving..."
+              : createdCarId === null
+                ? "Create Car"
+                : "Retry Image Upload"}
           </button>
 
           <button
             className="du-button"
             type="button"
+            disabled={saving}
             onClick={() => navigate("/cars")}
           >
             Cancel

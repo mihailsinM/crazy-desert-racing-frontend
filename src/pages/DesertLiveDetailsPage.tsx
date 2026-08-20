@@ -6,6 +6,7 @@ import {
   desertLiveCategoryLabels,
 } from "../components/desert-live/desertLiveOptions";
 import { isDesertLiveTargetUrlAllowed } from "../components/desert-live/desertLiveLinks";
+import FocalImage from "../components/images/FocalImage";
 import { useAuth } from "../context/authContext";
 import {
   deleteAdminDesertLiveItem,
@@ -17,10 +18,6 @@ import {
 } from "../services/desertLiveService";
 import type { DesertLiveItem } from "../types/desertLive";
 import raceBackground from "../assets/race.png";
-import {
-  createImageFocusPoint,
-  getImageObjectPosition,
-} from "../utils/imageFocus";
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString("en-US", {
@@ -114,9 +111,6 @@ function DesertLiveDetailsPage({
   }
 
   const itemImageUrl = getDesertLiveAssetUrl(item.imageUrl);
-  const itemImagePosition = getImageObjectPosition(
-    createImageFocusPoint(item.imageFocusX, item.imageFocusY),
-  );
   const canManage = isAdmin || currentUser?.id === item.authorId;
   const hasAllowedTargetUrl = Boolean(
     item.targetUrl && isDesertLiveTargetUrlAllowed(item.targetUrl),
@@ -165,11 +159,15 @@ function DesertLiveDetailsPage({
     <section className="du-page">
       <article
         className="du-details-card du-desert-live-details"
-        style={{
-          backgroundImage: `url(${itemImageUrl ?? raceBackground})`,
-          backgroundPosition: itemImageUrl ? itemImagePosition : "center",
-        }}
       >
+        <FocalImage
+          src={itemImageUrl ?? raceBackground}
+          alt=""
+          focusX={itemImageUrl ? item.imageFocusX : 50}
+          focusY={itemImageUrl ? item.imageFocusY : 50}
+          className="du-details-media"
+          aria-hidden="true"
+        />
         <div className="du-details-overlay du-details-overlay-top du-desert-live-details-overlay">
           <div className="du-desert-live-details-topline">
             <p className="du-details-eyebrow">
