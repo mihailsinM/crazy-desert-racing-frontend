@@ -12,10 +12,7 @@ import {
   getRandomDesertLiveItems,
 } from "../../services/desertLiveService";
 import type { DesertLiveItem } from "../../types/desertLive";
-import {
-  createImageFocusPoint,
-  getImageObjectPosition,
-} from "../../utils/imageFocus";
+import FocalImage from "../images/FocalImage";
 
 type DashboardActivityProps = {
   title: string;
@@ -37,9 +34,6 @@ function DashboardActivityItem({
   const imageUrl = getDesertLiveAssetUrl(item.imageUrl);
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const showImage = imageUrl !== null && imageUrl !== failedImageUrl;
-  const imageObjectPosition = getImageObjectPosition(
-    createImageFocusPoint(item.imageFocusX, item.imageFocusY),
-  );
 
   return (
     <button
@@ -49,10 +43,11 @@ function DashboardActivityItem({
     >
       <span className="du-dashboard-activity-media" aria-hidden="true">
         {showImage ? (
-          <img
+          <FocalImage
             src={imageUrl}
             alt=""
-            style={{ objectPosition: imageObjectPosition }}
+            focusX={item.imageFocusX}
+            focusY={item.imageFocusY}
             onError={() => setFailedImageUrl(imageUrl)}
           />
         ) : (

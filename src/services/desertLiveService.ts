@@ -1,4 +1,4 @@
-import API_BASE_URL from "./api";
+import API_BASE_URL, { resolveApiAssetUrl } from "./api";
 import { authenticatedFetch } from "./authService";
 import type {
   DesertLiveCategory,
@@ -113,15 +113,7 @@ function imageFocusRequestInit(focus: ImageFocusPoint): RequestInit {
 }
 
 export function getDesertLiveAssetUrl(path: string | null): string | null {
-  if (!path) {
-    return null;
-  }
-
-  if (path.startsWith("http://") || path.startsWith("https://")) {
-    return path;
-  }
-
-  return `${API_BASE_URL}${path}`;
+  return resolveApiAssetUrl(path);
 }
 
 export async function getRandomDesertLiveItems(

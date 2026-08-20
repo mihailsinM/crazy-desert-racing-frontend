@@ -6,6 +6,7 @@ import {
   desertLiveCategorySelectOptions,
 } from "../components/desert-live/desertLiveOptions";
 import DesertLiveMenuFilter from "../components/desert-live/DesertLiveMenuFilter";
+import FocalImage from "../components/images/FocalImage";
 import ImageFocusPicker from "../components/images/ImageFocusPicker";
 import { isDesertLiveTargetUrlAllowed } from "../components/desert-live/desertLiveLinks";
 import { useAuth } from "../context/authContext";
@@ -31,22 +32,17 @@ import type {
 } from "../types/desertLive";
 import raceBackground from "../assets/race.png";
 import {
-  compressImageForUpload,
-  DEFAULT_MAX_SOURCE_IMAGE_BYTES,
-} from "../utils/imageCompression";
-import {
   CENTER_IMAGE_FOCUS,
   createImageFocusPoint,
-  getImageObjectPosition,
   imageFocusPointsEqual,
   type ImageFocusPoint,
 } from "../utils/imageFocus";
-
-const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_SOURCE_IMAGE_SIZE_MB = Math.round(
-  DEFAULT_MAX_SOURCE_IMAGE_BYTES / 1024 / 1024,
-);
+import {
+  formatImageFileSize,
+  IMAGE_UPLOAD_ACCEPT,
+  MAX_SOURCE_IMAGE_SIZE_MB,
+  prepareImageForUpload,
+} from "../utils/imageUpload";
 
 type DesertLiveEditorPageProps = {
   editScope?: "MY" | "ADMIN";
@@ -64,14 +60,6 @@ function toLocalDateTime(value: string | null): string {
 
 function toApiDateTime(value: string): string | null {
   return value ? new Date(value).toISOString() : null;
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes >= 1024 * 1024) {
-    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-  }
-
-  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
 function getItemImageFocus(item: DesertLiveItem): ImageFocusPoint {
@@ -202,34 +190,19 @@ function DesertLiveEditorPage({
       return;
     }
 
-    if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
-      setError("Choose a JPG, PNG, or WebP image.");
-      return;
-    }
-
-    if (image.size > DEFAULT_MAX_SOURCE_IMAGE_BYTES) {
-      setError(`Choose an image smaller than ${MAX_SOURCE_IMAGE_SIZE_MB} MB.`);
-      return;
-    }
-
     setImageOptimizing(true);
     setSuccessMessage("");
     setError("");
 
     try {
-      const optimizedImage = await compressImageForUpload(image, {
-        maxBytes: MAX_IMAGE_SIZE_BYTES,
-        maxDimension: 1600,
-        maxSourceBytes: DEFAULT_MAX_SOURCE_IMAGE_BYTES,
-        outputType: "image/webp",
-      });
+      const optimizedImage = await prepareImageForUpload(image);
 
       setSelectedImage(optimizedImage);
       setImageFocus({ ...CENTER_IMAGE_FOCUS });
       setImageOptimizationMessage(
         optimizedImage === image
-          ? `Ready to upload · ${formatFileSize(optimizedImage.size)}`
-          : `Optimized ${formatFileSize(image.size)} → ${formatFileSize(optimizedImage.size)}`,
+          ? `Ready to upload · ${formatImageFileSize(optimizedImage.size)}`
+          : `Optimized ${formatImageFileSize(image.size)} → ${formatImageFileSize(optimizedImage.size)}`,
       );
     } catch (caughtError) {
       setSelectedImage(null);
@@ -382,7 +355,6 @@ function DesertLiveEditorPage({
 
   const currentImageUrl = getDesertLiveAssetUrl(existingItem?.imageUrl ?? null);
   const previewUrl = selectedImagePreview ?? currentImageUrl;
-  const previewObjectPosition = getImageObjectPosition(imageFocus);
   const hasContentChanges = existingItem
     ? !itemMatchesRequest(existingItem, createRequest())
     : true;
@@ -499,10 +471,11 @@ function DesertLiveEditorPage({
             <div className="du-desert-live-image-editor">
               <div className="du-desert-live-image-preview">
                 {previewUrl ? (
-                  <img
+                  <FocalImage
                     src={previewUrl}
                     alt="Publication preview"
-                    style={{ objectPosition: previewObjectPosition }}
+                    focusX={imageFocus.x}
+                    focusY={imageFocus.y}
                   />
                 ) : (
                   <span aria-hidden="true">
@@ -539,7 +512,7 @@ function DesertLiveEditorPage({
                     <input
                       hidden
                       type="file"
-                      accept="image/jpeg,image/png,image/webp"
+                      accept={IMAGE_UPLOAD_ACCEPT}
                       disabled={imageOptimizing}
                       onChange={selectImage}
                     />
@@ -583,6 +556,7 @@ function DesertLiveEditorPage({
                   imageUrl={previewUrl}
                   value={imageFocus}
                   onChange={setImageFocus}
+                  imageAlt="Publication image"
                   disabled={saving || imageSaving || imageOptimizing}
                 />
               )}

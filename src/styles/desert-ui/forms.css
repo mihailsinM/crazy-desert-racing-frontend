@@ -114,6 +114,23 @@
   margin-top: 8px;
 }
 
+.du-file-button {
+  cursor: pointer;
+}
+
+.du-file-button-disabled {
+  opacity: 0.55;
+  cursor: wait;
+  pointer-events: none;
+}
+
+.du-image-optimization-message {
+  margin: 6px 0 10px;
+  color: #baf0c8;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .du-search-box {
   position: relative;
   width: 320px;

@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyRaceCars } from "../services/raceCarService";
+import FocalImage from "../components/images/FocalImage";
+import raceBackground from "../assets/race.png";
+import {
+  getMyRaceCars,
+  getRaceCarAssetUrl,
+} from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
 
 
@@ -57,12 +62,16 @@ function MyCarsPage() {
           <article
             key={car.id}
             className="du-card du-showcase-card"
-            
             onClick={() => navigate(`/cars/${car.id}`)}
-            style={{
-              backgroundImage: `url(${car.imageUrl})`,
-            }}
           >
+            <FocalImage
+              src={getRaceCarAssetUrl(car.imageUrl) ?? raceBackground}
+              alt={`${car.brand} ${car.name}`}
+              focusX={car.imageFocusX}
+              focusY={car.imageFocusY}
+              cropPercent={car.imageUrl ? car.imageCropPercent : 0}
+              className="du-showcase-media"
+            />
             <div className="du-showcase-content">
               <p className="du-eyebrow du-showcase-eyebrow">{car.brand}</p>
 

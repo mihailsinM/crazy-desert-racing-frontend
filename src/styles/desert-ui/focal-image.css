@@ -1,0 +1,9 @@
+.du-focal-image {
+  display: block;
+  transition: transform 180ms ease-out;
+}
+
+.du-focal-image-fill {
+  width: 100%;
+  height: 100%;
+}

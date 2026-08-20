@@ -24,6 +24,21 @@
     rgba(18, 11, 7, 0.12) 100%
   );
 
+  z-index: 1;
+}
+
+.du-car-details::before {
+  background: linear-gradient(
+    90deg,
+    rgba(18, 11, 7, 0.74) 0%,
+    rgba(18, 11, 7, 0.38) 44%,
+    rgba(18, 11, 7, 0.04) 100%
+  );
+}
+
+.du-details-media {
+  position: absolute;
+  inset: 0;
   z-index: 0;
 }
 
@@ -34,7 +49,7 @@
   flex-direction: column;
   justify-content: center;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .du-details-overlay.du-scroll {

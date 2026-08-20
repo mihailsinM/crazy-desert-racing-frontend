@@ -1,4 +1,5 @@
 import type {
+  CSSProperties,
   KeyboardEvent,
   PointerEvent,
 } from "react";
@@ -6,27 +7,56 @@ import type {
 import {
   CENTER_IMAGE_FOCUS,
   createImageFocusPoint,
-  getImageObjectPosition,
+  getImageCropFrame,
+  IMAGE_CROP_PERCENT_OPTIONS,
   imageFocusPointsEqual,
+  MAX_IMAGE_CROP_PERCENT,
+  normalizeImageCropPercent,
   type ImageFocusPoint,
 } from "../../utils/imageFocus";
+import FocalImage from "./FocalImage";
+
+export type ImageFocusPreviewVariant = "circle" | "square" | "wide";
 
 type ImageFocusPickerProps = {
   imageUrl: string;
   value: ImageFocusPoint;
   onChange: (focus: ImageFocusPoint) => void;
+  cropPercent?: number;
+  onCropPercentChange?: (cropPercent: number) => void;
   disabled?: boolean;
+  imageAlt?: string;
+  previewVariants?: readonly ImageFocusPreviewVariant[];
 };
 
 const KEYBOARD_FOCUS_STEP = 2;
 const KEYBOARD_FOCUS_LARGE_STEP = 10;
+const DEFAULT_PREVIEW_VARIANTS: readonly ImageFocusPreviewVariant[] = [
+  "circle",
+];
+const PREVIEW_LABELS: Record<ImageFocusPreviewVariant, string> = {
+  circle: "Round preview",
+  square: "Square card",
+  wide: "Wide card",
+};
 
 function ImageFocusPicker({
   imageUrl,
   value,
   onChange,
+  cropPercent,
+  onCropPercentChange,
   disabled = false,
+  imageAlt = "Image",
+  previewVariants = DEFAULT_PREVIEW_VARIANTS,
 }: ImageFocusPickerProps) {
+  const cropEnabled =
+    typeof cropPercent === "number" &&
+    typeof onCropPercentChange === "function";
+  const normalizedCrop = normalizeImageCropPercent(cropPercent);
+  const cropFrame = getImageCropFrame(value, normalizedCrop);
+  const cropProgress = (normalizedCrop / MAX_IMAGE_CROP_PERCENT) * 100;
+
   function updateFromPointer(event: PointerEvent<HTMLButtonElement>) {
     const bounds = event.currentTarget.getBoundingClientRect();
 
@@ -103,7 +133,9 @@ function ImageFocusPicker({
   }
 
   const isCentered = imageFocusPointsEqual(value, CENTER_IMAGE_FOCUS);
-  const objectPosition = getImageObjectPosition(value);
+  const cropSliderStyle = {
+    "--du-crop-progress": `${cropProgress}%`,
+  } as CSSProperties;
 
   return (
     <section className="du-image-focus-picker">
@@ -115,45 +147,124 @@ function ImageFocusPicker({
           </p>
         </div>
 
-        <button
-          type="button"
-          className="du-button du-button-small du-button-rect"
-          disabled={disabled || isCentered}
-          onClick={() => onChange({ ...CENTER_IMAGE_FOCUS })}
-        >
-          Center Focus
-        </button>
+        <div className="du-image-focus-actions">
+          <button
+            type="button"
+            className="du-button du-button-small du-button-rect"
+            disabled={disabled || isCentered}
+            onClick={() => onChange({ ...CENTER_IMAGE_FOCUS })}
+          >
+            Center Focus
+          </button>
+
+          {cropEnabled && (
+            <button
+              type="button"
+              className="du-button du-button-small du-button-rect"
+              disabled={disabled || normalizedCrop === 0}
+              onClick={() => onCropPercentChange?.(0)}
+            >
+              Reset Crop
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="du-image-focus-workspace">
-        <button
-          type="button"
-          className="du-image-focus-stage"
-          aria-label={`Image focus at ${value.x} percent horizontally and ${value.y} percent vertically`}
-          disabled={disabled}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-          onKeyDown={handleKeyDown}
-        >
-          <img src={imageUrl} alt="Choose the publication image focus" />
-          <span
-            className="du-image-focus-marker"
-            style={{ left: `${value.x}%`, top: `${value.y}%` }}
-            aria-hidden="true"
-          />
-        </button>
+        <div className="du-image-focus-editor">
+          {cropEnabled && (
+            <label className="du-image-crop-control">
+              <span className="du-field-label">Crop depth</span>
+              <span className="du-image-crop-range-wrap">
+                <input
+                  type="range"
+                  className="du-image-crop-range"
+                  min={0}
+                  max={MAX_IMAGE_CROP_PERCENT}
+                  step={5}
+                  value={normalizedCrop}
+                  style={cropSliderStyle}
+                  disabled={disabled}
+                  aria-label="Crop depth"
+                  aria-valuetext={`${normalizedCrop} percent crop`}
+                  onChange={(event) =>
+                    onCropPercentChange?.(Number(event.currentTarget.value))
+                  }
+                />
+                <span className="du-image-crop-ticks" aria-hidden="true">
+                  {IMAGE_CROP_PERCENT_OPTIONS.map((option) => (
+                    <span key={option} />
+                  ))}
+                </span>
+              </span>
+            </label>
+          )}
+
+          <button
+            type="button"
+            className="du-image-focus-stage"
+            aria-label={`Image focus at ${value.x} percent horizontally and ${value.y} percent vertically`}
+            disabled={disabled}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            onKeyDown={handleKeyDown}
+          >
+            <FocalImage
+              src={imageUrl}
+              alt={`Choose ${imageAlt.toLowerCase()} focus`}
+              focusX={value.x}
+              focusY={value.y}
+              fit="contain"
+              fill={false}
+              className="du-image-focus-source"
+            />
+            {cropEnabled && normalizedCrop > 0 && (
+              <span
+                className="du-image-focus-crop-frame"
+                style={{
+                  left: `${cropFrame.left}%`,
+                  top: `${cropFrame.top}%`,
+                  width: `${cropFrame.width}%`,
+                  height: `${cropFrame.height}%`,
+                }}
+                aria-hidden="true"
+              />
+            )}
+            <span
+              className="du-image-focus-marker"
+              style={{ left: `${value.x}%`, top: `${value.y}%` }}
+              aria-hidden="true"
+            />
+          </button>
+        </div>
 
         <div className="du-image-focus-result">
-          <span className="du-caption">Card preview</span>
-          <span className="du-image-focus-card-preview">
-            <img
-              src={imageUrl}
-              alt="Publication card preview"
-              style={{ objectPosition }}
-            />
-          </span>
+          <span className="du-caption">Crop previews</span>
+          <div className="du-image-focus-preview-list">
+            {previewVariants.map((variant) => (
+              <span
+                key={variant}
+                className="du-image-focus-preview-item"
+              >
+                <span className="du-caption">
+                  {PREVIEW_LABELS[variant]}
+                </span>
+                <span
+                  className={`du-image-focus-preview du-image-focus-preview-${variant}`}
+                >
+                  <FocalImage
+                    src={imageUrl}
+                    alt={`${imageAlt} ${PREVIEW_LABELS[variant].toLowerCase()} preview`}
+                    focusX={value.x}
+                    focusY={value.y}
+                    cropPercent={normalizedCrop}
+                  />
+                </span>
+              </span>
+            ))}
+          </div>
           <span className="du-image-focus-value">
             {value.x}% · {value.y}%
           </span>
