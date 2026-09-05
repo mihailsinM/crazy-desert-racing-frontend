@@ -200,7 +200,7 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
         className="du-details-card du-desert-live-page"
         style={{ backgroundImage: `url(${raceBackground})` }}
       >
-        <div className="du-details-overlay du-details-overlay-top du-desert-live-overlay">
+        <div className="du-details-overlay du-scroll du-details-overlay-top du-desert-live-overlay">
           <header className="du-desert-live-page-header">
             <div>
               <p className="du-details-eyebrow">
