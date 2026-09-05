@@ -31,6 +31,9 @@
   --du-highlight-bg: rgba(255, 122, 26, 0.13);
   --du-highlight-border: rgba(255, 179, 71, 0.48);
 
+  /* Media framing */
+  --du-card-image-aspect-ratio: 16 / 9;
+
   /* Shadows */
   --du-shadow-card: 0 18px 40px rgba(0, 0, 0, 0.35);
   --du-shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.35);

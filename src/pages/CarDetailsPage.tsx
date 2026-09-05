@@ -8,6 +8,7 @@ import {
   getRaceCarById,
 } from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
+import { getRaceCarImageFraming } from "../utils/raceCarImageFraming";
 
 
 function CarDetailsPage() {
@@ -63,15 +64,17 @@ function CarDetailsPage() {
       setError("Failed to delete car");
     }
   }
+  const cardFraming = getRaceCarImageFraming(car).card;
+
   return (
     <section className="du-page">
       <article className="du-details-card du-car-details">
         <FocalImage
           src={getRaceCarAssetUrl(car.imageUrl) ?? raceBackground}
           alt={`${car.brand} ${car.name}`}
-          focusX={car.imageFocusX}
-          focusY={car.imageFocusY}
-          cropPercent={car.imageUrl ? car.imageCropPercent : 0}
+          focusX={cardFraming.focusX}
+          focusY={cardFraming.focusY}
+          cropPercent={car.imageUrl ? cardFraming.cropPercent : 0}
           className="du-details-media"
         />
         <div className="du-details-overlay">

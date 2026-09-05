@@ -1,3 +1,5 @@
+import type { ImageFramingProfiles } from "../utils/imageFocus";
+
 export type ImagePosition = "CENTER" | "LEFT" | "RIGHT" | "TOP" | "BOTTOM";
 
 export type RaceCar = {
@@ -10,6 +12,7 @@ export type RaceCar = {
   imageFocusX: number;
   imageFocusY: number;
   imageCropPercent: number;
+  imageFraming?: ImageFramingProfiles | null;
 };
 
 export type RaceCarWriteRequest = {
@@ -22,8 +25,4 @@ export type RaceCarWriteRequest = {
   imageCropPercent?: number;
 };
 
-export type RaceCarImageFramingRequest = {
-  focusX: number;
-  focusY: number;
-  cropPercent: number;
-};
+export type RaceCarImageFramingProfilesRequest = ImageFramingProfiles;
