@@ -2,7 +2,7 @@ import API_BASE_URL, { resolveApiAssetUrl } from "./api";
 import { authenticatedFetch } from "./authService";
 import type {
   RaceCar,
-  RaceCarImageFramingRequest,
+  RaceCarImageFramingProfilesRequest,
   RaceCarWriteRequest,
 } from "../types/raceCar";
 
@@ -93,13 +93,19 @@ export async function updateRaceCar(
 export async function updateRaceCarImage(
   id: number,
   image: File,
-  framing: RaceCarImageFramingRequest,
+  framing: RaceCarImageFramingProfilesRequest,
 ): Promise<RaceCar> {
   const formData = new FormData();
   formData.append("file", image);
-  formData.append("focusX", String(framing.focusX));
-  formData.append("focusY", String(framing.focusY));
-  formData.append("cropPercent", String(framing.cropPercent));
+  formData.append("avatarFocusX", String(framing.avatar.focusX));
+  formData.append("avatarFocusY", String(framing.avatar.focusY));
+  formData.append(
+    "avatarCropPercent",
+    String(framing.avatar.cropPercent),
+  );
+  formData.append("cardFocusX", String(framing.card.focusX));
+  formData.append("cardFocusY", String(framing.card.focusY));
+  formData.append("cardCropPercent", String(framing.card.cropPercent));
 
   const response = await authenticatedFetch(
     `${API_BASE_URL}/race-cars/${id}/image`,
@@ -114,7 +120,7 @@ export async function updateRaceCarImage(
 
 export async function updateRaceCarImageFraming(
   id: number,
-  framing: RaceCarImageFramingRequest,
+  framing: RaceCarImageFramingProfilesRequest,
 ): Promise<RaceCar> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/race-cars/${id}/image/framing`,

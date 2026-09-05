@@ -3,6 +3,19 @@ export type ImageFocusPoint = {
   y: number;
 };
 
+export type ImageFramingProfile = {
+  focusX: number;
+  focusY: number;
+  cropPercent: number;
+};
+
+export type ImageFramingProfiles = {
+  avatar: ImageFramingProfile;
+  card: ImageFramingProfile;
+};
+
+export type ImageFramingProfileName = keyof ImageFramingProfiles;
+
 export type ImageCropFrame = {
   left: number;
   top: number;
@@ -51,6 +64,38 @@ export function createImageFocusPoint(
   };
 }
 
+export function createImageFramingProfile(
+  focusX?: number,
+  focusY?: number,
+  cropPercent?: number,
+): ImageFramingProfile {
+  const focus = createImageFocusPoint(focusX, focusY);
+
+  return {
+    focusX: focus.x,
+    focusY: focus.y,
+    cropPercent: normalizeImageCropPercent(cropPercent),
+  };
+}
+
+export function createImageFramingProfiles(
+  avatar?: Partial<ImageFramingProfile>,
+  card?: Partial<ImageFramingProfile>,
+): ImageFramingProfiles {
+  return {
+    avatar: createImageFramingProfile(
+      avatar?.focusX,
+      avatar?.focusY,
+      avatar?.cropPercent,
+    ),
+    card: createImageFramingProfile(
+      card?.focusX,
+      card?.focusY,
+      card?.cropPercent,
+    ),
+  };
+}
+
 export function getImageObjectPosition(focus: ImageFocusPoint): string {
   return `${focus.x}% ${focus.y}%`;
 }
@@ -90,9 +135,62 @@ export function getImageCropFrame(
   };
 }
 
+export function getImageCropFrameForAspectRatio(
+  focus: ImageFocusPoint,
+  cropPercent: number | undefined,
+  sourceAspectRatio: number,
+  targetAspectRatio: number,
+): ImageCropFrame {
+  const safeSourceAspectRatio =
+    Number.isFinite(sourceAspectRatio) && sourceAspectRatio > 0
+      ? sourceAspectRatio
+      : 1;
+  const safeTargetAspectRatio =
+    Number.isFinite(targetAspectRatio) && targetAspectRatio > 0
+      ? targetAspectRatio
+      : 1;
+  const normalizedCrop = normalizeImageCropPercent(cropPercent);
+  const cropScale = (100 - normalizedCrop) / 100;
+
+  let fittedWidth = 100;
+  let fittedHeight = 100;
+
+  if (safeSourceAspectRatio > safeTargetAspectRatio) {
+    fittedWidth =
+      (safeTargetAspectRatio / safeSourceAspectRatio) * 100;
+  } else if (safeSourceAspectRatio < safeTargetAspectRatio) {
+    fittedHeight =
+      (safeSourceAspectRatio / safeTargetAspectRatio) * 100;
+  }
+
+  const width = fittedWidth * cropScale;
+  const height = fittedHeight * cropScale;
+
+  return {
+    left: ((100 - width) * focus.x) / 100,
+    top: ((100 - height) * focus.y) / 100,
+    width,
+    height,
+  };
+}
+
 export function imageFocusPointsEqual(
   first: ImageFocusPoint,
   second: ImageFocusPoint,
 ): boolean {
   return first.x === second.x && first.y === second.y;
+}
+
+export function imageFramingProfilesEqual(
+  first: ImageFramingProfiles,
+  second: ImageFramingProfiles,
+): boolean {
+  return (
+    first.avatar.focusX === second.avatar.focusX &&
+    first.avatar.focusY === second.avatar.focusY &&
+    first.avatar.cropPercent === second.avatar.cropPercent &&
+    first.card.focusX === second.card.focusX &&
+    first.card.focusY === second.card.focusY &&
+    first.card.cropPercent === second.card.cropPercent
+  );
 }

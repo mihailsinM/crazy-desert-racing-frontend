@@ -6,7 +6,8 @@
 
 .du-showcase-card {
   position: relative;
-  min-height: 380px;
+  min-height: 0;
+  aspect-ratio: var(--du-card-image-aspect-ratio);
   padding: 30px;
   overflow: hidden;
   cursor: pointer;
@@ -82,3 +83,9 @@
   }
 }
 
+@media (max-width: 600px) {
+  .du-showcase-card {
+    min-height: 380px;
+    aspect-ratio: auto;
+  }
+}

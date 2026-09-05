@@ -18,25 +18,17 @@ import {
 } from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
 import {
-  CENTER_IMAGE_FOCUS,
-  createImageFocusPoint,
-  DEFAULT_IMAGE_CROP_PERCENT,
-  imageFocusPointsEqual,
-  normalizeImageCropPercent,
-  type ImageFocusPoint,
+  createImageFramingProfiles,
+  imageFramingProfilesEqual,
+  type ImageFramingProfiles,
 } from "../utils/imageFocus";
+import { getRaceCarImageFraming } from "../utils/raceCarImageFraming";
 import {
   formatImageFileSize,
   IMAGE_UPLOAD_ACCEPT,
   MAX_SOURCE_IMAGE_SIZE_MB,
   prepareImageForUpload,
 } from "../utils/imageUpload";
-
-const CAR_IMAGE_PREVIEW_VARIANTS = ["circle", "wide"] as const;
-
-function getCarImageFocus(car: RaceCar): ImageFocusPoint {
-  return createImageFocusPoint(car.imageFocusX, car.imageFocusY);
-}
 
 function EditCarPage() {
   const { id } = useParams();
@@ -49,11 +41,8 @@ function EditCarPage() {
   const [horsePower, setHorsePower] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imageFocus, setImageFocus] = useState<ImageFocusPoint>({
-    ...CENTER_IMAGE_FOCUS,
-  });
-  const [imageCropPercent, setImageCropPercent] = useState(
-    DEFAULT_IMAGE_CROP_PERCENT,
+  const [imageFraming, setImageFraming] = useState<ImageFramingProfiles>(
+    () => createImageFramingProfiles(),
   );
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -95,10 +84,7 @@ function EditCarPage() {
           setBrand(car.brand);
           setHorsePower(String(car.horsePower));
           setImageUrl(car.imageUrl);
-          setImageFocus(getCarImageFocus(car));
-          setImageCropPercent(
-            normalizeImageCropPercent(car.imageCropPercent),
-          );
+          setImageFraming(getRaceCarImageFraming(car));
         }
       } catch (caughtError) {
         if (active) {
@@ -138,8 +124,7 @@ function EditCarPage() {
       const optimizedImage = await prepareImageForUpload(image);
 
       setSelectedImage(optimizedImage);
-      setImageFocus({ ...CENTER_IMAGE_FOCUS });
-      setImageCropPercent(DEFAULT_IMAGE_CROP_PERCENT);
+      setImageFraming(createImageFramingProfiles());
       setImageOptimizationMessage(
         optimizedImage === image
           ? `Ready to upload · ${formatImageFileSize(optimizedImage.size)}`
@@ -163,10 +148,7 @@ function EditCarPage() {
     setImageOptimizationMessage("");
 
     if (existingCar) {
-      setImageFocus(getCarImageFocus(existingCar));
-      setImageCropPercent(
-        normalizeImageCropPercent(existingCar.imageCropPercent),
-      );
+      setImageFraming(getRaceCarImageFraming(existingCar));
     }
   }
 
@@ -189,10 +171,7 @@ function EditCarPage() {
       setExistingCar(updatedCar);
       setImageUrl(updatedCar.imageUrl);
       setSelectedImage(null);
-      setImageFocus(getCarImageFocus(updatedCar));
-      setImageCropPercent(
-        normalizeImageCropPercent(updatedCar.imageCropPercent),
-      );
+      setImageFraming(getRaceCarImageFraming(updatedCar));
       setImageOptimizationMessage("");
       setSuccessMessage("Image removed.");
     } catch (caughtError) {
@@ -218,24 +197,22 @@ function EditCarPage() {
         brand: brand.trim(),
         horsePower: Number(horsePower),
       });
-      const framing = {
-        focusX: imageFocus.x,
-        focusY: imageFocus.y,
-        cropPercent: imageCropPercent,
-      };
 
       if (selectedImage) {
-        savedCar = await updateRaceCarImage(carId, selectedImage, framing);
+        savedCar = await updateRaceCarImage(
+          carId,
+          selectedImage,
+          imageFraming,
+        );
       } else if (
         imageUrl &&
         existingCar &&
-        (
-          !imageFocusPointsEqual(imageFocus, getCarImageFocus(existingCar)) ||
-          imageCropPercent !==
-            normalizeImageCropPercent(existingCar.imageCropPercent)
+        !imageFramingProfilesEqual(
+          imageFraming,
+          getRaceCarImageFraming(existingCar),
         )
       ) {
-        savedCar = await updateRaceCarImageFraming(carId, framing);
+        savedCar = await updateRaceCarImageFraming(carId, imageFraming);
       }
 
       setExistingCar(savedCar);
@@ -357,13 +334,11 @@ function EditCarPage() {
 
           {previewUrl && (
             <ImageFocusPicker
+              key={previewUrl}
               imageUrl={previewUrl}
-              value={imageFocus}
-              onChange={setImageFocus}
-              cropPercent={imageCropPercent}
-              onCropPercentChange={setImageCropPercent}
+              framingProfiles={imageFraming}
+              onFramingProfilesChange={setImageFraming}
               imageAlt="Race car image"
-              previewVariants={CAR_IMAGE_PREVIEW_VARIANTS}
               disabled={saving || imageSaving || imageOptimizing}
             />
           )}

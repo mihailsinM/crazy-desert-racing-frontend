@@ -7,6 +7,7 @@ import {
   getRaceCarAssetUrl,
 } from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
+import { getRaceCarImageFraming } from "../utils/raceCarImageFraming";
 
 
 function MyCarsPage() {
@@ -58,42 +59,46 @@ function MyCarsPage() {
           </article>
         )}
 
-        {cars.map((car) => (
-          <article
-            key={car.id}
-            className="du-card du-showcase-card"
-            onClick={() => navigate(`/cars/${car.id}`)}
-          >
-            <FocalImage
-              src={getRaceCarAssetUrl(car.imageUrl) ?? raceBackground}
-              alt={`${car.brand} ${car.name}`}
-              focusX={car.imageFocusX}
-              focusY={car.imageFocusY}
-              cropPercent={car.imageUrl ? car.imageCropPercent : 0}
-              className="du-showcase-media"
-            />
-            <div className="du-showcase-content">
-              <p className="du-eyebrow du-showcase-eyebrow">{car.brand}</p>
+        {cars.map((car) => {
+          const cardFraming = getRaceCarImageFraming(car).card;
 
-              <h2 className="du-showcase-title">{car.name}</h2>
+          return (
+            <article
+              key={car.id}
+              className="du-card du-showcase-card"
+              onClick={() => navigate(`/cars/${car.id}`)}
+            >
+              <FocalImage
+                src={getRaceCarAssetUrl(car.imageUrl) ?? raceBackground}
+                alt={`${car.brand} ${car.name}`}
+                focusX={cardFraming.focusX}
+                focusY={cardFraming.focusY}
+                cropPercent={car.imageUrl ? cardFraming.cropPercent : 0}
+                className="du-showcase-media"
+              />
+              <div className="du-showcase-content">
+                <p className="du-eyebrow du-showcase-eyebrow">{car.brand}</p>
 
-              <div className="du-showcase-meta">
-                <span className="du-badge">{car.horsePower} HP</span>
+                <h2 className="du-showcase-title">{car.name}</h2>
+
+                <div className="du-showcase-meta">
+                  <span className="du-badge">{car.horsePower} HP</span>
+                </div>
+
+                <button
+                  className="du-button du-button-primary du-showcase-action"
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    navigate(`/cars/${car.id}`);
+                  }}
+                >
+                  View Details →
+                </button>
               </div>
-
-              <button
-                className="du-button du-button-primary du-showcase-action"
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  navigate(`/cars/${car.id}`);
-                }}
-              >
-                View Details →
-              </button>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
         <article className="du-card" onClick={() => navigate("/cars/new")}>
           <h2>+ Add New Car</h2>
           <p>Connect your next racing vehicle to your driver profile.</p>

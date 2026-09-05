@@ -36,6 +36,16 @@
   );
 }
 
+.du-car-details {
+  min-height: 0;
+  aspect-ratio: var(--du-card-image-aspect-ratio);
+}
+
+.du-car-details .du-details-overlay {
+  min-height: 0;
+  height: 100%;
+}
+
 .du-details-media {
   position: absolute;
   inset: 0;
@@ -143,6 +153,14 @@
 
   .du-details-overlay {
     padding: 32px;
+  }
+
+  .du-car-details {
+    aspect-ratio: auto;
+  }
+
+  .du-car-details .du-details-overlay {
+    height: auto;
   }
 
   .du-details-title {

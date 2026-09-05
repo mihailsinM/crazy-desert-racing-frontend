@@ -14,9 +14,8 @@ import {
   updateRaceCarImage,
 } from "../services/raceCarService";
 import {
-  CENTER_IMAGE_FOCUS,
-  DEFAULT_IMAGE_CROP_PERCENT,
-  type ImageFocusPoint,
+  createImageFramingProfiles,
+  type ImageFramingProfiles,
 } from "../utils/imageFocus";
 import {
   formatImageFileSize,
@@ -25,8 +24,6 @@ import {
   prepareImageForUpload,
 } from "../utils/imageUpload";
 
-const CAR_IMAGE_PREVIEW_VARIANTS = ["circle", "wide"] as const;
-
 function AddCarPage() {
   const navigate = useNavigate();
 
@@ -34,11 +31,8 @@ function AddCarPage() {
   const [brand, setBrand] = useState("");
   const [horsePower, setHorsePower] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imageFocus, setImageFocus] = useState<ImageFocusPoint>({
-    ...CENTER_IMAGE_FOCUS,
-  });
-  const [imageCropPercent, setImageCropPercent] = useState(
-    DEFAULT_IMAGE_CROP_PERCENT,
+  const [imageFraming, setImageFraming] = useState<ImageFramingProfiles>(
+    () => createImageFramingProfiles(),
   );
   const [createdCarId, setCreatedCarId] = useState<number | null>(null);
   const [imageOptimizing, setImageOptimizing] = useState(false);
@@ -74,8 +68,7 @@ function AddCarPage() {
       const optimizedImage = await prepareImageForUpload(image);
 
       setSelectedImage(optimizedImage);
-      setImageFocus({ ...CENTER_IMAGE_FOCUS });
-      setImageCropPercent(DEFAULT_IMAGE_CROP_PERCENT);
+      setImageFraming(createImageFramingProfiles());
       setImageOptimizationMessage(
         optimizedImage === image
           ? `Ready to upload · ${formatImageFileSize(optimizedImage.size)}`
@@ -119,11 +112,7 @@ function AddCarPage() {
       savedCarId = savedCar.id;
       setCreatedCarId(savedCar.id);
 
-      await updateRaceCarImage(savedCar.id, selectedImage, {
-        focusX: imageFocus.x,
-        focusY: imageFocus.y,
-        cropPercent: imageCropPercent,
-      });
+      await updateRaceCarImage(savedCar.id, selectedImage, imageFraming);
 
       navigate(`/cars/${savedCar.id}`);
     } catch (caughtError) {
@@ -218,13 +207,11 @@ function AddCarPage() {
 
           {selectedImagePreview && (
             <ImageFocusPicker
+              key={selectedImagePreview}
               imageUrl={selectedImagePreview}
-              value={imageFocus}
-              onChange={setImageFocus}
-              cropPercent={imageCropPercent}
-              onCropPercentChange={setImageCropPercent}
+              framingProfiles={imageFraming}
+              onFramingProfilesChange={setImageFraming}
               imageAlt="Race car image"
-              previewVariants={CAR_IMAGE_PREVIEW_VARIANTS}
               disabled={saving || imageOptimizing}
             />
           )}
