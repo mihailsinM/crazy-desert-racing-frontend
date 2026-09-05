@@ -45,7 +45,10 @@ function DesertLiveRow({
 
   return (
     <article className="du-row-panel du-desert-live-row">
-      <div className="du-desert-live-row-media" aria-hidden={!showImage}>
+      <div
+        className="du-row-media du-desert-live-row-media"
+        aria-hidden={!showImage}
+      >
         {showImage ? (
           <FocalImage
             src={imageUrl}

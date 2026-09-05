@@ -4,6 +4,7 @@ import {
   verifyUserLicense,
   makeUserAdmin,
 } from "../services/userService";
+import UserAvatar from "../components/users/UserAvatar";
 import type { UserResponse } from "../types/user";
 
 function AdminUsersPage() {
@@ -92,7 +93,9 @@ function AdminUsersPage() {
 
           <div className="du-card-list du-soft-scroll du-list-4 du-list-row-large">
             {filteredUsers.map((user) => (
-              <div key={user.id} className="du-row-panel">
+              <div key={user.id} className="du-row-panel du-user-row">
+                <UserAvatar name={user.name} avatarUrl={user.avatarUrl} />
+
                 <div className="du-row-main">
                   <span className="du-row-title">
                     {user.name} · {user.role}

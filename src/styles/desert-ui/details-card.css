@@ -53,8 +53,10 @@
 }
 
 .du-details-overlay {
+  --du-details-overlay-inline-padding: 56px;
+
   min-height: 720px;
-  padding: 56px;
+  padding: 56px var(--du-details-overlay-inline-padding);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -63,7 +65,7 @@
 }
 
 .du-details-overlay.du-scroll {
-  padding-right: 39px;
+  padding-right: calc(var(--du-details-overlay-inline-padding) - 17px);
 }
 
 .du-details-eyebrow {
@@ -152,7 +154,9 @@
   }
 
   .du-details-overlay {
-    padding: 32px;
+    --du-details-overlay-inline-padding: 32px;
+
+    padding: 32px var(--du-details-overlay-inline-padding);
   }
 
   .du-car-details {
