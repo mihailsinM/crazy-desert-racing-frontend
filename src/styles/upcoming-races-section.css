@@ -1,6 +1,5 @@
 .upcoming-races-section {
   padding: 90px 24px;
- 
 }
 
 .upcoming-races-header {
@@ -22,39 +21,81 @@
 }
 
 .upcoming-races-grid {
-  max-width: 1100px;
-  margin: 0 auto;
-
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  max-width: 1100px;
+  margin: 0 auto;
   gap: 22px;
 }
 
 .upcoming-race-card {
-  padding: 24px;
-  border-radius: 24px;
-
-  background: rgba(35, 25, 20, 0.55);
+  position: relative;
+  aspect-ratio: var(--du-card-image-aspect-ratio);
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
-
+  border-radius: 24px;
+  background: rgba(35, 25, 20, 0.55);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
   transition:
     transform 0.25s ease,
     border-color 0.25s ease,
     box-shadow 0.25s ease;
 }
 
-.upcoming-race-card:hover {
+.upcoming-race-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(18, 11, 7, 0.84) 0%,
+    rgba(18, 11, 7, 0.54) 52%,
+    rgba(18, 11, 7, 0.12) 100%
+  );
+  pointer-events: none;
+}
+
+.upcoming-race-card:hover,
+.upcoming-race-card:focus-visible {
   transform: translateY(-6px);
-  border-color: rgba(255, 179, 71, 0.55);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 179, 71, 0.72);
+  box-shadow:
+    0 0 24px rgba(255, 122, 26, 0.24),
+    0 18px 38px rgba(0, 0, 0, 0.38);
+}
+
+.upcoming-race-card:focus-visible {
+  outline: 2px solid var(--du-orange-main);
+  outline-offset: 4px;
+}
+
+.upcoming-race-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.upcoming-race-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
 }
 
 .upcoming-race-card h3 {
-  margin-top: 0;
+  max-width: 90%;
+  margin: 0 0 10px;
   font-size: 24px;
 }
 
 .upcoming-race-card p {
+  margin: 3px 0;
   color: #f0ddd0;
 }
 

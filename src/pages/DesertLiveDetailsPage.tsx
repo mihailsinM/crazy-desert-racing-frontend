@@ -6,7 +6,7 @@ import {
   desertLiveCategoryLabels,
 } from "../components/desert-live/desertLiveOptions";
 import { isDesertLiveTargetUrlAllowed } from "../components/desert-live/desertLiveLinks";
-import FocalImage from "../components/images/FocalImage";
+import DetailsCard from "../components/details/DetailsCard";
 import { useAuth } from "../context/authContext";
 import {
   deleteAdminDesertLiveItem,
@@ -18,6 +18,7 @@ import {
 } from "../services/desertLiveService";
 import type { DesertLiveItem } from "../types/desertLive";
 import raceBackground from "../assets/race.png";
+import { getDesertLiveImageFraming } from "../utils/desertLiveImageFraming";
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString("en-US", {
@@ -111,7 +112,10 @@ function DesertLiveDetailsPage({
   }
 
   const itemImageUrl = getDesertLiveAssetUrl(item.imageUrl);
-  const canManage = isAdmin || currentUser?.id === item.authorId;
+  const cardFraming = getDesertLiveImageFraming(item).card;
+  const canManage =
+    item.linkedRaceId === null &&
+    (isAdmin || currentUser?.id === item.authorId);
   const hasAllowedTargetUrl = Boolean(
     item.targetUrl && isDesertLiveTargetUrlAllowed(item.targetUrl),
   );
@@ -157,49 +161,35 @@ function DesertLiveDetailsPage({
 
   return (
     <section className="du-page">
-      <article
-        className="du-details-card du-desert-live-details"
-      >
-        <FocalImage
-          src={itemImageUrl ?? raceBackground}
-          alt=""
-          focusX={itemImageUrl ? item.imageFocusX : 50}
-          focusY={itemImageUrl ? item.imageFocusY : 50}
-          className="du-details-media"
-          aria-hidden="true"
-        />
-        <div className="du-details-overlay du-details-overlay-top du-desert-live-details-overlay">
-          <div className="du-desert-live-details-topline">
-            <p className="du-details-eyebrow">
-              {desertLiveCategoryIcons[item.category]}{" "}
-              {desertLiveCategoryLabels[item.category]}
-            </p>
-            <span
-              className={`du-status du-status-${item.moderationStatus.toLowerCase()}`}
-            >
-              {item.moderationStatus}
-            </span>
-          </div>
-
-          <h1 className="du-details-title">{item.title}</h1>
-
-          <div className="du-desert-live-details-meta">
-            <span>By {item.authorName}</span>
-            <span>{formatDate(item.createdAt)}</span>
-          </div>
-
-          <p className="du-details-description du-desert-live-details-description">
-            {item.description}
-          </p>
-
-          {item.moderationNote && (
-            <div className="du-details-message">
-              <p className="du-details-message-title">Moderation note</p>
-              <p>{item.moderationNote}</p>
-            </div>
-          )}
-
-          <div className="du-inline du-inline-sm du-inline-wrap du-push-bottom">
+      <DetailsCard
+        className="du-desert-live-details"
+        overlayClassName="du-desert-live-details-overlay"
+        topAligned
+        eyebrow={
+          <>
+            {desertLiveCategoryIcons[item.category]}{" "}
+            {desertLiveCategoryLabels[item.category]}
+          </>
+        }
+        title={item.title}
+        image={{
+          src: itemImageUrl ?? raceBackground,
+          alt: "",
+          focusX: itemImageUrl ? cardFraming.focusX : 50,
+          focusY: itemImageUrl ? cardFraming.focusY : 50,
+          cropPercent: itemImageUrl ? cardFraming.cropPercent : 0,
+          ariaHidden: true,
+        }}
+        status={
+          <span
+            className={`du-status du-status-${item.moderationStatus.toLowerCase()}`}
+          >
+            {item.moderationStatus}
+          </span>
+        }
+        actionsClassName="du-details-actions-inline du-push-bottom"
+        actions={
+          <>
             <button
               type="button"
               className="du-button du-button-small du-button-rect du-button-back"
@@ -214,7 +204,7 @@ function DesertLiveDetailsPage({
                 className="du-button du-button-primary du-button-small du-button-rect"
                 onClick={openTargetUrl}
               >
-                Open Link
+                {item.linkedRaceId ? "View Race" : "Open Link"}
               </button>
             )}
 
@@ -243,47 +233,64 @@ function DesertLiveDetailsPage({
                 Delete Publication
               </button>
             )}
-          </div>
-        </div>
-
-        {deleteDialogOpen && (
-          <div className="du-desert-live-dialog-backdrop">
-            <div
-              className="du-panel du-desert-live-dialog"
-              role="dialog"
-              aria-modal="true"
-            >
-              <p className="du-eyebrow">Desert Live</p>
-              <h2>Delete publication?</h2>
-              <p className="du-text-soft">
-                “{item.title}” and its image will be removed.
-              </p>
-              {actionError && <p className="du-error">{actionError}</p>}
-              <div className="du-inline du-inline-sm du-inline-wrap du-mt-lg">
-                <button
-                  type="button"
-                  className="du-button du-button-danger du-button-rect du-button-small"
-                  disabled={deleting}
-                  onClick={handleDelete}
-                >
-                  {deleting ? "Deleting..." : "Delete"}
-                </button>
-                <button
-                  type="button"
-                  className="du-button du-button-rect du-button-small"
-                  disabled={deleting}
-                  onClick={() => {
-                    setDeleteDialogOpen(false);
-                    setActionError("");
-                  }}
-                >
-                  Cancel
-                </button>
+          </>
+        }
+        floatingLayer={
+          deleteDialogOpen && (
+            <div className="du-desert-live-dialog-backdrop">
+              <div
+                className="du-panel du-desert-live-dialog"
+                role="dialog"
+                aria-modal="true"
+              >
+                <p className="du-eyebrow">Desert Live</p>
+                <h2>Delete publication?</h2>
+                <p className="du-text-soft">
+                  “{item.title}” and its image will be removed.
+                </p>
+                {actionError && <p className="du-error">{actionError}</p>}
+                <div className="du-inline du-inline-sm du-inline-wrap du-mt-lg">
+                  <button
+                    type="button"
+                    className="du-button du-button-danger du-button-rect du-button-small"
+                    disabled={deleting}
+                    onClick={handleDelete}
+                  >
+                    {deleting ? "Deleting..." : "Delete"}
+                  </button>
+                  <button
+                    type="button"
+                    className="du-button du-button-rect du-button-small"
+                    disabled={deleting}
+                    onClick={() => {
+                      setDeleteDialogOpen(false);
+                      setActionError("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
+          )
+        }
+      >
+        <div className="du-desert-live-details-meta">
+          <span>By {item.authorName}</span>
+          <span>{formatDate(item.createdAt)}</span>
+        </div>
+
+        <p className="du-details-description du-desert-live-details-description">
+          {item.description}
+        </p>
+
+        {item.moderationNote && (
+          <div className="du-details-message">
+            <p className="du-details-message-title">Moderation note</p>
+            <p>{item.moderationNote}</p>
           </div>
         )}
-      </article>
+      </DetailsCard>
     </section>
   );
 }

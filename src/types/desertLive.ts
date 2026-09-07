@@ -1,3 +1,5 @@
+import type { ImageFramingProfiles } from "../utils/imageFocus";
+
 export type DesertLiveCategory =
   | "RACE"
   | "FESTIVAL"
@@ -20,6 +22,7 @@ export type DesertLiveItem = {
   title: string;
   description: string;
   targetUrl: string | null;
+  linkedRaceId: number | null;
   authorId: number;
   authorName: string;
   authorAvatarUrl: string | null;
@@ -30,7 +33,9 @@ export type DesertLiveItem = {
   updatedAt: string;
   imageFocusX: number;
   imageFocusY: number;
+  imageCropPercent: number;
   imageUrl: string | null;
+  imageFraming?: ImageFramingProfiles | null;
 };
 
 export type DesertLivePage = {

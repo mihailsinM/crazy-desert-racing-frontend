@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import FocalImage from "../components/images/FocalImage";
 import raceBackground from "../assets/race.png";
+import DetailsCard from "../components/details/DetailsCard";
 import {
   deleteRaceCar,
   getRaceCarAssetUrl,
@@ -68,30 +68,19 @@ function CarDetailsPage() {
 
   return (
     <section className="du-page">
-      <article className="du-details-card du-car-details">
-        <FocalImage
-          src={getRaceCarAssetUrl(car.imageUrl) ?? raceBackground}
-          alt={`${car.brand} ${car.name}`}
-          focusX={cardFraming.focusX}
-          focusY={cardFraming.focusY}
-          cropPercent={car.imageUrl ? cardFraming.cropPercent : 0}
-          className="du-details-media"
-        />
-        <div className="du-details-overlay">
-          <p className="du-details-eyebrow">Car Details</p>
-
-          <h1 className="du-details-title">🏎 {car.name}</h1>
-
-          <div className="du-details-info">
-            <p>🏷 Brand: {car.brand}</p>
-            <p>⚡ Horse Power: {car.horsePower} HP</p>
-          </div>
-
-          <p className="du-details-description">
-            This vehicle is connected to your Crazy Desert Racing profile and
-            can be used for future race registrations.
-          </p>
-          <div className="du-details-actions">
+      <DetailsCard
+        className="du-car-details"
+        eyebrow="Car Details"
+        title={<>🏎 {car.name}</>}
+        image={{
+          src: getRaceCarAssetUrl(car.imageUrl) ?? raceBackground,
+          alt: `${car.brand} ${car.name}`,
+          focusX: cardFraming.focusX,
+          focusY: cardFraming.focusY,
+          cropPercent: car.imageUrl ? cardFraming.cropPercent : 0,
+        }}
+        actions={
+          <>
             <button
               className="du-button du-button-secondary du-sand-text"
               onClick={() => navigate("/cars")}
@@ -110,9 +99,19 @@ function CarDetailsPage() {
             >
               🛠 Edit Car
             </button>
-          </div>
+          </>
+        }
+      >
+        <div className="du-details-info">
+          <p>🏷 Brand: {car.brand}</p>
+          <p>⚡ Horse Power: {car.horsePower} HP</p>
         </div>
-      </article>
+
+        <p className="du-details-description">
+          This vehicle is connected to your Crazy Desert Racing profile and
+          can be used for future race registrations.
+        </p>
+      </DetailsCard>
     </section>
   );
 }

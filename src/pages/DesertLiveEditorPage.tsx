@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import {
   desertLiveCategoryIcons,
-  desertLiveCategorySelectOptions,
+  desertLivePublicationCategoryOptions,
 } from "../components/desert-live/desertLiveOptions";
 import DesertLiveMenuFilter from "../components/desert-live/DesertLiveMenuFilter";
 import FocalImage from "../components/images/FocalImage";
@@ -19,10 +19,10 @@ import {
   getDesertLiveAssetUrl,
   getMyDesertLiveItem,
   updateAdminDesertLiveImage,
-  updateAdminDesertLiveImageFocus,
+  updateAdminDesertLiveImageFraming,
   updateAdminDesertLiveItem,
   updateMyDesertLiveImage,
-  updateMyDesertLiveImageFocus,
+  updateMyDesertLiveImageFraming,
   updateMyDesertLiveItem,
 } from "../services/desertLiveService";
 import type {
@@ -32,11 +32,11 @@ import type {
 } from "../types/desertLive";
 import raceBackground from "../assets/race.png";
 import {
-  CENTER_IMAGE_FOCUS,
-  createImageFocusPoint,
-  imageFocusPointsEqual,
-  type ImageFocusPoint,
+  createImageFramingProfiles,
+  imageFramingProfilesEqual,
+  type ImageFramingProfiles,
 } from "../utils/imageFocus";
+import { getDesertLiveImageFraming } from "../utils/desertLiveImageFraming";
 import {
   formatImageFileSize,
   IMAGE_UPLOAD_ACCEPT,
@@ -60,10 +60,6 @@ function toLocalDateTime(value: string | null): string {
 
 function toApiDateTime(value: string): string | null {
   return value ? new Date(value).toISOString() : null;
-}
-
-function getItemImageFocus(item: DesertLiveItem): ImageFocusPoint {
-  return createImageFocusPoint(item.imageFocusX, item.imageFocusY);
 }
 
 function dateTimesEqual(
@@ -100,16 +96,16 @@ function DesertLiveEditorPage({
 
   const [existingItem, setExistingItem] =
     useState<DesertLiveItem | null>(null);
-  const [category, setCategory] = useState<DesertLiveCategory>("RACE");
+  const [category, setCategory] = useState<DesertLiveCategory>("FESTIVAL");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [targetUrl, setTargetUrl] = useState("");
   const [activeFrom, setActiveFrom] = useState("");
   const [activeUntil, setActiveUntil] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imageFocus, setImageFocus] = useState<ImageFocusPoint>({
-    ...CENTER_IMAGE_FOCUS,
-  });
+  const [imageFraming, setImageFraming] = useState<ImageFramingProfiles>(() =>
+    createImageFramingProfiles(),
+  );
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [imageSaving, setImageSaving] = useState(false);
@@ -158,7 +154,7 @@ function DesertLiveEditorPage({
           setTargetUrl(item.targetUrl ?? "");
           setActiveFrom(toLocalDateTime(item.activeFrom));
           setActiveUntil(toLocalDateTime(item.activeUntil));
-          setImageFocus(getItemImageFocus(item));
+          setImageFraming(getDesertLiveImageFraming(item));
         }
       } catch (caughtError) {
         if (active) {
@@ -198,7 +194,7 @@ function DesertLiveEditorPage({
       const optimizedImage = await prepareImageForUpload(image);
 
       setSelectedImage(optimizedImage);
-      setImageFocus({ ...CENTER_IMAGE_FOCUS });
+      setImageFraming(createImageFramingProfiles());
       setImageOptimizationMessage(
         optimizedImage === image
           ? `Ready to upload · ${formatImageFileSize(optimizedImage.size)}`
@@ -231,17 +227,20 @@ function DesertLiveEditorPage({
   async function saveImage(item: DesertLiveItem): Promise<DesertLiveItem> {
     if (selectedImage) {
       return usesAdminApi
-        ? updateAdminDesertLiveImage(item.id, selectedImage, imageFocus)
-        : updateMyDesertLiveImage(item.id, selectedImage, imageFocus);
+        ? updateAdminDesertLiveImage(item.id, selectedImage, imageFraming)
+        : updateMyDesertLiveImage(item.id, selectedImage, imageFraming);
     }
 
     if (
       item.imageUrl &&
-      !imageFocusPointsEqual(imageFocus, getItemImageFocus(item))
+      !imageFramingProfilesEqual(
+        imageFraming,
+        getDesertLiveImageFraming(item),
+      )
     ) {
       return usesAdminApi
-        ? updateAdminDesertLiveImageFocus(item.id, imageFocus)
-        : updateMyDesertLiveImageFocus(item.id, imageFocus);
+        ? updateAdminDesertLiveImageFraming(item.id, imageFraming)
+        : updateMyDesertLiveImageFraming(item.id, imageFraming);
     }
 
     return item;
@@ -296,7 +295,7 @@ function DesertLiveEditorPage({
       setExistingItem(savedItem);
       savedItem = await saveImage(savedItem);
       setExistingItem(savedItem);
-      setImageFocus(getItemImageFocus(savedItem));
+      setImageFraming(getDesertLiveImageFraming(savedItem));
       setSelectedImage(null);
       setImageOptimizationMessage("");
 
@@ -336,7 +335,7 @@ function DesertLiveEditorPage({
         : await deleteMyDesertLiveImage(existingItem.id);
 
       setExistingItem(updatedItem);
-      setImageFocus(getItemImageFocus(updatedItem));
+      setImageFraming(getDesertLiveImageFraming(updatedItem));
       setSuccessMessage("Image removed.");
     } catch (caughtError) {
       setError(
@@ -353,24 +352,49 @@ function DesertLiveEditorPage({
     return <p className="du-sand-text">Loading publication editor...</p>;
   }
 
+  if (existingItem?.linkedRaceId) {
+    return (
+      <section className="du-page">
+        <section className="du-panel">
+          <p className="du-eyebrow">Connected Race publication</p>
+          <h1 className="du-title-lg">Manage this update from its Race</h1>
+          <p className="du-text-soft">
+            The title, status, link, and image are synchronized with the real
+            Race and cannot be edited as a separate Desert Live post.
+          </p>
+          <button
+            type="button"
+            className="du-button du-button-primary du-button-small du-button-rect"
+            onClick={() => navigate(`/races/${existingItem.linkedRaceId}/edit`)}
+          >
+            Edit Race
+          </button>
+        </section>
+      </section>
+    );
+  }
+
   const currentImageUrl = getDesertLiveAssetUrl(existingItem?.imageUrl ?? null);
   const previewUrl = selectedImagePreview ?? currentImageUrl;
   const hasContentChanges = existingItem
     ? !itemMatchesRequest(existingItem, createRequest())
     : true;
-  const hasFocusChanges = existingItem
-    ? !imageFocusPointsEqual(imageFocus, getItemImageFocus(existingItem))
+  const hasFramingChanges = existingItem
+    ? !imageFramingProfilesEqual(
+        imageFraming,
+        getDesertLiveImageFraming(existingItem),
+      )
     : false;
-  const isFocusOnlySave = Boolean(
+  const isFramingOnlySave = Boolean(
     existingItem?.imageUrl &&
     !selectedImage &&
     !hasContentChanges &&
-    hasFocusChanges,
+    hasFramingChanges,
   );
   let submitLabel = usesAdminApi ? "Publish Now" : "Submit for Review";
 
-  if (isFocusOnlySave) {
-    submitLabel = "Save Image Focus";
+  if (isFramingOnlySave) {
+    submitLabel = "Save Image Framing";
   } else if (isEditing) {
     submitLabel = usesAdminApi ? "Save Changes" : "Submit Changes";
   }
@@ -382,6 +406,7 @@ function DesertLiveEditorPage({
         style={{ backgroundImage: `url(${raceBackground})` }}
       >
         <div className="du-details-overlay du-details-overlay-top du-desert-live-editor-overlay">
+          <div className="du-desert-live-editor-scroll du-soft-scroll">
           <header className="du-desert-live-page-header">
             <div>
               <p className="du-details-eyebrow">Desert Live</p>
@@ -408,7 +433,7 @@ function DesertLiveEditorPage({
                   buttonLabel="Category"
                   menuLabel="Choose category"
                   value={category}
-                  options={desertLiveCategorySelectOptions}
+                  options={desertLivePublicationCategoryOptions}
                   onChange={setCategory}
                   variant="SELECT"
                 />
@@ -474,8 +499,9 @@ function DesertLiveEditorPage({
                   <FocalImage
                     src={previewUrl}
                     alt="Publication preview"
-                    focusX={imageFocus.x}
-                    focusY={imageFocus.y}
+                    focusX={imageFraming.avatar.focusX}
+                    focusY={imageFraming.avatar.focusY}
+                    cropPercent={imageFraming.avatar.cropPercent}
                   />
                 ) : (
                   <span aria-hidden="true">
@@ -525,10 +551,10 @@ function DesertLiveEditorPage({
                       onClick={() => {
                         setSelectedImage(null);
                         setImageOptimizationMessage("");
-                        setImageFocus(
+                        setImageFraming(
                           existingItem
-                            ? getItemImageFocus(existingItem)
-                            : { ...CENTER_IMAGE_FOCUS },
+                            ? getDesertLiveImageFraming(existingItem)
+                            : createImageFramingProfiles(),
                         );
                       }}
                     >
@@ -554,8 +580,8 @@ function DesertLiveEditorPage({
               {previewUrl && (
                 <ImageFocusPicker
                   imageUrl={previewUrl}
-                  value={imageFocus}
-                  onChange={setImageFocus}
+                  framingProfiles={imageFraming}
+                  onFramingProfilesChange={setImageFraming}
                   imageAlt="Publication image"
                   disabled={saving || imageSaving || imageOptimizing}
                 />
@@ -574,7 +600,7 @@ function DesertLiveEditorPage({
               <p className="du-caption">
                 New publications, replaced images, and content changes are sent
                 to an administrator for review. Changing only the image focus
-                keeps the current moderation status.
+                or crop keeps the current moderation status.
               </p>
             )}
 
@@ -596,6 +622,7 @@ function DesertLiveEditorPage({
               </button>
             </div>
           </form>
+          </div>
         </div>
       </article>
     </section>

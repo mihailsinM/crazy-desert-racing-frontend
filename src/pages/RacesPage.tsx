@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
 import type { Race } from "../types/race";
 import { useNavigate } from "react-router-dom";
+import raceBackground from "../assets/race.png";
+import FocalImage from "../components/images/FocalImage";
 import { getMyRaceCars } from "../services/raceCarService";
 import { registerMyCarForRace } from "../services/raceRegistrationService";
 import type { RaceCar } from "../types/raceCar";
-import { getAllRaces, updateRace } from "../services/raceService";
+import {
+  getAllRaces,
+  getRaceAssetUrl,
+  synchronizeRacePublications,
+  updateRace,
+} from "../services/raceService";
 import { useAuth } from "../context/authContext";
+import { getRaceImageFraming } from "../utils/raceImageFraming";
 
 
 function RacesPage() {
@@ -15,6 +23,7 @@ function RacesPage() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [myCars, setMyCars] = useState<RaceCar[]>([]);
+  const [synchronizingLive, setSynchronizingLive] = useState(false);
 
   function formatRaceDate(startDate: string) {
     const date = new Date(startDate);
@@ -71,7 +80,7 @@ function RacesPage() {
   }
   async function handleCancelRace(race: Race) {
     try {
-      await updateRace(race.id, {
+      const updatedRace = await updateRace(race.id, {
         name: race.name,
         location: race.location,
         startDate: race.startDate,
@@ -81,13 +90,7 @@ function RacesPage() {
       });
 
       const updatedRaces = races.map((currentRace) =>
-        currentRace.id === race.id
-          ? {
-              ...currentRace,
-              status: "CANCELED",
-              adminMessage: "Race canceled by organizer.",
-            }
-          : currentRace,
+        currentRace.id === race.id ? updatedRace : currentRace,
       );
 
       setRaces(updatedRaces);
@@ -102,7 +105,7 @@ function RacesPage() {
 
   async function handlePostponeRace(race: Race) {
     try {
-      await updateRace(race.id, {
+      const updatedRace = await updateRace(race.id, {
         name: race.name,
         location: race.location,
         startDate: race.startDate,
@@ -112,13 +115,7 @@ function RacesPage() {
       });
 
       const updatedRaces = races.map((currentRace) =>
-        currentRace.id === race.id
-          ? {
-              ...currentRace,
-              status: "POSTPONED",
-              adminMessage: "Race postponed by organizer.",
-            }
-          : currentRace,
+        currentRace.id === race.id ? updatedRace : currentRace,
       );
 
       setRaces(updatedRaces);
@@ -130,6 +127,24 @@ function RacesPage() {
       }
     }
   }
+
+  async function handleSynchronizeLive() {
+    setSynchronizingLive(true);
+
+    try {
+      const synchronizedRaces = await synchronizeRacePublications();
+      alert(`Desert Live synchronized for ${synchronizedRaces} races.`);
+    } catch (caughtError) {
+      alert(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Failed to synchronize Desert Live races",
+      );
+    } finally {
+      setSynchronizingLive(false);
+    }
+  }
+
   return (
     <section className="du-page">
       <header className="du-page-header">
@@ -138,8 +153,20 @@ function RacesPage() {
       </header>
 
       {currentUser?.role === "ADMIN" && (
-        <div className="du-page-actions">
-          <button className="du-button du-eyebrow" onClick={() => navigate("/races/new")}>
+        <div className="du-page-actions du-inline du-inline-sm du-inline-wrap">
+          <button
+            type="button"
+            className="du-button du-button-small du-button-rect"
+            disabled={synchronizingLive}
+            onClick={handleSynchronizeLive}
+          >
+            {synchronizingLive ? "Synchronizing..." : "Sync Desert Live"}
+          </button>
+          <button
+            type="button"
+            className="du-button du-button-primary du-button-small du-button-rect"
+            onClick={() => navigate("/races/new")}
+          >
             Add New Race
           </button>
         </div>
@@ -149,19 +176,38 @@ function RacesPage() {
         {races.map((race) => {
           const status = race.status ?? "UPCOMING";
           const formattedDate = formatRaceDate(race.startDate);
+          const avatarFraming = getRaceImageFraming(race).avatar;
+          const imageUrl = getRaceAssetUrl(race.imageUrl);
 
           return (
-            <article key={race.id} className="du-card du-entity-card">
-              <h2>{race.name}</h2>
+            <article
+              key={race.id}
+              className="du-card du-entity-card du-race-card"
+            >
+              <div className="du-race-card-heading">
+                <div className="du-race-card-title-group">
+                  <h2>{race.name}</h2>
+                  <span
+                    className={`du-status du-status-${status.toLowerCase()}`}
+                  >
+                    {status}
+                  </span>
+                </div>
+                <span className="du-row-media du-race-card-avatar">
+                  <FocalImage
+                    src={imageUrl ?? raceBackground}
+                    alt={`${race.name} avatar`}
+                    focusX={imageUrl ? avatarFraming.focusX : 50}
+                    focusY={imageUrl ? avatarFraming.focusY : 50}
+                    cropPercent={imageUrl ? avatarFraming.cropPercent : 0}
+                  />
+                </span>
+              </div>
 
               <p>📍 {race.location}</p>
 
               <p>📅 {formattedDate}</p>
-
-              {/* <p>👥 Max Participants: {race.maxParticipants}</p> */}
-              <span className={`du-status du-status-${status.toLowerCase()}`}>
-                {status}
-              </span>
+              <p>👥 Up to {race.maxParticipants} drivers</p>
 
               <div className="du-entity-actions">
                 {currentUser?.role === "ADMIN" && (

@@ -7,6 +7,7 @@ import {
 } from "react";
 
 import {
+  CARD_IMAGE_ASPECT_RATIO,
   CENTER_IMAGE_FOCUS,
   createImageFramingProfile,
   createImageFocusPoint,
@@ -78,7 +79,7 @@ const PROFILE_LABELS: Record<ImageFramingProfileName, string> = {
 };
 const PROFILE_ASPECT_RATIOS: Record<ImageFramingProfileName, number> = {
   avatar: 1,
-  card: 16 / 9,
+  card: CARD_IMAGE_ASPECT_RATIO,
 };
 
 function ImageFocusPicker({

@@ -3,8 +3,21 @@
 }
 
 .du-page-shell {
+  --du-page-shell-top-space: 110px;
+  --du-page-shell-bottom-space: 40px;
+
   min-height: 100vh;
-  padding: 110px 24px 40px;
+  padding: var(--du-page-shell-top-space) 24px
+    var(--du-page-shell-bottom-space);
+}
+
+.dashboard-page.du-page-shell > .du-container {
+  display: grid;
+  min-height: calc(
+    100vh - var(--du-page-shell-top-space) -
+      var(--du-page-shell-bottom-space)
+  );
+  align-items: center;
 }
 
 .du-container {
