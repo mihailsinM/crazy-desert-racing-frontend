@@ -7,7 +7,7 @@ import type {
   DesertLivePageQuery,
   DesertLiveWriteRequest,
 } from "../types/desertLive";
-import type { ImageFocusPoint } from "../utils/imageFocus";
+import type { ImageFramingProfiles } from "../utils/imageFocus";
 
 async function getResponseError(
   response: Response,
@@ -79,7 +79,7 @@ function writeRequestInit(
 function imageRequestInit(
   method: "PUT" | "DELETE",
   image?: File,
-  focus?: ImageFocusPoint,
+  framing?: ImageFramingProfiles,
 ): RequestInit {
   if (method === "DELETE") {
     return { method };
@@ -88,9 +88,16 @@ function imageRequestInit(
   const formData = new FormData();
   formData.append("file", image as File);
 
-  if (focus) {
-    formData.append("focusX", String(focus.x));
-    formData.append("focusY", String(focus.y));
+  if (framing) {
+    formData.append("avatarFocusX", String(framing.avatar.focusX));
+    formData.append("avatarFocusY", String(framing.avatar.focusY));
+    formData.append(
+      "avatarCropPercent",
+      String(framing.avatar.cropPercent),
+    );
+    formData.append("cardFocusX", String(framing.card.focusX));
+    formData.append("cardFocusY", String(framing.card.focusY));
+    formData.append("cardCropPercent", String(framing.card.cropPercent));
   }
 
   return {
@@ -99,16 +106,15 @@ function imageRequestInit(
   };
 }
 
-function imageFocusRequestInit(focus: ImageFocusPoint): RequestInit {
+function imageFramingRequestInit(
+  framing: ImageFramingProfiles,
+): RequestInit {
   return {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      focusX: focus.x,
-      focusY: focus.y,
-    }),
+    body: JSON.stringify(framing),
   };
 }
 
@@ -207,26 +213,26 @@ export async function deleteMyDesertLiveItem(id: number): Promise<void> {
 export async function updateMyDesertLiveImage(
   id: number,
   image: File,
-  focus: ImageFocusPoint,
+  framing: ImageFramingProfiles,
 ): Promise<DesertLiveItem> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/desert-live/my/${id}/image`,
-    imageRequestInit("PUT", image, focus),
+    imageRequestInit("PUT", image, framing),
   );
 
   return readJson(response, "Failed to update publication image");
 }
 
-export async function updateMyDesertLiveImageFocus(
+export async function updateMyDesertLiveImageFraming(
   id: number,
-  focus: ImageFocusPoint,
+  framing: ImageFramingProfiles,
 ): Promise<DesertLiveItem> {
   const response = await authenticatedFetch(
-    `${API_BASE_URL}/desert-live/my/${id}/image/focus`,
-    imageFocusRequestInit(focus),
+    `${API_BASE_URL}/desert-live/my/${id}/image/framing`,
+    imageFramingRequestInit(framing),
   );
 
-  return readJson(response, "Failed to update publication image focus");
+  return readJson(response, "Failed to update publication image framing");
 }
 
 export async function deleteMyDesertLiveImage(
@@ -315,26 +321,26 @@ export async function rejectDesertLiveItem(
 export async function updateAdminDesertLiveImage(
   id: number,
   image: File,
-  focus: ImageFocusPoint,
+  framing: ImageFramingProfiles,
 ): Promise<DesertLiveItem> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/desert-live/admin/${id}/image`,
-    imageRequestInit("PUT", image, focus),
+    imageRequestInit("PUT", image, framing),
   );
 
   return readJson(response, "Failed to update publication image");
 }
 
-export async function updateAdminDesertLiveImageFocus(
+export async function updateAdminDesertLiveImageFraming(
   id: number,
-  focus: ImageFocusPoint,
+  framing: ImageFramingProfiles,
 ): Promise<DesertLiveItem> {
   const response = await authenticatedFetch(
-    `${API_BASE_URL}/desert-live/admin/${id}/image/focus`,
-    imageFocusRequestInit(focus),
+    `${API_BASE_URL}/desert-live/admin/${id}/image/framing`,
+    imageFramingRequestInit(framing),
   );
 
-  return readJson(response, "Failed to update publication image focus");
+  return readJson(response, "Failed to update publication image framing");
 }
 
 export async function deleteAdminDesertLiveImage(

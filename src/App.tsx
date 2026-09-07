@@ -70,9 +70,23 @@ function App() {
             <Route path="/cars" element={<MyCarsPage />} />
             <Route path="/cars/new" element={<AddCarPage />} />
             <Route path="/races" element={<RacesPage />} />
-            <Route path="/races/new" element={<AddRacePage />} />
+            <Route
+              path="/races/new"
+              element={
+                <AdminRoute>
+                  <AddRacePage />
+                </AdminRoute>
+              }
+            />
             <Route path="/races/:id" element={<RaceDetailsPage />} />
-            <Route path="/races/:id/edit" element={<EditRacePage />} />
+            <Route
+              path="/races/:id/edit"
+              element={
+                <AdminRoute>
+                  <EditRacePage />
+                </AdminRoute>
+              }
+            />
             <Route path="/vip" element={<VipClubPage />} />
             <Route path="/activity" element={<DesertLivePage />} />
             <Route path="/activity/my" element={<DesertLivePage scope="MY" />} />

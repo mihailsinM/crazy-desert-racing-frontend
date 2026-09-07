@@ -4,6 +4,7 @@ export type DesertLiveFilterOption<T extends string> = {
   value: T;
   label: string;
   icon: string;
+  disabled?: boolean;
 };
 
 type DesertLiveMenuFilterProps<T extends string> = {
@@ -93,12 +94,17 @@ function DesertLiveMenuFilter<T extends string>({
                 type="button"
                 role="menuitemradio"
                 aria-checked={isActive}
+                disabled={option.disabled}
                 className={
                   isActive
                     ? "du-filter-option du-filter-option-active"
                     : "du-filter-option"
                 }
-                onClick={() => selectOption(option.value)}
+                onClick={() => {
+                  if (!option.disabled) {
+                    selectOption(option.value);
+                  }
+                }}
               >
                 <span className="du-filter-option-icon" aria-hidden="true">
                   {option.icon}

@@ -32,7 +32,8 @@
   --du-highlight-border: rgba(255, 179, 71, 0.48);
 
   /* Media framing */
-  --du-card-image-aspect-ratio: 16 / 9;
+  /* Matches the 1180 × 840 desktop Details card. */
+  --du-card-image-aspect-ratio: 59 / 42;
 
   /* Shadows */
   --du-shadow-card: 0 18px 40px rgba(0, 0, 0, 0.35);

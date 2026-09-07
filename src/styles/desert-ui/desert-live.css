@@ -1,6 +1,5 @@
 .du-desert-live-page,
-.du-desert-live-editor-page,
-.du-desert-live-details {
+.du-desert-live-editor-page {
   min-height: 760px;
 }
 
@@ -10,6 +9,22 @@
 
   min-height: 760px;
   padding: 46px var(--du-details-overlay-inline-padding);
+}
+
+.du-desert-live-editor-overlay {
+  height: 760px;
+  overflow: hidden;
+}
+
+.du-desert-live-editor-scroll {
+  height: 100%;
+  width: calc(100% + 14px);
+  margin-right: -14px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .du-desert-live-page::before,
@@ -174,25 +189,15 @@
 }
 
 .du-desert-live-details-overlay {
-  min-height: 760px;
   max-width: 760px;
   padding: 54px;
 }
 
-.du-desert-live-details-topline,
 .du-desert-live-details-meta {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 14px;
-}
-
-.du-desert-live-details-topline {
-  justify-content: space-between;
-}
-
-.du-desert-live-details-topline .du-details-eyebrow {
-  margin: 0;
 }
 
 .du-desert-live-details-meta {
@@ -296,6 +301,20 @@
     --du-details-overlay-inline-padding: 30px;
 
     padding: 30px var(--du-details-overlay-inline-padding);
+  }
+
+  .du-desert-live-editor-overlay {
+    height: auto;
+    overflow: visible;
+  }
+
+  .du-desert-live-editor-scroll {
+    height: auto;
+    width: auto;
+    margin-right: 0;
+    padding-right: 0;
+    overflow: visible;
+    scrollbar-gutter: auto;
   }
 
   .du-desert-live-page-header {

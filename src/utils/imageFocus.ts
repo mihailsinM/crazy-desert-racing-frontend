@@ -42,6 +42,8 @@ export const IMAGE_CROP_PERCENT_OPTIONS = [
 ] as const;
 export const DEFAULT_IMAGE_CROP_PERCENT = 0;
 export const MAX_IMAGE_CROP_PERCENT = 35;
+// Matches the 1180 × 840 desktop Details card from Desert UI.
+export const CARD_IMAGE_ASPECT_RATIO = 59 / 42;
 
 function normalizeCoordinate(value: number | undefined): number {
   if (typeof value !== "number" || !Number.isFinite(value)) {

@@ -27,3 +27,38 @@
   gap: 10px;
   margin-top: 14px;
 }
+
+.du-race-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.du-race-card-avatar {
+  --du-row-media-size: 88px;
+
+  border-color: var(--du-border-orange-strong);
+  box-shadow:
+    0 0 18px rgba(255, 179, 71, 0.2),
+    0 10px 24px rgba(0, 0, 0, 0.25);
+}
+
+.du-race-card-title-group {
+  display: grid;
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-items: start;
+  gap: 9px;
+}
+
+.du-race-card-title-group h2 {
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+.du-race-card .du-entity-actions {
+  margin-top: auto;
+  padding-top: 14px;
+}

@@ -12,6 +12,7 @@ import {
   getRandomDesertLiveItems,
 } from "../../services/desertLiveService";
 import type { DesertLiveItem } from "../../types/desertLive";
+import { getDesertLiveImageFraming } from "../../utils/desertLiveImageFraming";
 import FocalImage from "../images/FocalImage";
 
 type DashboardActivityProps = {
@@ -34,6 +35,7 @@ function DashboardActivityItem({
   const imageUrl = getDesertLiveAssetUrl(item.imageUrl);
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
   const showImage = imageUrl !== null && imageUrl !== failedImageUrl;
+  const avatarFraming = getDesertLiveImageFraming(item).avatar;
 
   return (
     <button
@@ -46,8 +48,9 @@ function DashboardActivityItem({
           <FocalImage
             src={imageUrl}
             alt=""
-            focusX={item.imageFocusX}
-            focusY={item.imageFocusY}
+            focusX={avatarFraming.focusX}
+            focusY={avatarFraming.focusY}
+            cropPercent={avatarFraming.cropPercent}
             onError={() => setFailedImageUrl(imageUrl)}
           />
         ) : (
@@ -168,7 +171,13 @@ function DashboardActivity({
           <DashboardActivityItem
             key={item.id}
             item={item}
-            onOpen={() => navigate(`/activity/${item.id}`)}
+            onOpen={() =>
+              navigate(
+                item.linkedRaceId
+                  ? `/races/${item.linkedRaceId}`
+                  : `/activity/${item.id}`,
+              )
+            }
           />
         ))}
 

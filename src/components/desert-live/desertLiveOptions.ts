@@ -32,6 +32,17 @@ export const desertLiveCategoryOptions = [
   icon: string;
 }>;
 
+export const desertLivePublicationCategoryOptions =
+  desertLiveCategorySelectOptions.map((option) =>
+    option.value === "RACE"
+      ? {
+          ...option,
+          label: "Race · manage in Races",
+          disabled: true,
+        }
+      : option,
+  );
+
 export const desertLiveStatusOptions = [
   { value: "ALL", label: "All statuses", icon: "◎" },
   { value: "PENDING", label: "Pending review", icon: "◷" },

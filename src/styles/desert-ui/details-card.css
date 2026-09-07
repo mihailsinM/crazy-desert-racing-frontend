@@ -12,6 +12,15 @@
   position: relative;
 }
 
+.du-entity-details {
+  min-height: 840px;
+  aspect-ratio: var(--du-card-image-aspect-ratio);
+}
+
+.du-entity-details .du-details-overlay {
+  min-height: 840px;
+}
+
 .du-details-card::before {
   content: "";
   position: absolute;
@@ -36,16 +45,6 @@
   );
 }
 
-.du-car-details {
-  min-height: 0;
-  aspect-ratio: var(--du-card-image-aspect-ratio);
-}
-
-.du-car-details .du-details-overlay {
-  min-height: 0;
-  height: 100%;
-}
-
 .du-details-media {
   position: absolute;
   inset: 0;
@@ -66,6 +65,19 @@
 
 .du-details-overlay.du-scroll {
   padding-right: calc(var(--du-details-overlay-inline-padding) - 17px);
+}
+
+.du-details-heading {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.du-details-heading .du-details-eyebrow {
+  margin: 0;
 }
 
 .du-details-eyebrow {
@@ -111,6 +123,22 @@
   width: 100%;
 }
 
+.du-details-secondary-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.du-details-secondary-actions .du-button,
+.du-details-actions > .du-button-primary {
+  width: 100%;
+}
+
+.du-details-actions-inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
 .du-details-message {
   max-width: 620px;
   margin-top: 10px;
@@ -153,21 +181,26 @@
     min-height: auto;
   }
 
+  .du-entity-details {
+    min-height: auto;
+    aspect-ratio: auto;
+  }
+
+  .du-entity-details .du-details-overlay {
+    min-height: auto;
+  }
+
   .du-details-overlay {
     --du-details-overlay-inline-padding: 32px;
 
     padding: 32px var(--du-details-overlay-inline-padding);
   }
 
-  .du-car-details {
-    aspect-ratio: auto;
-  }
-
-  .du-car-details .du-details-overlay {
-    height: auto;
-  }
-
   .du-details-title {
     font-size: 40px;
+  }
+
+  .du-details-secondary-actions {
+    grid-template-columns: 1fr;
   }
 }

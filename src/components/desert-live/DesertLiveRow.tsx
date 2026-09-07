@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { getDesertLiveAssetUrl } from "../../services/desertLiveService";
 import type { DesertLiveItem } from "../../types/desertLive";
+import { getDesertLiveImageFraming } from "../../utils/desertLiveImageFraming";
 import FocalImage from "../images/FocalImage";
 import {
   desertLiveCategoryIcons,
@@ -42,6 +43,7 @@ function DesertLiveRow({
   const [imageFailed, setImageFailed] = useState(false);
   const imageUrl = getDesertLiveAssetUrl(item.imageUrl);
   const showImage = imageUrl !== null && !imageFailed;
+  const avatarFraming = getDesertLiveImageFraming(item).avatar;
 
   return (
     <article className="du-row-panel du-desert-live-row">
@@ -53,8 +55,9 @@ function DesertLiveRow({
           <FocalImage
             src={imageUrl}
             alt=""
-            focusX={item.imageFocusX}
-            focusY={item.imageFocusY}
+            focusX={avatarFraming.focusX}
+            focusY={avatarFraming.focusY}
+            cropPercent={avatarFraming.cropPercent}
             onError={() => setImageFailed(true)}
           />
         ) : (

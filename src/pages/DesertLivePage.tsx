@@ -283,13 +283,17 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
                   key={item.id}
                   item={item}
                   busy={busyItemId === item.id}
-                  showModerationActions={!isMyPage && isAdmin}
-                  showOwnerActions={isMyPage}
+                  showModerationActions={
+                    !isMyPage && isAdmin && item.linkedRaceId === null
+                  }
+                  showOwnerActions={isMyPage && item.linkedRaceId === null}
                   onView={() =>
                     navigate(
-                      isMyPage
-                        ? `/activity/my/${item.id}`
-                        : `/activity/${item.id}`,
+                      item.linkedRaceId
+                        ? `/races/${item.linkedRaceId}`
+                        : isMyPage
+                          ? `/activity/my/${item.id}`
+                          : `/activity/${item.id}`,
                     )
                   }
                   onApprove={handleApprove}
