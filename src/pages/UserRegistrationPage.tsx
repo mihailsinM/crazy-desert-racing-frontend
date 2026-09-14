@@ -76,8 +76,14 @@ function RegisterPage() {
               type="number"
               value={age}
               placeholder="39"
+              min={18}
+              max={120}
+              required
               onChange={(event) => setAge(event.target.value)}
             />
+            <span className="auth-field-note">
+              Crazy Desert Racing accounts are currently available to adults 18+.
+            </span>
           </label>
 
           <label>

@@ -84,6 +84,47 @@
   margin: 40px auto;
 }
 
+.du-form-panel.du-form-panel-media {
+  --du-form-inline-padding: 36px;
+  --du-form-scrollbar-width: 10px;
+  --du-form-scroll-lane: calc(
+    (var(--du-form-inline-padding) + var(--du-form-scrollbar-width)) / 2
+  );
+
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 1060px);
+  max-width: 1060px;
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 36px var(--du-form-inline-padding);
+  overflow: hidden;
+}
+
+.du-form-content-scroll {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  width: calc(100% + var(--du-form-scroll-lane));
+  margin-right: calc(-1 * var(--du-form-scroll-lane));
+  padding-right: calc(
+    var(--du-form-scroll-lane) - var(--du-form-scrollbar-width)
+  );
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 720px) {
+  .du-form-panel.du-form-panel-media {
+    --du-form-inline-padding: 20px;
+
+    padding-block: 20px;
+  }
+}
+
 .du-form-header {
   margin-bottom: 28px;
 }

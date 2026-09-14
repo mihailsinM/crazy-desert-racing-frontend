@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import FocalImage from "../images/FocalImage";
+import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
 
 type DetailsCardImage = {
   src: string;
@@ -9,6 +10,7 @@ type DetailsCardImage = {
   focusY?: number;
   cropPercent?: number;
   ariaHidden?: boolean;
+  authenticated?: boolean;
 };
 
 type DetailsCardProps = {
@@ -23,6 +25,7 @@ type DetailsCardProps = {
   overlayClassName?: string;
   actionsClassName?: string;
   topAligned?: boolean;
+  scrollable?: boolean;
 };
 
 function joinClassNames(...classNames: Array<string | undefined | false>) {
@@ -41,6 +44,7 @@ function DetailsCard({
   overlayClassName,
   actionsClassName,
   topAligned = false,
+  scrollable = false,
 }: DetailsCardProps) {
   return (
     <article
@@ -50,20 +54,33 @@ function DetailsCard({
         className,
       )}
     >
-      <FocalImage
-        src={image.src}
-        alt={image.alt}
-        focusX={image.focusX}
-        focusY={image.focusY}
-        cropPercent={image.cropPercent}
-        className="du-details-media"
-        aria-hidden={image.ariaHidden}
-      />
+      {image.authenticated ? (
+        <AuthenticatedFocalImage
+          src={image.src}
+          alt={image.alt}
+          focusX={image.focusX}
+          focusY={image.focusY}
+          cropPercent={image.cropPercent}
+          className="du-details-media"
+          aria-hidden={image.ariaHidden}
+        />
+      ) : (
+        <FocalImage
+          src={image.src}
+          alt={image.alt}
+          focusX={image.focusX}
+          focusY={image.focusY}
+          cropPercent={image.cropPercent}
+          className="du-details-media"
+          aria-hidden={image.ariaHidden}
+        />
+      )}
 
       <div
         className={joinClassNames(
           "du-details-overlay",
           topAligned && "du-details-overlay-top",
+          scrollable && "du-details-overlay-scrollable",
           overlayClassName,
         )}
       >
@@ -74,7 +91,13 @@ function DetailsCard({
 
         <h1 className="du-details-title">{title}</h1>
 
-        {children}
+        {scrollable ? (
+          <div className="du-details-body-scroll du-soft-scroll">
+            {children}
+          </div>
+        ) : (
+          children
+        )}
 
         {actions && (
           <div

@@ -41,12 +41,13 @@ function MyCarsPage() {
   }
 
   return (
-    <section className="du-page">
+    <section className="du-page du-viewport-page du-collection-page">
       <header className="du-page-header">
         <p className="du-eyebrow">Garage</p>
         <h1 className="du-title-xl">🏎 My Cars</h1>
       </header>
 
+      <div className="du-collection-scroll du-soft-scroll">
       <div className="du-showcase-grid">
         {cars.length === 0 && (
           <article className="du-card">
@@ -104,6 +105,7 @@ function MyCarsPage() {
           <p>Connect your next racing vehicle to your driver profile.</p>
           <span className="du-badge">Open form</span>
         </article>
+      </div>
       </div>
     </section>
   );

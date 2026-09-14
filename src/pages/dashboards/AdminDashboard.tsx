@@ -31,7 +31,11 @@ function AdminDashboard() {
         onOpenProfile={() => setWorkspaceView("PROFILE")}
       />
 
-      <section className="du-dashboard-grid">
+      <section
+        className={`du-dashboard-grid${
+          workspaceView === "PROFILE" ? " du-dashboard-grid-profile" : ""
+        }`}
+      >
         <DashboardWorkspace
           activeView={workspaceView}
           profileTitle={config.profile.title}

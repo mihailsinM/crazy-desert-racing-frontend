@@ -400,7 +400,7 @@ function DesertLiveEditorPage({
   }
 
   return (
-    <section className="du-page">
+    <section className="du-page du-viewport-page">
       <article
         className="du-details-card du-desert-live-editor-page"
         style={{ backgroundImage: `url(${raceBackground})` }}

@@ -2,6 +2,13 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -10,5 +17,23 @@ body {
 }
 
 .app {
-  min-height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 179, 71, 0.6) transparent;
+}
+
+.app::-webkit-scrollbar {
+  width: 10px;
+}
+
+.app::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 179, 71, 0.6);
 }

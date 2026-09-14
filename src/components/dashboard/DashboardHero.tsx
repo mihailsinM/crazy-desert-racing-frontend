@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/authContext";
-import { getUserAvatarImageUrl } from "../../services/userService";
+import { getUserImageFraming } from "../../utils/userImageFraming";
+import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
 
 type DashboardHeroStat = {
   label: string;
@@ -14,6 +15,7 @@ type DashboardHeroProps = {
   description: string;
   stats: DashboardHeroStat[];
   onOpenProfile?: () => void;
+  myCarsPath?: string;
 };
 
 function getInitials(name: string): string {
@@ -31,17 +33,16 @@ function DashboardHero({
   description,
   stats,
   onOpenProfile,
+  myCarsPath = "/cars",
 }: DashboardHeroProps) {
   const { currentUser } = useAuth();
-  const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   if (!currentUser) {
     return null;
   }
 
-  const avatarImageUrl = getUserAvatarImageUrl(currentUser.avatarUrl);
-  const showAvatarImage =
-    avatarImageUrl !== null && failedAvatarUrl !== avatarImageUrl;
+  const avatarFraming = getUserImageFraming(currentUser).avatar;
 
   return (
     <section className="du-hero">
@@ -50,12 +51,19 @@ function DashboardHero({
           className="dashboard-hero-avatar"
           aria-label={`${currentUser.name} profile photo`}
         >
-          {showAvatarImage ? (
-            <img
-              className="dashboard-hero-avatar-image"
-              src={avatarImageUrl}
+          {currentUser.avatarUrl ? (
+            <AuthenticatedFocalImage
+              src={currentUser.avatarUrl}
               alt=""
-              onError={() => setFailedAvatarUrl(avatarImageUrl)}
+              focusX={avatarFraming.focusX}
+              focusY={avatarFraming.focusY}
+              cropPercent={avatarFraming.cropPercent}
+              className="dashboard-hero-avatar-image"
+              fallback={
+                <span aria-hidden="true">
+                  {getInitials(currentUser.name) || "CD"}
+                </span>
+              }
             />
           ) : (
             <span aria-hidden="true">
@@ -79,6 +87,14 @@ function DashboardHero({
                 onClick={onOpenProfile}
               >
                 My Profile
+              </button>
+
+              <button
+                type="button"
+                className="du-button du-button-small"
+                onClick={() => navigate(myCarsPath)}
+              >
+                My Cars
               </button>
 
               <span className="du-caption">

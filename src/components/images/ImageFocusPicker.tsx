@@ -21,7 +21,7 @@ import {
   type ImageFramingProfiles,
   type ImageFocusPoint,
 } from "../../utils/imageFocus";
-import FocalImage from "./FocalImage";
+import AuthenticatedFocalImage from "./AuthenticatedFocalImage";
 
 export type ImageFocusPreviewVariant = "circle" | "square" | "wide";
 
@@ -59,8 +59,8 @@ const DEFAULT_PREVIEW_VARIANTS: readonly ImageFocusPreviewVariant[] = [
   "circle",
 ];
 const FRAMING_PROFILE_PREVIEW_VARIANTS: readonly ImageFocusPreviewVariant[] = [
-  "circle",
   "wide",
+  "circle",
 ];
 const PREVIEW_LABELS: Record<ImageFocusPreviewVariant, string> = {
   circle: "Round preview",
@@ -357,7 +357,7 @@ function ImageFocusPicker({
             onPointerCancel={handlePointerUp}
             onKeyDown={handleKeyDown}
           >
-            <FocalImage
+            <AuthenticatedFocalImage
               src={imageUrl}
               alt={`Choose ${imageAlt.toLowerCase()} focus`}
               focusX={activeFocus.x}
@@ -421,7 +421,7 @@ function ImageFocusPicker({
                   <span
                     className={`du-image-focus-preview du-image-focus-preview-${variant}`}
                   >
-                    <FocalImage
+                    <AuthenticatedFocalImage
                       src={imageUrl}
                       alt={`${imageAlt} ${label.toLowerCase()} preview`}
                       focusX={previewFraming.focusX}

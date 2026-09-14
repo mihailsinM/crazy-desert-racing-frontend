@@ -9,7 +9,7 @@ import {
 
 export type FocalImageFit = "cover" | "contain";
 
-type FocalImageProps = Omit<
+export type FocalImageProps = Omit<
   ImgHTMLAttributes<HTMLImageElement>,
   "alt" | "src"
 > & {

@@ -4,6 +4,31 @@ import type {
   UserProfileUpdateRequest,
   UserResponse,
 } from "../types/user";
+import type { DriverProfile } from "../types/driver";
+
+async function hydratePublicProfile(
+  user: UserResponse,
+): Promise<UserResponse> {
+  const response = await authenticatedFetch(`${API_BASE_URL}/drivers/me`);
+
+  if (!response.ok) {
+    return user;
+  }
+
+  const profile = (await response.json()) as DriverProfile;
+
+  return {
+    ...user,
+    avatarUrl: profile.avatarUrl,
+    imageFraming: profile.imageFraming,
+    membershipTier: profile.membershipTier,
+    profileBio: profile.bio,
+    profileLocation: profile.location,
+    showCars: profile.carsVisible,
+    showRaceHistory: profile.raceHistoryVisible,
+    showPhotos: profile.photosVisible,
+  };
+}
 
 async function getResponseError(
   response: Response,
@@ -28,7 +53,8 @@ export async function getCurrentUser(): Promise<UserResponse> {
     throw new Error("Failed to load current user");
   }
 
-  return response.json();
+  const user = (await response.json()) as UserResponse;
+  return hydratePublicProfile(user);
 }
 
 export async function updateCurrentUser(
@@ -48,7 +74,8 @@ export async function updateCurrentUser(
     );
   }
 
-  return response.json();
+  const user = (await response.json()) as UserResponse;
+  return hydratePublicProfile(user);
 }
 
 export async function updateCurrentUserAvatar(
@@ -71,7 +98,8 @@ export async function updateCurrentUserAvatar(
     );
   }
 
-  return response.json();
+  const user = (await response.json()) as UserResponse;
+  return hydratePublicProfile(user);
 }
 
 export async function deleteCurrentUserAvatar(): Promise<UserResponse> {
@@ -88,7 +116,8 @@ export async function deleteCurrentUserAvatar(): Promise<UserResponse> {
     );
   }
 
-  return response.json();
+  const user = (await response.json()) as UserResponse;
+  return hydratePublicProfile(user);
 }
 
 export function getUserAvatarImageUrl(

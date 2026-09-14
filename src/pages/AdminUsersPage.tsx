@@ -1,22 +1,49 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import raceBackground from "../assets/race.png";
 import {
   getAllUsers,
   verifyUserLicense,
   makeUserAdmin,
 } from "../services/userService";
+import { getDrivers } from "../services/driverService";
 import UserAvatar from "../components/users/UserAvatar";
+import AdaptiveCardList from "../components/lists/AdaptiveCardList";
+import CatalogPage from "../components/lists/CatalogPage";
 import type { UserResponse } from "../types/user";
 
 function AdminUsersPage() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+  async function loadUsersWithPublicAvatars() {
+    const [allUsers, drivers] = await Promise.all([
+      getAllUsers(),
+      getDrivers(),
+    ]);
+    const driversById = new Map(drivers.map((driver) => [driver.id, driver]));
+
+    return allUsers.map((user) => {
+      const driver = driversById.get(user.id);
+
+      return driver
+        ? {
+            ...user,
+            avatarUrl: driver.avatarUrl,
+            imageFraming: driver.imageFraming,
+            membershipTier: driver.membershipTier,
+          }
+        : user;
+    });
+  }
+
   useEffect(() => {
     async function loadUsers() {
       try {
-        const data = await getAllUsers();
+        const data = await loadUsersWithPublicAvatars();
         setUsers(data);
       } catch {
         setError("Failed to load users");
@@ -38,13 +65,13 @@ function AdminUsersPage() {
 
   async function handleVerifyLicense(userId: number) {
     await verifyUserLicense(userId);
-    const data = await getAllUsers();
+    const data = await loadUsersWithPublicAvatars();
     setUsers(data);
   }
 
   async function handleMakeAdmin(userId: number) {
     await makeUserAdmin(userId);
-    const data = await getAllUsers();
+    const data = await loadUsersWithPublicAvatars();
     setUsers(data);
   }
 
@@ -60,11 +87,11 @@ function AdminUsersPage() {
   });
 
   return (
-    <section className="du-page">
+    <CatalogPage>
       <article
         className="du-details-card"
         style={{
-          backgroundImage: `url("/src/assets/race.png")`,
+          backgroundImage: `url(${raceBackground})`,
         }}
       >
         <div className="du-details-overlay du-scroll du-details-overlay-top">
@@ -91,10 +118,21 @@ function AdminUsersPage() {
             </div>
           </div>
 
-          <div className="du-card-list du-soft-scroll du-list-4 du-list-row-large">
-            {filteredUsers.map((user) => (
+          <AdaptiveCardList className="du-list-row-large">
+            {filteredUsers.length === 0 ? (
+              <div className="du-row-panel">
+                <div className="du-row-main">
+                  <span className="du-row-title">No users found</span>
+                  <span className="du-row-subtitle">Try another name or email.</span>
+                </div>
+              </div>
+            ) : filteredUsers.map((user) => (
               <div key={user.id} className="du-row-panel du-user-row">
-                <UserAvatar name={user.name} avatarUrl={user.avatarUrl} />
+                <UserAvatar
+                  name={user.name}
+                  avatarUrl={user.avatarUrl}
+                  imageFraming={user.imageFraming}
+                />
 
                 <div className="du-row-main">
                   <span className="du-row-title">
@@ -110,9 +148,18 @@ function AdminUsersPage() {
                 </div>
 
                 <div className="du-row-actions">
+                  <button
+                    className="du-button"
+                    type="button"
+                    onClick={() => navigate(`/drivers/${user.id}`)}
+                  >
+                    View Profile
+                  </button>
+
                   {!user.licenseVerified && (
                     <button
                       className="du-button du-button-primary"
+                      type="button"
                       onClick={() => handleVerifyLicense(user.id)}
                     >
                       Verify
@@ -122,6 +169,7 @@ function AdminUsersPage() {
                   {user.role !== "ADMIN" && (
                     <button
                       className="du-button"
+                      type="button"
                       onClick={() => handleMakeAdmin(user.id)}
                     >
                       Make Admin
@@ -130,10 +178,10 @@ function AdminUsersPage() {
                 </div>
               </div>
             ))}
-          </div>
+          </AdaptiveCardList>
         </div>
       </article>
-    </section>
+    </CatalogPage>
   );
 }
 
