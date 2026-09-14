@@ -20,6 +20,9 @@ import AdminUsersPage from "./pages/AdminUsersPage";
 import DesertLiveDetailsPage from "./pages/DesertLiveDetailsPage";
 import DesertLiveEditorPage from "./pages/DesertLiveEditorPage";
 import DesertLivePage from "./pages/DesertLivePage";
+import DriversPage from "./pages/DriversPage";
+import DriverDetailsPage from "./pages/DriverDetailsPage";
+import AdminPhotoReportsPage from "./pages/AdminPhotoReportsPage";
 import AdminRoute from "./routes/AdminRoute";
 import { useAuth } from "./context/authContext";
 
@@ -64,7 +67,17 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route
+              path="/admin/photo-reports"
+              element={
+                <AdminRoute>
+                  <AdminPhotoReportsPage />
+                </AdminRoute>
+              }
+            />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/drivers" element={<DriversPage />} />
+            <Route path="/drivers/:id" element={<DriverDetailsPage />} />
             <Route path="/cars/:id/edit" element={<EditCarPage />} />
             <Route path="/cars/:id" element={<CarDetailsPage />} />
             <Route path="/cars" element={<MyCarsPage />} />

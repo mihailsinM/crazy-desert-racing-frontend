@@ -47,10 +47,15 @@
   gap: 22px;
 }
 
+.du-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
 
 @media (max-width: 800px) {
   .du-grid {
     grid-template-columns: 1fr;
   }
 }
-

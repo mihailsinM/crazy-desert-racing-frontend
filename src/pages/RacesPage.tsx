@@ -146,7 +146,7 @@ function RacesPage() {
   }
 
   return (
-    <section className="du-page">
+    <section className="du-page du-viewport-page du-collection-page">
       <header className="du-page-header">
         <p className="du-eyebrow">Race Calendar</p>
         <h1 className="du-title-xl">🏁 Races</h1>
@@ -172,6 +172,7 @@ function RacesPage() {
         </div>
       )}
 
+      <div className="du-collection-scroll du-soft-scroll">
       <div className="du-grid">
         {races.map((race) => {
           const status = race.status ?? "UPCOMING";
@@ -249,6 +250,7 @@ function RacesPage() {
             </article>
           );
         })}
+      </div>
       </div>
     </section>
   );

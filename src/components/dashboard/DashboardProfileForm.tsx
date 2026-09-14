@@ -78,7 +78,7 @@ function DashboardProfileForm({
           className="du-input"
           type="number"
           value={profileForm.age}
-          min={1}
+          min={18}
           max={120}
           required
           onChange={(event) => updateProfileField("age", event.target.value)}

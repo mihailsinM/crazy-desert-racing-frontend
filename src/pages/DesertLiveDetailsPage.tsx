@@ -160,11 +160,12 @@ function DesertLiveDetailsPage({
   }
 
   return (
-    <section className="du-page">
+    <section className="du-page du-viewport-page">
       <DetailsCard
         className="du-desert-live-details"
         overlayClassName="du-desert-live-details-overlay"
         topAligned
+        scrollable
         eyebrow={
           <>
             {desertLiveCategoryIcons[item.category]}{" "}

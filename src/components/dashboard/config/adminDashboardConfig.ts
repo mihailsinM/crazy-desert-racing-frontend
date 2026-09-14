@@ -47,9 +47,9 @@ export function createAdminDashboardConfig(
           path: "/races",
         },
         {
-          title: "🏎 My Cars",
-          text: "Add and manage your desert racing vehicles.",
-          path: "/cars",
+          title: "🚩 Photo Reports",
+          text: "Review privacy, copyright and community photo reports.",
+          path: "/admin/photo-reports",
         },
         {
           title: "⭐ VIP Club",

@@ -26,7 +26,7 @@
   box-sizing: border-box;
   margin: 0;
   scroll-snap-align: start;
-   scroll-margin-top: 1px;
+  scroll-margin-top: 1px;
 }
 
 .du-list-3 {
@@ -55,4 +55,78 @@
 
 .du-card-list > .du-row-panel {
   margin-bottom: 0;
+}
+
+.du-row-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.du-list-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.du-list-toolbar-search {
+  flex: 1 1 280px;
+  width: auto;
+  margin: 0;
+}
+
+.du-list-toolbar-actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
+.du-viewport-page .du-card-list {
+  flex: 0 0 auto;
+}
+
+.du-viewport-page .du-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.du-viewport-page .du-page-header .du-search-box {
+  margin-bottom: 0;
+}
+
+/* Shared layout for user, publication and future event directories. */
+@media (min-width: 801px) and (min-height: 561px) {
+  .du-viewport-page.du-catalog-page .du-details-overlay.du-scroll {
+    justify-content: space-between;
+  }
+
+  .du-viewport-page.du-catalog-page .du-details-overlay.du-scroll > :first-child,
+  .du-viewport-page.du-catalog-page .du-adaptive-card-list {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .du-viewport-page .du-page-header,
+  .du-list-toolbar,
+  .du-list-toolbar-actions {
+    align-items: stretch;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .du-list-toolbar-search {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .du-list-toolbar-actions > *,
+  .du-list-toolbar-actions .du-button {
+    width: 100%;
+  }
 }

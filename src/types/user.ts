@@ -1,3 +1,8 @@
+import type { ImageFramingProfiles } from "../utils/imageFocus";
+
+export type UserRole = "USER" | "ADMIN";
+export type MembershipTier = "STANDARD" | "SILVER" | "GOLD" | "PLATINUM";
+
 export interface UserResponse {
   id: number;
   name: string;
@@ -5,8 +10,16 @@ export interface UserResponse {
   age: number;
   licenseCategory: string;
   licenseVerified: boolean;
-  role: "USER" | "ADMIN";
+  role: UserRole;
   avatarUrl: string | null;
+  imageFraming: ImageFramingProfiles | null;
+  membershipTier: MembershipTier;
+  membershipExpiresAt: string | null;
+  profileBio: string | null;
+  profileLocation: string | null;
+  showCars: boolean;
+  showRaceHistory: boolean;
+  showPhotos: boolean;
 }
 
 export interface UserProfileUpdateRequest {

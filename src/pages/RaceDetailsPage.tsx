@@ -163,7 +163,7 @@ function RaceDetailsPage() {
 
   if (showParticipants) {
     return (
-      <section className="du-page">
+      <section className="du-page du-viewport-page">
         <DetailsCard
           className="du-race-details"
           eyebrow="Race Participants"
@@ -171,6 +171,7 @@ function RaceDetailsPage() {
           image={detailsImage}
           topAligned
           actionsClassName="du-push-bottom"
+          scrollable
           actions={
             <button
               type="button"
@@ -204,12 +205,13 @@ function RaceDetailsPage() {
   }
 
   return (
-    <section className="du-page">
+    <section className="du-page du-viewport-page">
       <DetailsCard
         className="du-race-details"
         eyebrow="Race Details"
         title={<>🏁 {race.name}</>}
         image={detailsImage}
+        scrollable
         status={
           <span
             className={`du-status du-status-${race.status.toLowerCase()}`}

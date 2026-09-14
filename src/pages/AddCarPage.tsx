@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import ImageFocusPicker from "../components/images/ImageFocusPicker";
+import MediaFormPage from "../components/forms/MediaFormPage";
 import {
   createMyRaceCar,
   updateRaceCar,
@@ -131,8 +132,7 @@ function AddCarPage() {
   }
 
   return (
-    <section className="du-page">
-      <section className="du-form-panel du-panel">
+    <MediaFormPage>
         <div className="du-form-header">
           <p className="du-form-eyebrow">🏎 ADD CAR</p>
           <p className="du-form-subtitle">
@@ -239,8 +239,7 @@ function AddCarPage() {
 
           {error && <p className="du-error">{error}</p>}
         </form>
-      </section>
-    </section>
+    </MediaFormPage>
   );
 }
 

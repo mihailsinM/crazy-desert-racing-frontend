@@ -34,9 +34,9 @@ export function createUserDashboardConfig(user: UserResponse): DashboardConfig {
           path: "/races",
         },
         {
-          title: "🏎 My Cars",
-          text: "Add and manage your desert racing vehicles.",
-          path: "/cars",
+          title: "👥 Club Drivers",
+          text: "Meet verified drivers and explore shared club profiles.",
+          path: "/drivers",
         },
         {
           title: "⭐ VIP Club",

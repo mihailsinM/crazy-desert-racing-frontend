@@ -1,10 +1,11 @@
-import { useState } from "react";
-
-import { getUserAvatarImageUrl } from "../../services/userService";
+import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
+import type { ImageFramingProfiles } from "../../utils/imageFocus";
+import { getUserImageFraming } from "../../utils/userImageFraming";
 
 type UserAvatarProps = {
   name: string;
   avatarUrl: string | null;
+  imageFraming?: ImageFramingProfiles | null;
   className?: string;
 };
 
@@ -17,21 +18,29 @@ function getInitials(name: string): string {
     .join("");
 }
 
-function UserAvatar({ name, avatarUrl, className }: UserAvatarProps) {
-  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
-  const imageUrl = getUserAvatarImageUrl(avatarUrl);
-  const showImage = imageUrl !== null && failedImageUrl !== imageUrl;
+function UserAvatar({
+  name,
+  avatarUrl,
+  imageFraming,
+  className,
+}: UserAvatarProps) {
+  const avatar = getUserImageFraming({ imageFraming }).avatar;
   const classes = ["du-row-media", "du-user-avatar", className]
     .filter(Boolean)
     .join(" ");
 
   return (
     <div className={classes} role="img" aria-label={`${name} profile photo`}>
-      {showImage ? (
-        <img
-          src={imageUrl}
+      {avatarUrl ? (
+        <AuthenticatedFocalImage
+          src={avatarUrl}
           alt=""
-          onError={() => setFailedImageUrl(imageUrl)}
+          focusX={avatar.focusX}
+          focusY={avatar.focusY}
+          cropPercent={avatar.cropPercent}
+          fallback={
+            <span aria-hidden="true">{getInitials(name) || "CD"}</span>
+          }
         />
       ) : (
         <span aria-hidden="true">{getInitials(name) || "CD"}</span>

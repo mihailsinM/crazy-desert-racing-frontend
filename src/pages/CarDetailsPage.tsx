@@ -67,7 +67,7 @@ function CarDetailsPage() {
   const cardFraming = getRaceCarImageFraming(car).card;
 
   return (
-    <section className="du-page">
+    <section className="du-page du-viewport-page">
       <DetailsCard
         className="du-car-details"
         eyebrow="Car Details"
@@ -79,6 +79,7 @@ function CarDetailsPage() {
           focusY: cardFraming.focusY,
           cropPercent: car.imageUrl ? cardFraming.cropPercent : 0,
         }}
+        scrollable
         actions={
           <>
             <button

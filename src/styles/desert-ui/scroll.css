@@ -19,6 +19,36 @@
   border-radius: 999px;
 }
 
+.du-details-overlay.du-scroll .du-soft-scroll::-webkit-scrollbar,
+.du-details-overlay.du-scroll::-webkit-scrollbar,
+.du-details-overlay-scrollable::-webkit-scrollbar,
+.du-desert-live-editor-scroll::-webkit-scrollbar,
+.du-details-body-scroll::-webkit-scrollbar,
+.du-collection-scroll::-webkit-scrollbar,
+.du-scroll-large::-webkit-scrollbar {
+  width: 10px;
+}
+
+.du-details-overlay.du-scroll .du-soft-scroll,
+.du-details-overlay.du-scroll,
+.du-details-overlay-scrollable,
+.du-desert-live-editor-scroll,
+.du-details-body-scroll,
+.du-collection-scroll,
+.du-scroll-large {
+  scrollbar-color: rgba(255, 179, 71, 0.34) transparent;
+}
+
+.du-details-overlay.du-scroll .du-soft-scroll::-webkit-scrollbar-thumb,
+.du-details-overlay.du-scroll::-webkit-scrollbar-thumb,
+.du-details-overlay-scrollable::-webkit-scrollbar-thumb,
+.du-desert-live-editor-scroll::-webkit-scrollbar-thumb,
+.du-details-body-scroll::-webkit-scrollbar-thumb,
+.du-collection-scroll::-webkit-scrollbar-thumb,
+.du-scroll-large::-webkit-scrollbar-thumb {
+  background: rgba(255, 179, 71, 0.34);
+}
+
 .du-scroll-card {
-padding-right: 10px;
+  padding-right: 10px;
 }

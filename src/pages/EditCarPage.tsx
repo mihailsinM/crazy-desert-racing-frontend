@@ -8,6 +8,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 
 import ImageFocusPicker from "../components/images/ImageFocusPicker";
+import MediaFormPage from "../components/forms/MediaFormPage";
 import {
   deleteRaceCarImage,
   getRaceCarAssetUrl,
@@ -236,8 +237,7 @@ function EditCarPage() {
   const previewUrl = selectedImagePreview ?? currentImageUrl;
 
   return (
-    <section className="du-page">
-      <section className="du-form-panel du-panel">
+    <MediaFormPage>
         <div className="du-form-header">
           <p className="du-form-eyebrow">🛠 EDIT CAR</p>
           <p className="du-form-subtitle">
@@ -367,8 +367,7 @@ function EditCarPage() {
           )}
           {error && <p className="du-error">{error}</p>}
         </form>
-      </section>
-    </section>
+    </MediaFormPage>
   );
 }
 

@@ -27,8 +27,8 @@ function Navbar() {
               Dashboard
             </NavLink>
 
-            <NavLink to="/cars" className={getNavLinkClass}>
-              My Cars
+            <NavLink to="/drivers" className={getNavLinkClass}>
+              All Drivers
             </NavLink>
 
             <NavLink to="/races" className={getNavLinkClass}>

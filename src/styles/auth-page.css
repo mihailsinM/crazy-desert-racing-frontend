@@ -77,6 +77,13 @@
   color: #f0ddd0;
 }
 
+.auth-field-note {
+  color: #d6c3b4;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
 .auth-form input {
   width: 100%;
   padding: 14px 16px;

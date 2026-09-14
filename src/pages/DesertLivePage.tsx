@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 import DesertLiveMenuFilter from "../components/desert-live/DesertLiveMenuFilter";
 import DesertLiveRow from "../components/desert-live/DesertLiveRow";
+import EntityListToolbar from "../components/lists/EntityListToolbar";
+import AdaptiveCardList from "../components/lists/AdaptiveCardList";
+import CatalogPage from "../components/lists/CatalogPage";
 import {
   desertLiveCategoryOptions,
   desertLiveStatusOptions,
@@ -195,7 +198,7 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
   }
 
   return (
-    <section className="du-page">
+    <CatalogPage>
       <article
         className="du-details-card du-desert-live-page"
         style={{ backgroundImage: `url(${raceBackground})` }}
@@ -231,22 +234,11 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
             </div>
           </header>
 
-          <div className="du-desert-live-toolbar">
-            <div className="du-search-box du-desert-live-search">
-              {!searchInput && (
-                <span className="du-search-icon" aria-hidden="true">
-                  ⌕
-                </span>
-              )}
-              <input
-                className="du-search-input"
-                type="search"
-                placeholder="Search publications..."
-                value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
-              />
-            </div>
-
+          <EntityListToolbar
+            searchValue={searchInput}
+            searchPlaceholder="Search publications..."
+            onSearchChange={setSearchInput}
+          >
             <DesertLiveMenuFilter
               buttonLabel="Filter"
               menuLabel="Show category"
@@ -272,11 +264,11 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
             >
               ← Back
             </button>
-          </div>
+          </EntityListToolbar>
 
           {error && <p className="du-error">{error}</p>}
 
-          <div className="du-card-list du-soft-scroll du-list-4 du-list-row-large du-desert-live-page-list">
+          <AdaptiveCardList className="du-list-row-large du-desert-live-page-list">
             {!loading &&
               pageData.items.map((item) => (
                 <DesertLiveRow
@@ -315,7 +307,7 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
                 </p>
               </div>
             )}
-          </div>
+          </AdaptiveCardList>
 
           {pageData.totalPages > 1 && (
             <div className="du-desert-live-pagination">
@@ -412,7 +404,7 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
           </div>
         )}
       </article>
-    </section>
+    </CatalogPage>
   );
 }
 
