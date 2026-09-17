@@ -42,6 +42,10 @@
   gap: 12px;
 }
 
+.du-navbar-menu-toggle {
+  display: none;
+}
+
 .du-nav-link {
   display: inline-flex;
   align-items: center;
@@ -111,6 +115,33 @@
 
   .du-navbar-links {
     display: none;
+  }
+
+  .du-navbar-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    min-height: 38px;
+  }
+
+  .du-navbar-links.du-navbar-links-open {
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    left: 12px;
+    display: grid;
+    gap: 4px;
+    padding: 12px;
+    border: 1px solid var(--du-border-orange);
+    border-radius: var(--du-radius-row);
+    background: rgba(35, 25, 20, 0.96);
+    box-shadow: var(--du-shadow-panel);
+  }
+
+  .du-navbar-links.du-navbar-links-open > * {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .du-navbar-logo {

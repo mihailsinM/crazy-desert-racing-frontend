@@ -226,6 +226,38 @@
   overflow: visible;
 }
 
+/* Shared single-scroll layout for content-heavy details cards. */
+.du-details-overlay-scroll-all {
+  justify-content: flex-start;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.du-details-content-scroll {
+  --du-page-scrollbar-width: 10px;
+  --du-page-scroll-lane: calc(
+    (var(--du-details-overlay-inline-padding) + var(--du-page-scrollbar-width)) / 2
+  );
+
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  width: calc(100% + var(--du-page-scroll-lane));
+  margin-right: calc(-1 * var(--du-page-scroll-lane));
+  padding-right: calc(var(--du-page-scroll-lane) - var(--du-page-scrollbar-width));
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.du-details-content-scroll > .du-details-actions.du-push-bottom {
+  margin-top: auto;
+  padding-top: 28px;
+}
+
 .du-details-overlay-scrollable > .du-details-actions {
   flex: 0 0 auto;
   margin-top: 16px;

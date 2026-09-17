@@ -6,6 +6,46 @@
   scrollbar-color: rgba(255, 179, 71, 0.22) transparent;
 }
 
+/* A single warm page rail; the outer browser/app shell never scrolls. */
+.du-page-scroll {
+  height: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 179, 71, 0.38) transparent;
+}
+
+.du-page-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.du-page-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.du-page-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 179, 71, 0.38);
+}
+
+.du-page-scroll::-webkit-scrollbar-button:single-button:vertical:decrement,
+.du-page-scroll::-webkit-scrollbar-button:single-button:vertical:increment {
+  display: block;
+  height: 13px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 8px 8px;
+}
+
+.du-page-scroll::-webkit-scrollbar-button:single-button:vertical:decrement {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M4 1 7 6H1z' fill='%23ffb347' fill-opacity='.65'/%3E%3C/svg%3E");
+}
+
+.du-page-scroll::-webkit-scrollbar-button:single-button:vertical:increment {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='m1 2 3 5 3-5z' fill='%23ffb347' fill-opacity='.65'/%3E%3C/svg%3E");
+}
+
 .du-soft-scroll::-webkit-scrollbar {
   width: 4px;
 }
@@ -36,6 +76,7 @@
 .du-details-body-scroll,
 .du-collection-scroll,
 .du-scroll-large {
+  scrollbar-width: auto;
   scrollbar-color: rgba(255, 179, 71, 0.34) transparent;
 }
 

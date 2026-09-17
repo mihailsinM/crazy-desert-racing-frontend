@@ -1,5 +1,4 @@
 .home-page {
-  min-height: 100vh;
   color: white;
 
   background:
@@ -14,4 +13,8 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+}
+
+.app:has(> .home-page) {
+  background: url("/src/assets/home_page.jpg") center / cover;
 }

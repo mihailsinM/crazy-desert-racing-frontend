@@ -5,6 +5,7 @@ import ImageFocusPicker from "../images/ImageFocusPicker";
 import {
   deleteCurrentUserPhoto,
   getCurrentUserPhotos,
+  setCurrentUserCardPhoto,
   setCurrentUserProfilePhoto,
   updateCurrentUserPhoto,
   updateCurrentUserPhotoFraming,
@@ -189,7 +190,7 @@ function ProfilePhotosManager({
       await onProfilePhotoChanged();
       setMessage(
         nextVisibility === "PRIVATE"
-          ? "Photo hidden. A private photo cannot remain the profile photo."
+          ? "Photo hidden. Private photos cannot be used as an avatar or profile card."
           : "Photo visibility updated.",
       );
     } catch (caughtError) {
@@ -223,16 +224,20 @@ function ProfilePhotosManager({
     }
   }
 
-  async function setProfilePhoto(photo: UserPhoto) {
+  async function setProfilePhoto(photo: UserPhoto, target: "avatar" | "card") {
     setBusyPhotoId(photo.id);
     setError("");
     setMessage("");
 
     try {
-      await setCurrentUserProfilePhoto(photo.id);
+      if (target === "avatar") {
+        await setCurrentUserProfilePhoto(photo.id);
+      } else {
+        await setCurrentUserCardPhoto(photo.id);
+      }
       await loadPhotos();
       await onProfilePhotoChanged();
-      setMessage("Profile photo updated.");
+      setMessage(target === "avatar" ? "Avatar updated." : "Profile card updated.");
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Failed to set profile photo");
     } finally {
@@ -405,7 +410,8 @@ function ProfilePhotosManager({
                   <strong>{photo.caption || "Untitled photo"}</strong>
                   <span className="du-caption">
                     {photo.visibility.replace("_", " ")}
-                    {photo.profilePhoto ? " · PROFILE PHOTO" : ""}
+                    {photo.profilePhoto ? " · AVATAR" : ""}
+                    {photo.cardProfilePhoto ? " · PROFILE CARD" : ""}
                   </span>
                   <div className="du-inline du-inline-sm du-inline-wrap">
                     {!photo.profilePhoto && photo.visibility !== "PRIVATE" && (
@@ -413,9 +419,19 @@ function ProfilePhotosManager({
                         type="button"
                         className="du-button du-button-small"
                         disabled={disabled}
-                        onClick={() => setProfilePhoto(photo)}
+                        onClick={() => setProfilePhoto(photo, "avatar")}
                       >
-                        Use as Profile
+                        Use as Avatar
+                      </button>
+                    )}
+                    {!photo.cardProfilePhoto && photo.visibility !== "PRIVATE" && (
+                      <button
+                        type="button"
+                        className="du-button du-button-small"
+                        disabled={disabled}
+                        onClick={() => setProfilePhoto(photo, "card")}
+                      >
+                        Use as Profile Card
                       </button>
                     )}
                     <button

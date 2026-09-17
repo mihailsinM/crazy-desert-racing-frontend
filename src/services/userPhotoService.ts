@@ -118,6 +118,17 @@ export async function setCurrentUserProfilePhoto(
   return readJson(response, "Failed to set profile photo");
 }
 
+export async function setCurrentUserCardPhoto(
+  photoId: number,
+): Promise<UserPhoto> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/users/me/photos/${photoId}/card-profile`,
+    { method: "PUT" },
+  );
+
+  return readJson(response, "Failed to set profile card photo");
+}
+
 export async function deleteCurrentUserPhoto(photoId: number): Promise<void> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/users/me/photos/${photoId}`,
