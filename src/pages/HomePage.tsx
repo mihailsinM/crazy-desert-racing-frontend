@@ -8,7 +8,7 @@ import VipPreviewSection from "../components/VipPreviewSection";
 
 function HomePage() {
   return (
-    <main className="home-page">
+    <main className="home-page du-page-scroll">
       <Navbar />
       <HeroSection />
       <UpcomingRacesSection />

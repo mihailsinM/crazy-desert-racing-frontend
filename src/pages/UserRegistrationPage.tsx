@@ -42,7 +42,7 @@ function RegisterPage() {
   }
 
   return (
-    <main className="auth-page">
+    <main className="auth-page du-page-scroll">
       <section className="auth-brand">
         <img src={logo} alt="Crazy Desert Racing logo" className="auth-logo" />
 

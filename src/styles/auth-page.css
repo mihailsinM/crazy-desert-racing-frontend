@@ -1,5 +1,4 @@
 .auth-page {
-  min-height: 100vh;
   padding: 32px;
 
   display: grid;
@@ -13,6 +12,10 @@
 
   background-size: cover;
   background-position: center;
+}
+
+.app:has(> .auth-page) {
+  background: url("../assets/logo.png") center / cover;
 }
 
 .auth-brand {

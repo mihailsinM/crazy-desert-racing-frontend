@@ -5,13 +5,14 @@ import "../../styles/dashboard-page.css";
 
 function DashboardLayout() {
   return (
-    <section className="dashboard-page du-page-shell">
+    <div className="dashboard-layout">
       <Navbar />
-
-      <div className="du-container">
-        <Outlet />
-      </div>
-    </section>
+      <section className="dashboard-page du-page-shell du-page-scroll">
+        <div className="du-container">
+          <Outlet />
+        </div>
+      </section>
+    </div>
   );
 }
 

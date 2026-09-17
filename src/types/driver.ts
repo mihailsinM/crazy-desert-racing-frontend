@@ -52,6 +52,7 @@ export type UserPhoto = {
   visibility: UserPhotoVisibility;
   createdAt: string;
   profilePhoto: boolean;
+  cardProfilePhoto: boolean;
   imageFraming: ImageFramingProfiles | null;
 };
 
@@ -60,6 +61,8 @@ export type DriverProfile = {
   name: string;
   avatarUrl: string | null;
   imageFraming: ImageFramingProfiles | null;
+  cardImageUrl: string | null;
+  cardImageFraming: ImageFramingProfiles | null;
   role: UserRole;
   verifiedDriver: boolean;
   membershipTier: MembershipTier;

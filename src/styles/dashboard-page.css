@@ -1,11 +1,17 @@
-.dashboard-page {
+.dashboard-layout {
+  height: 100dvh;
+  min-height: 0;
   background:
     linear-gradient(rgba(18, 11, 7, 0.35), rgba(18, 11, 7, 0.55)),
     url("../assets/dashboard1-bg.jpg");
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
-  animation: dashboardFadeIn 2.5s ease both;
 }
 
+.dashboard-page {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  animation: dashboardFadeIn 2.5s ease both;
+}
 

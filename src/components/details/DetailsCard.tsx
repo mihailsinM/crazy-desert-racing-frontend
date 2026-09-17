@@ -26,6 +26,7 @@ type DetailsCardProps = {
   actionsClassName?: string;
   topAligned?: boolean;
   scrollable?: boolean;
+  scrollAll?: boolean;
 };
 
 function joinClassNames(...classNames: Array<string | undefined | false>) {
@@ -45,7 +46,31 @@ function DetailsCard({
   actionsClassName,
   topAligned = false,
   scrollable = false,
+  scrollAll = false,
 }: DetailsCardProps) {
+  const content = (
+    <>
+      <div className="du-details-heading">
+        <p className="du-details-eyebrow">{eyebrow}</p>
+        {status}
+      </div>
+
+      <h1 className="du-details-title">{title}</h1>
+
+      {scrollable ? (
+        <div className="du-details-body-scroll du-soft-scroll">{children}</div>
+      ) : (
+        children
+      )}
+
+      {actions && (
+        <div className={joinClassNames("du-details-actions", actionsClassName)}>
+          {actions}
+        </div>
+      )}
+    </>
+  );
+
   return (
     <article
       className={joinClassNames(
@@ -81,33 +106,16 @@ function DetailsCard({
           "du-details-overlay",
           topAligned && "du-details-overlay-top",
           scrollable && "du-details-overlay-scrollable",
+          scrollAll && "du-details-overlay-scroll-all",
           overlayClassName,
         )}
       >
-        <div className="du-details-heading">
-          <p className="du-details-eyebrow">{eyebrow}</p>
-          {status}
-        </div>
-
-        <h1 className="du-details-title">{title}</h1>
-
-        {scrollable ? (
-          <div className="du-details-body-scroll du-soft-scroll">
-            {children}
+        {scrollAll ? (
+          <div className="du-details-content-scroll du-scroll-large">
+            {content}
           </div>
         ) : (
-          children
-        )}
-
-        {actions && (
-          <div
-            className={joinClassNames(
-              "du-details-actions",
-              actionsClassName,
-            )}
-          >
-            {actions}
-          </div>
+          content
         )}
       </div>
 

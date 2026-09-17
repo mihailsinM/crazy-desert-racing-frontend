@@ -21,6 +21,9 @@ import type {
 } from "../types/driver";
 import { getUserImageFraming } from "../utils/userImageFraming";
 
+type ProfileSection = "cars" | "races" | "photos";
+type GalleryFilter = "all" | "photos" | "cars";
+
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString("en-US", {
     month: "short",
@@ -44,6 +47,11 @@ function DriverDetailsPage() {
   const [busyPhotoId, setBusyPhotoId] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [selectedSection, setSelectedSection] = useState<{
+    driverId: number;
+    section: ProfileSection;
+  } | null>(null);
+  const [galleryFilter, setGalleryFilter] = useState<GalleryFilter>("all");
 
   useEffect(() => {
     if (!validDriverId) {
@@ -163,23 +171,53 @@ function DriverDetailsPage() {
   }
 
   const ownerView = currentUser?.id === driver.id;
-  const profileFraming = getUserImageFraming(driver);
+  const galleryCars = driver.cars.flatMap((car) => {
+    const imageUrl = getRaceCarAssetUrl(car.imageUrl);
+    return imageUrl ? [{ car, imageUrl }] : [];
+  });
+  const galleryVisible = ownerView || driver.photosVisible || driver.carsVisible;
+  const galleryItemCount = driver.photos.length + galleryCars.length;
+  const activeGalleryFilter =
+    (galleryFilter === "photos" && !ownerView && !driver.photosVisible) ||
+    (galleryFilter === "cars" && !ownerView && !driver.carsVisible)
+      ? "all"
+      : galleryFilter;
+  const filteredGalleryItemCount =
+    (activeGalleryFilter === "cars" ? 0 : driver.photos.length) +
+    (activeGalleryFilter === "photos" ? 0 : galleryCars.length);
+  const cardFraming = getUserImageFraming({
+    imageFraming: driver.cardImageFraming ?? driver.imageFraming,
+  }).card;
+  const cardImageUrl = driver.cardImageUrl ?? driver.avatarUrl;
+  const activeSection = selectedSection?.driverId === driver.id
+    ? selectedSection.section
+    : null;
   const usesProtectedImage = Boolean(
-    driver.avatarUrl?.includes("/driver-photos/"),
+    cardImageUrl?.includes("/driver-photos/"),
   );
 
+  const shownDriverId = driver.id;
+
+  function selectSection(section: ProfileSection) {
+    setSelectedSection(
+      activeSection === section ? null : { driverId: shownDriverId, section },
+    );
+  }
+
   return (
-    <section className="du-page du-driver-profile-page">
+    <section className="du-page du-viewport-page du-driver-profile-page">
       <DetailsCard
         className="du-driver-details"
         image={{
-          src: driver.avatarUrl ?? raceBackground,
+          src: cardImageUrl ?? raceBackground,
           alt: `${driver.name} profile card`,
-          focusX: driver.avatarUrl ? profileFraming.card.focusX : 50,
-          focusY: driver.avatarUrl ? profileFraming.card.focusY : 50,
-          cropPercent: driver.avatarUrl ? profileFraming.card.cropPercent : 0,
+          focusX: cardImageUrl ? cardFraming.focusX : 50,
+          focusY: cardImageUrl ? cardFraming.focusY : 50,
+          cropPercent: cardImageUrl ? cardFraming.cropPercent : 0,
           authenticated: usesProtectedImage,
         }}
+        scrollAll
+        actionsClassName="du-push-bottom"
         eyebrow="Driver Details"
         title={driver.name}
         status={
@@ -221,21 +259,51 @@ function DriverDetailsPage() {
         </div>
 
         <div className="du-driver-profile-stats">
-          <span><strong>{driver.cars.length}</strong> Cars</span>
-          <span><strong>{driver.races.length}</strong> Races</span>
-          <span><strong>{driver.photos.length}</strong> Photos</span>
+          <button
+            type="button"
+            className="du-driver-stat"
+            disabled={!ownerView && !driver.carsVisible}
+            aria-pressed={activeSection === "cars"}
+            onClick={() => selectSection("cars")}
+          >
+            <strong>{ownerView || driver.carsVisible ? driver.cars.length : "Private"}</strong> Cars
+          </button>
+          <button
+            type="button"
+            className="du-driver-stat"
+            disabled={!ownerView && !driver.raceHistoryVisible}
+            aria-pressed={activeSection === "races"}
+            onClick={() => selectSection("races")}
+          >
+            <strong>{ownerView || driver.raceHistoryVisible ? driver.races.length : "Private"}</strong> Races
+          </button>
+          <button
+            type="button"
+            className="du-driver-stat"
+            disabled={!galleryVisible}
+            aria-pressed={activeSection === "photos"}
+            onClick={() => selectSection("photos")}
+          >
+            <strong>{galleryVisible ? galleryItemCount : "Private"}</strong> Gallery
+          </button>
         </div>
-      </DetailsCard>
 
-      {message && <p className="du-image-optimization-message">{message}</p>}
-      {error && <p className="du-error">{error}</p>}
+        {ownerView && (!driver.carsVisible || !driver.raceHistoryVisible || !driver.photosVisible) && (
+          <p className="du-caption du-driver-privacy-note">
+            Hidden sections are visible only to you. To share them with other
+            drivers, enable them under Edit Public Profile in My Profile.
+          </p>
+        )}
 
-      <section className="du-panel du-driver-section">
+        {message && <p className="du-image-optimization-message">{message}</p>}
+        {error && <p className="du-error">{error}</p>}
+
+      {activeSection === "cars" && <section className="du-driver-section">
         <div className="du-page-header">
           <p className="du-eyebrow">Garage</p>
           <h2 className="du-title-lg">Driver Cars</h2>
         </div>
-        {!driver.carsVisible ? (
+        {!ownerView && !driver.carsVisible ? (
           <p className="du-text-soft">This driver keeps their garage private.</p>
         ) : driver.cars.length === 0 ? (
           <p className="du-text-soft">No cars are shared yet.</p>
@@ -267,19 +335,19 @@ function DriverDetailsPage() {
             })}
           </div>
         )}
-      </section>
+      </section>}
 
-      <section className="du-panel du-driver-section">
+      {activeSection === "races" && <section className="du-driver-section">
         <div className="du-page-header">
           <p className="du-eyebrow">Participation</p>
           <h2 className="du-title-lg">Race History</h2>
         </div>
-        {!driver.raceHistoryVisible ? (
+        {!ownerView && !driver.raceHistoryVisible ? (
           <p className="du-text-soft">This driver keeps race history private.</p>
         ) : driver.races.length === 0 ? (
           <p className="du-text-soft">No shared race history yet.</p>
         ) : (
-          <div className="du-card-list du-soft-scroll du-scroll-large du-list-4 du-list-row-medium">
+          <div className="du-card-list du-driver-races du-list-row-medium">
             {driver.races.map((race) => (
               <button
                 key={race.registrationId}
@@ -299,71 +367,135 @@ function DriverDetailsPage() {
             ))}
           </div>
         )}
-      </section>
+      </section>}
 
-      <section className="du-panel du-driver-section">
+      {activeSection === "photos" && <section className="du-driver-section">
         <div className="du-page-header">
           <p className="du-eyebrow">Gallery</p>
-          <h2 className="du-title-lg">Driver Photos</h2>
+          <h2 className="du-title-lg">Driver Gallery</h2>
         </div>
-        {!driver.photosVisible ? (
-          <p className="du-text-soft">This driver keeps their photos private.</p>
-        ) : driver.photos.length === 0 ? (
-          <p className="du-text-soft">No photos are shared yet.</p>
+        {!galleryVisible ? (
+          <p className="du-text-soft">This driver keeps their gallery private.</p>
+        ) : galleryItemCount === 0 ? (
+          <p className="du-text-soft">No gallery photos are shared yet.</p>
         ) : (
-          <div className="du-media-grid">
-            {driver.photos.map((photo) => {
-              const card = getUserImageFraming(photo).card;
-              return (
-                <article key={photo.id} className="du-photo-card">
-                  <div className="du-photo-card-media">
-                    <AuthenticatedFocalImage
-                      src={photo.imageUrl}
-                      alt={photo.caption || `${driver.name} photo`}
-                      focusX={card.focusX}
-                      focusY={card.focusY}
-                      cropPercent={card.cropPercent}
-                    />
-                  </div>
-                  <div className="du-photo-card-copy">
-                    <p>{photo.caption || "Shared club photo"}</p>
-                    {!ownerView && currentUser?.role !== "ADMIN" && (
-                      <button
-                        type="button"
-                        className="du-button du-button-small du-button-rect"
-                        disabled={busyPhotoId === photo.id}
-                        onClick={() => handleReport(photo)}
-                      >
-                        Report Photo
-                      </button>
-                    )}
-                    {currentUser?.role === "ADMIN" && !ownerView && (
-                      <div className="du-inline du-inline-sm du-inline-wrap">
-                        <button
-                          type="button"
-                          className="du-button du-button-small"
-                          disabled={busyPhotoId === photo.id}
-                          onClick={() => handleAdminHide(photo.id)}
-                        >
-                          Hide
-                        </button>
-                        <button
-                          type="button"
-                          className="du-button du-button-small du-button-danger"
-                          disabled={busyPhotoId === photo.id}
-                          onClick={() => handleAdminDelete(photo.id)}
-                        >
-                          Delete
-                        </button>
+          <>
+            <div className="du-driver-gallery-filter" aria-label="Gallery filter">
+              <button
+                type="button"
+                className="du-button du-button-small"
+                aria-pressed={activeGalleryFilter === "all"}
+                onClick={() => setGalleryFilter("all")}
+              >
+                All · {galleryItemCount}
+              </button>
+              {(ownerView || driver.photosVisible) && (
+                <button
+                  type="button"
+                  className="du-button du-button-small"
+                  aria-pressed={activeGalleryFilter === "photos"}
+                  onClick={() => setGalleryFilter("photos")}
+                >
+                  Driver Photos · {driver.photos.length}
+                </button>
+              )}
+              {(ownerView || driver.carsVisible) && (
+                <button
+                  type="button"
+                  className="du-button du-button-small"
+                  aria-pressed={activeGalleryFilter === "cars"}
+                  onClick={() => setGalleryFilter("cars")}
+                >
+                  Cars · {galleryCars.length}
+                </button>
+              )}
+            </div>
+
+            {filteredGalleryItemCount === 0 ? (
+              <p className="du-text-soft">No photos in this category yet.</p>
+            ) : (
+              <div className="du-media-grid du-driver-photo-grid">
+                {activeGalleryFilter !== "cars" && driver.photos.map((photo) => {
+                  const card = getUserImageFraming(photo).card;
+                  return (
+                    <article key={`photo-${photo.id}`} className="du-photo-card">
+                      <div className="du-photo-card-media">
+                        <AuthenticatedFocalImage
+                          src={photo.imageUrl}
+                          alt={photo.caption || `${driver.name} photo`}
+                          focusX={card.focusX}
+                          focusY={card.focusY}
+                          cropPercent={card.cropPercent}
+                        />
                       </div>
-                    )}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+                      <div className="du-photo-card-copy">
+                        <p>{photo.caption || "Shared club photo"}</p>
+                        {!ownerView && currentUser?.role !== "ADMIN" && (
+                          <button
+                            type="button"
+                            className="du-button du-button-small du-button-rect"
+                            disabled={busyPhotoId === photo.id}
+                            onClick={() => handleReport(photo)}
+                          >
+                            Report Photo
+                          </button>
+                        )}
+                        {currentUser?.role === "ADMIN" && !ownerView && (
+                          <div className="du-inline du-inline-sm du-inline-wrap">
+                            <button
+                              type="button"
+                              className="du-button du-button-small"
+                              disabled={busyPhotoId === photo.id}
+                              onClick={() => handleAdminHide(photo.id)}
+                            >
+                              Hide
+                            </button>
+                            <button
+                              type="button"
+                              className="du-button du-button-small du-button-danger"
+                              disabled={busyPhotoId === photo.id}
+                              onClick={() => handleAdminDelete(photo.id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+
+                {activeGalleryFilter !== "photos" && galleryCars.map(({ car, imageUrl }) => {
+                  const card = getUserImageFraming(car).card;
+                  return (
+                    <button
+                      key={`car-${car.id}`}
+                      type="button"
+                      className="du-photo-card du-driver-gallery-car"
+                      onClick={() => navigate(`/cars/${car.id}`)}
+                    >
+                      <div className="du-photo-card-media">
+                        <FocalImage
+                          src={imageUrl}
+                          alt={`${car.brand} ${car.name}`}
+                          focusX={card.focusX}
+                          focusY={card.focusY}
+                          cropPercent={card.cropPercent}
+                        />
+                      </div>
+                      <span className="du-photo-card-copy">
+                        <strong>{car.brand} {car.name}</strong>
+                        <span className="du-caption">Car · {car.horsePower} HP</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
-      </section>
+      </section>}
+      </DetailsCard>
     </section>
   );
 }
