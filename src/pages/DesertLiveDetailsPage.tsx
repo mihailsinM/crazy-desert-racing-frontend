@@ -19,6 +19,7 @@ import {
 import type { DesertLiveItem } from "../types/desertLive";
 import raceBackground from "../assets/race.png";
 import { getDesertLiveImageFraming } from "../utils/desertLiveImageFraming";
+import { hasAdminAccess } from "../utils/userRole";
 
 function formatDate(value: string): string {
   return new Date(value).toLocaleDateString("en-US", {
@@ -39,7 +40,7 @@ function DesertLiveDetailsPage({
   const { id } = useParams();
   const { currentUser } = useAuth();
   const itemId = Number(id);
-  const isAdmin = currentUser?.role === "ADMIN";
+  const isAdmin = hasAdminAccess(currentUser?.role);
   const usesMyApi = itemScope === "MY";
 
   const [item, setItem] = useState<DesertLiveItem | null>(null);

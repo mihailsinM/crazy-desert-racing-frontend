@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/authContext";
 import { getUserImageFraming } from "../../utils/userImageFraming";
 import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
+import { formatUserRole } from "../../utils/userRole";
 
 type DashboardHeroStat = {
   label: string;
@@ -98,9 +99,7 @@ function DashboardHero({
               </button>
 
               <span className="du-caption">
-                {currentUser.role === "ADMIN"
-                  ? "Administrator"
-                  : "Crazy Desert Club Member"}
+                {formatUserRole(currentUser.role)}
                 {" · "}
                 {currentUser.email}
               </span>

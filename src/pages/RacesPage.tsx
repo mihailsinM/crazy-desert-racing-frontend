@@ -14,6 +14,7 @@ import {
 } from "../services/raceService";
 import { useAuth } from "../context/authContext";
 import { getRaceImageFraming } from "../utils/raceImageFraming";
+import { hasAdminAccess } from "../utils/userRole";
 
 
 function RacesPage() {
@@ -152,7 +153,7 @@ function RacesPage() {
         <h1 className="du-title-xl">🏁 Races</h1>
       </header>
 
-      {currentUser?.role === "ADMIN" && (
+      {hasAdminAccess(currentUser?.role) && (
         <div className="du-page-actions du-inline du-inline-sm du-inline-wrap">
           <button
             type="button"
@@ -211,7 +212,7 @@ function RacesPage() {
               <p>👥 Up to {race.maxParticipants} drivers</p>
 
               <div className="du-entity-actions">
-                {currentUser?.role === "ADMIN" && (
+                {hasAdminAccess(currentUser?.role) && (
                   <>
                     <button
                       className="du-button"

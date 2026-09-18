@@ -13,6 +13,7 @@ import UserAvatar from "../components/users/UserAvatar";
 import { useAuth } from "../context/authContext";
 import { getDrivers } from "../services/driverService";
 import type { DriverSummary } from "../types/driver";
+import { formatUserRole, hasAdminAccess } from "../utils/userRole";
 
 function formatTier(tier: DriverSummary["membershipTier"]): string {
   return tier.charAt(0) + tier.slice(1).toLowerCase();
@@ -134,7 +135,7 @@ function DriversPage() {
             onChange={setDriverStatus}
           />
 
-          {currentUser?.role === "ADMIN" && (
+          {hasAdminAccess(currentUser?.role) && (
             <button
               type="button"
               className="du-button du-button-small du-button-rect"
@@ -191,9 +192,7 @@ function DriversPage() {
                   </span>
 
                   <span className="du-row-subtitle">
-                    {driver.role === "ADMIN"
-                      ? "Club Administrator"
-                      : "Crazy Desert Club Member"}
+                    {formatUserRole(driver.role)}
                   </span>
                   <span className="du-row-subtitle">
                     {driver.carCount} cars · {driver.raceCount} races ·{" "}

@@ -10,6 +10,7 @@ import { updateCurrentUser } from "../../services/userService";
 import type { PublicProfileUpdateRequest } from "../../types/driver";
 import type { UserProfileUpdateRequest } from "../../types/user";
 import { getUserImageFraming } from "../../utils/userImageFraming";
+import { formatUserRole } from "../../utils/userRole";
 import DashboardProfileForm from "./DashboardProfileForm";
 
 type DashboardProfileProps = {
@@ -140,9 +141,7 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
         <div>
           <h3 className="du-title-sm">{user.name}</h3>
           <p className="du-caption">
-            {user.role === "ADMIN"
-              ? "Administrator"
-              : "Crazy Desert Club Member"}
+            {formatUserRole(user.role)}
             {" · "}
             {user.licenseVerified ? "Verified driver" : "License pending"}
             {" · "}
