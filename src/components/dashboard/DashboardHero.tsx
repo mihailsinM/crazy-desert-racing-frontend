@@ -100,7 +100,7 @@ function DashboardHero({
               <span className="du-caption">
                 {currentUser.role === "ADMIN"
                   ? "Administrator"
-                  : "Club member"}
+                  : "Crazy Desert Club Member"}
                 {" · "}
                 {currentUser.email}
               </span>

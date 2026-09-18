@@ -140,7 +140,9 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
         <div>
           <h3 className="du-title-sm">{user.name}</h3>
           <p className="du-caption">
-            {user.role === "ADMIN" ? "Administrator" : "Club member"}
+            {user.role === "ADMIN"
+              ? "Administrator"
+              : "Crazy Desert Club Member"}
             {" · "}
             {user.licenseVerified ? "Verified driver" : "License pending"}
             {" · "}
