@@ -18,6 +18,7 @@ import {
 import type { RaceCar } from "../types/raceCar";
 import type { Race } from "../types/race";
 import { getRaceImageFraming } from "../utils/raceImageFraming";
+import { hasAdminAccess } from "../utils/userRole";
 
 function formatRaceDate(startDate: string): string {
   return new Date(startDate).toLocaleDateString("en-US", {
@@ -241,7 +242,7 @@ function RaceDetailsPage() {
                 ← Back to Races
               </button>
 
-              {currentUser?.role === "ADMIN" && (
+              {hasAdminAccess(currentUser?.role) && (
                 <button
                   type="button"
                   className="du-button du-button-small du-sand-text"
@@ -251,7 +252,7 @@ function RaceDetailsPage() {
                 </button>
               )}
 
-              {currentUser?.role === "ADMIN" && (
+              {hasAdminAccess(currentUser?.role) && (
                 <button
                   type="button"
                   className="du-button du-button-small du-button-danger"

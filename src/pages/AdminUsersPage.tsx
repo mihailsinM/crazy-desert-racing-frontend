@@ -11,6 +11,7 @@ import UserAvatar from "../components/users/UserAvatar";
 import AdaptiveCardList from "../components/lists/AdaptiveCardList";
 import CatalogPage from "../components/lists/CatalogPage";
 import type { UserResponse } from "../types/user";
+import { hasAdminAccess } from "../utils/userRole";
 
 function AdminUsersPage() {
   const navigate = useNavigate();
@@ -166,7 +167,7 @@ function AdminUsersPage() {
                     </button>
                   )}
 
-                  {user.role !== "ADMIN" && (
+                  {!hasAdminAccess(user.role) && (
                     <button
                       className="du-button"
                       type="button"

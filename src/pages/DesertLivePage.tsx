@@ -26,6 +26,7 @@ import type {
   DesertLivePage as DesertLivePageData,
 } from "../types/desertLive";
 import raceBackground from "../assets/race.png";
+import { hasAdminAccess } from "../utils/userRole";
 
 type DesertLivePageProps = {
   scope?: "PUBLIC" | "MY";
@@ -42,7 +43,7 @@ const emptyPage: DesertLivePageData = {
 function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const isAdmin = currentUser?.role === "ADMIN";
+  const isAdmin = hasAdminAccess(currentUser?.role);
   const isMyPage = scope === "MY";
 
   const [category, setCategory] =

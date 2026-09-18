@@ -43,6 +43,7 @@ import {
   MAX_SOURCE_IMAGE_SIZE_MB,
   prepareImageForUpload,
 } from "../utils/imageUpload";
+import { hasAdminAccess } from "../utils/userRole";
 
 type DesertLiveEditorPageProps = {
   editScope?: "MY" | "ADMIN";
@@ -92,7 +93,7 @@ function DesertLiveEditorPage({
   const itemId = id ? Number(id) : null;
   const isEditing = itemId !== null;
   const usesAdminApi =
-    currentUser?.role === "ADMIN" && (!isEditing || editScope === "ADMIN");
+    hasAdminAccess(currentUser?.role) && (!isEditing || editScope === "ADMIN");
 
   const [existingItem, setExistingItem] =
     useState<DesertLiveItem | null>(null);

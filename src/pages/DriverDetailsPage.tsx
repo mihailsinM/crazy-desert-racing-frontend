@@ -20,6 +20,7 @@ import type {
   UserPhotoReportReason,
 } from "../types/driver";
 import { getUserImageFraming } from "../utils/userImageFraming";
+import { hasAdminAccess } from "../utils/userRole";
 
 type ProfileSection = "cars" | "races" | "photos";
 type GalleryFilter = "all" | "photos" | "cars";
@@ -430,7 +431,7 @@ function DriverDetailsPage() {
                       </div>
                       <div className="du-photo-card-copy">
                         <p>{photo.caption || "Shared club photo"}</p>
-                        {!ownerView && currentUser?.role !== "ADMIN" && (
+                        {!ownerView && !hasAdminAccess(currentUser?.role) && (
                           <button
                             type="button"
                             className="du-button du-button-small du-button-rect"
@@ -440,7 +441,7 @@ function DriverDetailsPage() {
                             Report Photo
                           </button>
                         )}
-                        {currentUser?.role === "ADMIN" && !ownerView && (
+                        {hasAdminAccess(currentUser?.role) && !ownerView && (
                           <div className="du-inline du-inline-sm du-inline-wrap">
                             <button
                               type="button"

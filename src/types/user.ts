@@ -1,6 +1,6 @@
 import type { ImageFramingProfiles } from "../utils/imageFocus";
 
-export type UserRole = "USER" | "ADMIN";
+export type UserRole = "USER" | "ADMIN" | "SUPER_ADMIN";
 export type MembershipTier = "STANDARD" | "SILVER" | "GOLD" | "PLATINUM";
 
 export interface UserResponse {

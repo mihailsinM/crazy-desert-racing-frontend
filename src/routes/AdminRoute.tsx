@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
+import { hasAdminAccess } from "../utils/userRole";
 
 type AdminRouteProps = {
   children: React.ReactNode;
@@ -8,7 +9,7 @@ type AdminRouteProps = {
 function AdminRoute({ children }: AdminRouteProps) {
   const { currentUser } = useAuth();
 
-  if (currentUser?.role !== "ADMIN") {
+  if (!hasAdminAccess(currentUser?.role)) {
     return <Navigate to="/dashboard" replace />;
   }
 
