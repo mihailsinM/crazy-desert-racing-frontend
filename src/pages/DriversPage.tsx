@@ -191,7 +191,9 @@ function DriversPage() {
                   </span>
 
                   <span className="du-row-subtitle">
-                    {driver.role === "ADMIN" ? "Club administrator" : "Club member"}
+                    {driver.role === "ADMIN"
+                      ? "Club Administrator"
+                      : "Crazy Desert Club Member"}
                   </span>
                   <span className="du-row-subtitle">
                     {driver.carCount} cars · {driver.raceCount} races ·{" "}

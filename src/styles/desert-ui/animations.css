@@ -18,6 +18,44 @@
   animation: duSoftGlow 2.4s ease-in-out infinite;
 }
 
+.du-story-pulse {
+  animation: duStoryPulse 2.15s ease-out both;
+  will-change: transform, box-shadow, border-color;
+}
+
+@keyframes duStoryPulse {
+  0%,
+  100% {
+    border-color: var(--du-border-orange);
+    transform: translateY(0) scale(1);
+    box-shadow: var(--du-shadow-panel);
+  }
+
+  24% {
+    border-color: rgba(255, 179, 71, 0.72);
+
+    box-shadow:
+      var(--du-shadow-panel),
+      0 0 30px rgba(255, 122, 26, 0.42);
+  }
+
+  48% {
+    transform: translateY(0) scale(1);
+  }
+
+  66% {
+    border-color: rgba(255, 179, 71, 0.46);
+
+    box-shadow:
+      var(--du-shadow-panel),
+      0 0 18px rgba(255, 179, 71, 0.24);
+  }
+
+  82% {
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes cardPopIn {
   from {
     opacity: 0;
@@ -55,5 +93,11 @@
     opacity: 1;
     filter: blur(0);
     transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .du-story-pulse {
+    animation: none;
   }
 }
