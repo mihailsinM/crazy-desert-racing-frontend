@@ -2,7 +2,7 @@ import "../styles/festival-experience-section.css";
 
 function FestivalExperienceSection() {
   return (
-    <section className="festival-section">
+    <section id="festival" className="festival-section">
       <div className="festival-content">
         <p>Festival Experience</p>
 

@@ -13,6 +13,7 @@ export type RaceCar = {
   imageFocusY: number;
   imageCropPercent: number;
   imageFraming?: ImageFramingProfiles | null;
+  galleryPhotoIds?: number[];
 };
 
 export type RaceCarWriteRequest = {

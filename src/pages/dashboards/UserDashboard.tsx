@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import DashboardActivity from "../../components/dashboard/DashboardActivity";
 import DashboardHero from "../../components/dashboard/DashboardHero";
 import DashboardShell from "../../components/dashboard/DashboardShell";
@@ -9,11 +7,16 @@ import DashboardWorkspace, {
 import { createUserDashboardConfig } from "../../components/dashboard/config/userDashboardConfig";
 import { useAuth } from "../../context/authContext";
 
-function UserDashboard() {
-  const { currentUser } = useAuth();
+type UserDashboardProps = {
+  workspaceView: DashboardWorkspaceView;
+  onWorkspaceViewChange: (view: DashboardWorkspaceView) => void;
+};
 
-  const [workspaceView, setWorkspaceView] =
-    useState<DashboardWorkspaceView>("HUB");
+function UserDashboard({
+  workspaceView,
+  onWorkspaceViewChange,
+}: UserDashboardProps) {
+  const { currentUser } = useAuth();
 
   if (!currentUser) {
     return null;
@@ -28,7 +31,7 @@ function UserDashboard() {
         title={config.hero.title}
         description={config.hero.description}
         stats={config.hero.stats}
-        onOpenProfile={() => setWorkspaceView("PROFILE")}
+        onOpenProfile={() => onWorkspaceViewChange("PROFILE")}
       />
 
       <section
@@ -43,7 +46,7 @@ function UserDashboard() {
           hubItems={config.hub.items}
           addPath={config.hub.addPath}
           viewAllPath={config.hub.viewAllPath}
-          onCloseProfile={() => setWorkspaceView("HUB")}
+          onCloseProfile={() => onWorkspaceViewChange("HUB")}
         />
 
         <DashboardActivity

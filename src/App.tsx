@@ -15,6 +15,7 @@ import AddRacePage from "./pages/AddRacePage";
 import AddCarPage from "./pages/AddCarPage";
 import EditRacePage from "./pages/EditRacePage";
 import CarDetailsPage from "./pages/CarDetailsPage";
+import CarGalleryPage from "./pages/CarGalleryPage";
 import EditCarPage from "./pages/EditCarPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
 import DesertLiveDetailsPage from "./pages/DesertLiveDetailsPage";
@@ -23,6 +24,9 @@ import DesertLivePage from "./pages/DesertLivePage";
 import DriversPage from "./pages/DriversPage";
 import DriverDetailsPage from "./pages/DriverDetailsPage";
 import AdminPhotoReportsPage from "./pages/AdminPhotoReportsPage";
+import ProfilePhotosPage from "./pages/ProfilePhotosPage";
+import ProfilePhotoViewerPage from "./pages/ProfilePhotoViewerPage";
+import ProfilePhotoSettingsPage from "./pages/ProfilePhotoSettingsPage";
 import AdminRoute from "./routes/AdminRoute";
 import { useAuth } from "./context/authContext";
 
@@ -78,7 +82,17 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/drivers" element={<DriversPage />} />
             <Route path="/drivers/:id" element={<DriverDetailsPage />} />
+            <Route path="/profile/photos" element={<ProfilePhotosPage />} />
+            <Route
+              path="/profile/photos/:photoId"
+              element={<ProfilePhotoViewerPage />}
+            />
+            <Route
+              path="/profile/photos/:photoId/settings"
+              element={<ProfilePhotoSettingsPage />}
+            />
             <Route path="/cars/:id/edit" element={<EditCarPage />} />
+            <Route path="/cars/:id/gallery" element={<CarGalleryPage />} />
             <Route path="/cars/:id" element={<CarDetailsPage />} />
             <Route path="/cars" element={<MyCarsPage />} />
             <Route path="/cars/new" element={<AddCarPage />} />

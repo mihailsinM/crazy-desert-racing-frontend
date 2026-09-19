@@ -62,13 +62,13 @@ function HeroSection() {
               Join The Journey
             </Link>
 
-            <Link to="/races" className="du-button du-button-inline">
+            <a href="#races" className="du-button du-button-inline">
               Explore Races
-            </Link>
+            </a>
 
-            <Link to="/races" className="du-button du-button-inline">
+            <a href="#festival" className="du-button du-button-inline">
               Explore Festival
-            </Link>
+            </a>
           </div>
         </div>
 

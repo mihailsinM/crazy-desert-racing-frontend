@@ -19,7 +19,7 @@ function StoryDetailsDialog({
   onClose,
 }: StoryDetailsDialogProps) {
   useEffect(() => {
-    const homePage = document.querySelector<HTMLElement>(".home-page");
+    const homePage = document.querySelector<HTMLElement>(".home-page-content");
     const previousOverflow = homePage?.style.overflow;
     const previouslyFocusedElement = document.activeElement;
 

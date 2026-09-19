@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
-import ProfilePhotosManager from "../users/ProfilePhotosManager";
 import PublicProfileForm from "../users/PublicProfileForm";
 import { useAuth } from "../../context/authContext";
 import { updateCurrentDriver } from "../../services/driverService";
@@ -41,7 +40,7 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
     refreshCurrentUser,
     logout,
   } = useAuth();
-  const [editorMode, setEditorMode] = useState<EditorMode>("VIEW");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -53,6 +52,28 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
   const user = currentUser;
   const avatarFraming = getUserImageFraming(user).avatar;
 
+  const requestedEditor = searchParams.get("edit");
+  const editorMode: EditorMode =
+    requestedEditor === "public"
+      ? "PUBLIC"
+      : requestedEditor === "account"
+        ? "ACCOUNT"
+        : "VIEW";
+
+  function changeEditorMode(nextMode: EditorMode) {
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (nextMode === "PUBLIC") {
+      nextParams.set("edit", "public");
+    } else if (nextMode === "ACCOUNT") {
+      nextParams.set("edit", "account");
+    } else {
+      nextParams.delete("edit");
+    }
+
+    setSearchParams(nextParams, { replace: true });
+  }
+
   async function handleAccountSave(request: UserProfileUpdateRequest) {
     setError("");
     setMessage("");
@@ -62,13 +83,12 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
       const emailChanged = request.email !== user.email;
       const updatedUser = await updateCurrentUser(request);
       setCurrentUser(updatedUser);
-      setEditorMode("VIEW");
+      changeEditorMode("VIEW");
 
       if (emailChanged) {
         setMessage("Email updated. Sign in again with your new email address...");
         window.setTimeout(() => {
-          logout();
-          window.location.replace("/login");
+          logout("/login");
         }, 1500);
       } else {
         setMessage("Account details updated.");
@@ -94,7 +114,7 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
     try {
       await updateCurrentDriver(request);
       await refreshCurrentUser();
-      setEditorMode("VIEW");
+      changeEditorMode("VIEW");
       setMessage("Public profile and privacy settings updated.");
     } catch (caughtError) {
       setError(
@@ -105,10 +125,6 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
     } finally {
       setSaving(false);
     }
-  }
-
-  async function refreshProfilePhoto(): Promise<void> {
-    await refreshCurrentUser();
   }
 
   return (
@@ -158,7 +174,7 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
           user={user}
           isSaving={saving}
           onSave={handleAccountSave}
-          onCancel={() => setEditorMode("VIEW")}
+          onCancel={() => changeEditorMode("VIEW")}
         />
       )}
 
@@ -167,7 +183,7 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
           user={user}
           saving={saving}
           onSave={handlePublicProfileSave}
-          onCancel={() => setEditorMode("VIEW")}
+          onCancel={() => changeEditorMode("VIEW")}
         />
       )}
 
@@ -204,29 +220,38 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
             <button
               type="button"
               className="du-button du-button-primary du-button-small"
-              onClick={() => setEditorMode("PUBLIC")}
+              onClick={() => changeEditorMode("PUBLIC")}
             >
               Edit Public Profile
             </button>
             <button
               type="button"
               className="du-button du-button-small"
-              onClick={() => setEditorMode("ACCOUNT")}
+              onClick={() => changeEditorMode("ACCOUNT")}
             >
               Edit Account
             </button>
             <button
               type="button"
               className="du-button du-button-small"
-              onClick={() => navigate(`/drivers/${user.id}`)}
+              onClick={() =>
+                navigate(`/drivers/${user.id}`, {
+                  state: { from: "/dashboard" },
+                })
+              }
             >
-              View My Public Profile
+              View My Card
+            </button>
+            <button
+              type="button"
+              className="du-button du-button-small"
+              onClick={() => navigate("/profile/photos")}
+            >
+              My Gallery
             </button>
           </div>
         </>
       )}
-
-      <ProfilePhotosManager onProfilePhotoChanged={refreshProfilePhoto} />
     </article>
   );
 }

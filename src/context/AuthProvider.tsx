@@ -1,25 +1,30 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
+  getToken,
   hasToken,
   removeToken,
   subscribeToAuthChanges,
 } from "../services/authService";
 import { getCurrentUser } from "../services/userService";
 import type { UserResponse } from "../types/user";
-import { AuthContext } from "./authContext";
+import { AuthContext, type LogoutDestination } from "./authContext";
 
 type AuthProviderProps = {
   children: React.ReactNode;
 };
 
 async function loadAuthenticatedUser(): Promise<UserResponse | null> {
-  if (!hasToken()) {
+  const requestToken = getToken();
+
+  if (!requestToken) {
     return null;
   }
 
   try {
-    return await getCurrentUser();
+    const user = await getCurrentUser();
+
+    return getToken() === requestToken ? user : null;
   } catch {
     return null;
   }
@@ -80,8 +85,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setCurrentUserState(user);
   }, []);
 
-  const logout = useCallback(() => {
-    removeToken();
+  const logout = useCallback((destination: LogoutDestination = "/") => {
+    // The page is about to be replaced. Avoid notifying this React tree first,
+    // otherwise the protected route briefly redirects through /login.
+    removeToken({ notify: false });
+    window.location.replace(destination);
   }, []);
 
   const contextValue = useMemo(

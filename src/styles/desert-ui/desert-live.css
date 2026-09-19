@@ -18,15 +18,14 @@
 
 .du-desert-live-editor-scroll {
   --du-page-scrollbar-width: 10px;
-  --du-page-scroll-lane: calc(
-    (var(--du-details-overlay-inline-padding) + var(--du-page-scrollbar-width)) / 2
-  );
+  --du-page-scroll-lane: var(--du-details-overlay-inline-padding);
 
   height: 100%;
   width: calc(100% + var(--du-page-scroll-lane));
   margin-right: calc(-1 * var(--du-page-scroll-lane));
   padding-right: calc(
-    var(--du-page-scroll-lane) - var(--du-page-scrollbar-width)
+    var(--du-page-scroll-lane) - var(--du-page-scrollbar-width) -
+      var(--du-page-scrollbar-width)
   );
   box-sizing: border-box;
   overflow-y: auto;

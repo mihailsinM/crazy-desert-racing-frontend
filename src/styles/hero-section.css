@@ -47,7 +47,7 @@
 
 @media (max-width: 600px) {
   .hero-section {
-    padding: 110px 20px 40px;
+    padding: 40px 20px;
   }
 
   .hero-content h1 {
@@ -108,16 +108,6 @@
 .story-slider:focus-visible {
   border-radius: 12px;
   box-shadow: 0 0 0 2px rgba(255, 179, 71, 0.62);
-}
-
-.story-slider::-webkit-scrollbar-thumb {
-  background: rgba(255, 179, 71, 0.34);
-  transition: background-color 180ms ease;
-}
-
-.story-slider:hover::-webkit-scrollbar-thumb,
-.story-slider:focus-visible::-webkit-scrollbar-thumb {
-  background: rgba(255, 179, 71, 0.72);
 }
 
 .story-slide {

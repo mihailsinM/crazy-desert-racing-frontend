@@ -22,7 +22,7 @@ function UpcomingRacesSection() {
   }, []);
 
   return (
-    <section className="upcoming-races-section">
+    <section id="races" className="upcoming-races-section">
       <div className="upcoming-races-header">
         <p>Race Calendar</p>
         <h2>Upcoming Races</h2>

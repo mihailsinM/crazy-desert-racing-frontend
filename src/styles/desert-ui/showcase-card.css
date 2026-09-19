@@ -45,6 +45,10 @@
   align-items: flex-start;
 }
 
+.du-my-cars-title {
+  margin: 0;
+}
+
 .du-showcase-eyebrow {
   color: #ffb347;
   text-transform: uppercase;

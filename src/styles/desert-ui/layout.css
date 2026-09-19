@@ -4,10 +4,7 @@
 
 .du-viewport-page {
   display: flex;
-  height: calc(
-    100dvh - var(--du-page-shell-top-space) -
-      var(--du-page-shell-bottom-space)
-  );
+  height: 100%;
   min-height: 0;
 }
 
@@ -34,54 +31,57 @@
 }
 
 .du-collection-scroll {
-  /* Keep the grid full-width while centering the rail in the outer gap. */
-  --du-collection-scroll-lane: clamp(24px, 4vw, 52px);
+  /* Keep the grid width while placing the rail against the viewport edge. */
+  --du-collection-scroll-lane: max(24px, calc((100vw - 1180px) * 0.5));
   --du-collection-scrollbar-width: 10px;
+  --du-card-hover-space: 16px;
 
   flex: 1 1 auto;
   min-height: 0;
-  width: calc(100% + var(--du-collection-scroll-lane));
+  width: calc(
+    100% + var(--du-collection-scroll-lane) + var(--du-card-hover-space)
+  );
+  margin-left: calc(-1 * var(--du-card-hover-space));
   margin-right: calc(-1 * var(--du-collection-scroll-lane));
+  padding-top: var(--du-card-hover-space);
+  padding-left: var(--du-card-hover-space);
   padding-right: calc(
-    var(--du-collection-scroll-lane) - var(--du-collection-scrollbar-width)
+    var(--du-collection-scroll-lane) - var(--du-collection-scrollbar-width) -
+      var(--du-collection-scrollbar-width)
   );
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-gutter: stable;
 }
 
-.du-collection-scroll > .du-grid,
-.du-collection-scroll > .du-showcase-grid {
+.du-collection-scroll > :is(.du-grid, .du-showcase-grid, .vip-grid) {
   padding-bottom: 20px;
 }
 
 .dashboard-page.du-page-shell:has(
     > .du-container > .du-viewport-page
   ) {
-  --du-page-shell-top-space: 118px;
-  --du-page-shell-bottom-space: 40px;
-
-  height: 100dvh;
+  height: 100%;
   min-height: 0;
   overflow: hidden;
 }
 
 .du-page-shell {
-  --du-page-shell-top-space: 110px;
-  --du-page-shell-bottom-space: 40px;
-
-  min-height: 100vh;
-  padding: var(--du-page-shell-top-space) 24px
-    var(--du-page-shell-bottom-space);
+  min-height: 100%;
+  padding: 40px 24px;
 }
 
 .dashboard-page.du-page-shell > .du-container {
   display: grid;
-  min-height: calc(
-    100vh - var(--du-page-shell-top-space) -
-      var(--du-page-shell-bottom-space)
-  );
+  min-height: 100%;
   align-items: center;
+}
+
+.dashboard-page.du-page-shell:has(
+    > .du-container > .du-viewport-page
+  ) > .du-container {
+  height: 100%;
+  min-height: 0;
 }
 
 .du-container {
@@ -104,6 +104,20 @@
 
 .du-page-header {
   margin-bottom: 32px;
+}
+
+.du-page-header > .du-eyebrow,
+.du-page-heading-copy > .du-eyebrow {
+  margin: 0 0 8px;
+}
+
+.du-page-header > :is(.du-title-xl, .du-title-lg, .du-title-md, .du-title-sm),
+.du-page-heading-copy > :is(.du-title-xl, .du-title-lg, .du-title-md, .du-title-sm) {
+  margin-top: 0;
+}
+
+.du-page-heading-copy {
+  min-width: 0;
 }
 
 .du-page-actions {
@@ -147,7 +161,7 @@
 }
 
 @media (max-width: 768px) {
-  .du-page-header {
+  .du-page-header-split {
     flex-direction: column;
     align-items: stretch;
   }

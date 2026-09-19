@@ -96,7 +96,7 @@ function AdminUsersPage() {
         }}
       >
         <div className="du-details-overlay du-scroll du-details-overlay-top">
-          <div className="du-page-header">
+          <div className="du-page-header du-page-header-split">
             <div>
               <p className="du-details-eyebrow">Admin Panel</p>
               <h1 className="du-details-title">All Users</h1>

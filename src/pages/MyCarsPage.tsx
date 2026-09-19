@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FocalImage from "../components/images/FocalImage";
+import RaceCarImage from "../components/images/RaceCarImage";
 import raceBackground from "../assets/race.png";
 import {
   getMyRaceCars,
@@ -43,8 +43,7 @@ function MyCarsPage() {
   return (
     <section className="du-page du-viewport-page du-collection-page">
       <header className="du-page-header">
-        <p className="du-eyebrow">Garage</p>
-        <h1 className="du-title-xl">🏎 My Cars</h1>
+        <h1 className="du-eyebrow du-my-cars-title">My Cars</h1>
       </header>
 
       <div className="du-collection-scroll du-soft-scroll">
@@ -69,7 +68,7 @@ function MyCarsPage() {
               className="du-card du-showcase-card"
               onClick={() => navigate(`/cars/${car.id}`)}
             >
-              <FocalImage
+              <RaceCarImage
                 src={getRaceCarAssetUrl(car.imageUrl) ?? raceBackground}
                 alt={`${car.brand} ${car.name}`}
                 focusX={cardFraming.focusX}

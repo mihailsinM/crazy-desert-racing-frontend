@@ -89,6 +89,10 @@
 }
 
 .du-viewport-page .du-page-header {
+  display: block;
+}
+
+.du-viewport-page .du-page-header-split {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -112,7 +116,7 @@
 }
 
 @media (max-width: 700px) {
-  .du-viewport-page .du-page-header,
+  .du-viewport-page .du-page-header-split,
   .du-list-toolbar,
   .du-list-toolbar-actions {
     align-items: stretch;

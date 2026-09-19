@@ -65,9 +65,7 @@
 
 .du-details-overlay.du-scroll {
   --du-page-scrollbar-width: 10px;
-  --du-page-scroll-lane: calc(
-    (var(--du-details-overlay-inline-padding) + var(--du-page-scrollbar-width)) / 2
-  );
+  --du-page-scroll-lane: var(--du-details-overlay-inline-padding);
 
   padding-right: var(--du-details-overlay-inline-padding);
 }
@@ -76,7 +74,8 @@
   width: calc(100% + var(--du-page-scroll-lane));
   margin-right: calc(-1 * var(--du-page-scroll-lane));
   padding-right: calc(
-    var(--du-page-scroll-lane) - var(--du-page-scrollbar-width)
+    var(--du-page-scroll-lane) - var(--du-page-scrollbar-width) -
+      var(--du-page-scrollbar-width)
   );
   scrollbar-gutter: stable;
 }
@@ -162,6 +161,23 @@
   flex-wrap: wrap;
 }
 
+.du-car-details-action-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.du-car-details-action-row .du-button {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  .du-car-details-action-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .du-details-message {
   max-width: 620px;
   margin-top: 10px;
@@ -209,14 +225,15 @@
 
 .du-details-body-scroll {
   --du-page-scrollbar-width: 10px;
-  --du-page-scroll-lane: calc(
-    (var(--du-details-overlay-inline-padding) + var(--du-page-scrollbar-width)) / 2
-  );
+  --du-page-scroll-lane: var(--du-details-overlay-inline-padding);
   flex: 1 1 auto;
   min-height: 0;
   width: calc(100% + var(--du-page-scroll-lane));
   margin-right: calc(-1 * var(--du-page-scroll-lane));
-  padding-right: calc(var(--du-page-scroll-lane) - var(--du-page-scrollbar-width));
+  padding-right: calc(
+    var(--du-page-scroll-lane) - var(--du-page-scrollbar-width) -
+      var(--du-page-scrollbar-width)
+  );
   overflow-y: auto;
   scrollbar-gutter: stable;
 }
@@ -235,9 +252,7 @@
 
 .du-details-content-scroll {
   --du-page-scrollbar-width: 10px;
-  --du-page-scroll-lane: calc(
-    (var(--du-details-overlay-inline-padding) + var(--du-page-scrollbar-width)) / 2
-  );
+  --du-page-scroll-lane: var(--du-details-overlay-inline-padding);
 
   display: flex;
   flex: 1 1 auto;
@@ -246,7 +261,10 @@
   min-height: 0;
   width: calc(100% + var(--du-page-scroll-lane));
   margin-right: calc(-1 * var(--du-page-scroll-lane));
-  padding-right: calc(var(--du-page-scroll-lane) - var(--du-page-scrollbar-width));
+  padding-right: calc(
+    var(--du-page-scroll-lane) - var(--du-page-scrollbar-width) -
+      var(--du-page-scrollbar-width)
+  );
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -326,12 +344,7 @@
       .du-scroll,
       .du-details-overlay-scrollable
     ) {
-    width: calc(
-      100% - (var(--du-details-overlay-inline-padding) - 10px) / 2
-    );
-    padding-right: calc(
-      (var(--du-details-overlay-inline-padding) - 10px) / 2
-    );
+    width: 100%;
     overflow-y: auto;
     scrollbar-gutter: stable;
   }

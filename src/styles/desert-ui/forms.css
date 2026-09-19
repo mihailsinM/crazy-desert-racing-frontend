@@ -87,9 +87,7 @@
 .du-form-panel.du-form-panel-media {
   --du-form-inline-padding: 36px;
   --du-form-scrollbar-width: 10px;
-  --du-form-scroll-lane: calc(
-    (var(--du-form-inline-padding) + var(--du-form-scrollbar-width)) / 2
-  );
+  --du-form-scroll-lane: var(--du-form-inline-padding);
 
   display: flex;
   flex-direction: column;
@@ -109,7 +107,8 @@
   width: calc(100% + var(--du-form-scroll-lane));
   margin-right: calc(-1 * var(--du-form-scroll-lane));
   padding-right: calc(
-    var(--du-form-scroll-lane) - var(--du-form-scrollbar-width)
+    var(--du-form-scroll-lane) - var(--du-form-scrollbar-width) -
+      var(--du-form-scrollbar-width)
   );
   overflow-x: hidden;
   overflow-y: auto;
