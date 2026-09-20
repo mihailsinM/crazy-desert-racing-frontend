@@ -14,6 +14,7 @@ type DesertLiveMenuFilterProps<T extends string> = {
   options: readonly DesertLiveFilterOption<T>[];
   onChange: (value: T) => void;
   variant?: "FILTER" | "SELECT";
+  disabled?: boolean;
 };
 
 function DesertLiveMenuFilter<T extends string>({
@@ -23,6 +24,7 @@ function DesertLiveMenuFilter<T extends string>({
   options,
   onChange,
   variant = "FILTER",
+  disabled = false,
 }: DesertLiveMenuFilterProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -65,6 +67,7 @@ function DesertLiveMenuFilter<T extends string>({
         className="du-button du-button-small du-button-rect du-filter-trigger"
         aria-expanded={isOpen}
         aria-haspopup="menu"
+        disabled={disabled}
         onClick={() => setIsOpen((current) => !current)}
       >
         <span aria-hidden="true">

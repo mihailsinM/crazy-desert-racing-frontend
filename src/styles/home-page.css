@@ -1,4 +1,9 @@
 .home-page {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
   color: white;
 
   background:
@@ -13,6 +18,19 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+}
+
+.home-page > .du-navbar {
+  position: relative;
+}
+
+.home-page-content {
+  min-height: 0;
+  scroll-behavior: smooth;
+}
+
+.home-page-content > section {
+  scroll-margin-top: 1rem;
 }
 
 .app:has(> .home-page) {

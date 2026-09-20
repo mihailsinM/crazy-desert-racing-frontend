@@ -148,30 +148,32 @@ function RacesPage() {
 
   return (
     <section className="du-page du-viewport-page du-collection-page">
-      <header className="du-page-header">
-        <p className="du-eyebrow">Race Calendar</p>
-        <h1 className="du-title-xl">🏁 Races</h1>
-      </header>
-
-      {hasAdminAccess(currentUser?.role) && (
-        <div className="du-page-actions du-inline du-inline-sm du-inline-wrap">
-          <button
-            type="button"
-            className="du-button du-button-small du-button-rect"
-            disabled={synchronizingLive}
-            onClick={handleSynchronizeLive}
-          >
-            {synchronizingLive ? "Synchronizing..." : "Sync Desert Live"}
-          </button>
-          <button
-            type="button"
-            className="du-button du-button-primary du-button-small du-button-rect"
-            onClick={() => navigate("/races/new")}
-          >
-            Add New Race
-          </button>
+      <header className="du-page-header du-page-header-split">
+        <div className="du-page-heading-copy">
+          <p className="du-eyebrow">Race Calendar</p>
+          <h1 className="du-title-xl">🏁 Races</h1>
         </div>
-      )}
+
+        {hasAdminAccess(currentUser?.role) && (
+          <div className="du-inline du-inline-sm du-inline-wrap du-inline-mobile-stack">
+            <button
+              type="button"
+              className="du-button du-button-small du-button-rect"
+              disabled={synchronizingLive}
+              onClick={handleSynchronizeLive}
+            >
+              {synchronizingLive ? "Synchronizing..." : "Sync Desert Live"}
+            </button>
+            <button
+              type="button"
+              className="du-button du-button-primary du-button-small du-button-rect"
+              onClick={() => navigate("/races/new")}
+            >
+              Add New Race
+            </button>
+          </div>
+        )}
+      </header>
 
       <div className="du-collection-scroll du-soft-scroll">
       <div className="du-grid">

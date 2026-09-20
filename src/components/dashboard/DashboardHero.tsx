@@ -98,6 +98,26 @@ function DashboardHero({
                 My Cars
               </button>
 
+              <button
+                type="button"
+                className="du-button du-button-small"
+                onClick={() => navigate("/profile/photos")}
+              >
+                My Gallery
+              </button>
+
+              <button
+                type="button"
+                className="du-button du-button-small"
+                onClick={() =>
+                  navigate(`/drivers/${currentUser.id}`, {
+                    state: { from: "/dashboard" },
+                  })
+                }
+              >
+                My Card
+              </button>
+
               <span className="du-caption">
                 {formatUserRole(currentUser.role)}
                 {" · "}

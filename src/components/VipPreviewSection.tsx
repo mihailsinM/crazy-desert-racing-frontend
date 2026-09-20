@@ -2,7 +2,7 @@ import "../styles/vip-preview-section.css";
 
 function VipPreviewSection() {
   return (
-    <section className="vip-preview-section">
+    <section id="vip" className="vip-preview-section">
       <div className="vip-preview-card">
         <p>VIP Membership</p>
 
@@ -14,7 +14,7 @@ function VipPreviewSection() {
           Desert Racing community.
         </p>
 
-        <a href="/dashboard/vip" className="vip-preview-button">
+        <a href="/vip" className="vip-preview-button">
           Explore VIP Club
         </a>
       </div>

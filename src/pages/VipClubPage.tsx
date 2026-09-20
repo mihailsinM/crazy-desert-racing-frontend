@@ -27,32 +27,34 @@ const memberships = [
 
 function VipClubPage() {
   return (
-    <section className="vip-page">
-      <header className="page-header">
-        <p>Premium Membership</p>
-        <h1>⭐ VIP Club</h1>
+    <section className="du-page du-viewport-page du-collection-page vip-page">
+      <header className="du-page-header">
+        <p className="du-eyebrow">Premium Membership</p>
+        <h1 className="du-title-xl">⭐ VIP Club</h1>
       </header>
 
-      <div className="vip-grid">
-        {memberships.map((membership) => (
-          <div
-            key={membership.name}
-            className={
-              membership.featured ? "vip-card featured" : "vip-card"
-            }
-          >
-            <h2>{membership.name}</h2>
-            <p>{membership.description}</p>
+      <div className="du-collection-scroll du-soft-scroll">
+        <div className="vip-grid">
+          {memberships.map((membership) => (
+            <div
+              key={membership.name}
+              className={
+                membership.featured ? "vip-card featured" : "vip-card"
+              }
+            >
+              <h2>{membership.name}</h2>
+              <p>{membership.description}</p>
 
-            <strong className="vip-price">{membership.price}</strong>
+              <strong className="vip-price">{membership.price}</strong>
 
-            <span>{membership.badge}</span>
+              <span>{membership.badge}</span>
 
-            <button className="vip-button">
-              Choose {membership.name}
-            </button>
-          </div>
-        ))}
+              <button className="vip-button">
+                Choose {membership.name}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

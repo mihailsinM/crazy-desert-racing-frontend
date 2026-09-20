@@ -78,22 +78,31 @@ function CarDetailsPage() {
           focusX: cardFraming.focusX,
           focusY: cardFraming.focusY,
           cropPercent: car.imageUrl ? cardFraming.cropPercent : 0,
+          authenticated: Boolean(car.imageUrl?.includes("/driver-photos/")),
         }}
         scrollable
         actions={
           <>
-            <button
-              className="du-button du-button-secondary du-sand-text"
-              onClick={() => navigate("/cars")}
-            >
-              ← Back To My Cars
-            </button>
-            <button
-              className="du-button du-button-secondary du-sand-text"
-              onClick={handleDeleteCar}
-            >
-              Delete Car
-            </button>
+            <div className="du-car-details-action-row">
+              <button
+                className="du-button du-button-secondary du-sand-text"
+                onClick={() => navigate(`/cars/${car.id}/gallery`)}
+              >
+                Car Gallery
+              </button>
+              <button
+                className="du-button du-button-secondary du-sand-text"
+                onClick={() => navigate("/cars")}
+              >
+                ← Back To My Cars
+              </button>
+              <button
+                className="du-button du-button-secondary du-sand-text"
+                onClick={handleDeleteCar}
+              >
+                Delete Car
+              </button>
+            </div>
             <button
               className="du-button du-button-primary"
               onClick={() => navigate(`/cars/${car.id}/edit`)}
@@ -112,6 +121,7 @@ function CarDetailsPage() {
           This vehicle is connected to your Crazy Desert Racing profile and
           can be used for future race registrations.
         </p>
+
       </DetailsCard>
     </section>
   );

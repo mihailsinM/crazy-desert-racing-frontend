@@ -1,52 +1,36 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
-import ImageFocusPicker from "../images/ImageFocusPicker";
+import { useAuth } from "../../context/authContext";
 import {
-  deleteCurrentUserPhoto,
   getCurrentUserPhotos,
-  setCurrentUserCardPhoto,
-  setCurrentUserProfilePhoto,
-  updateCurrentUserPhoto,
-  updateCurrentUserPhotoFraming,
   uploadCurrentUserPhoto,
 } from "../../services/userPhotoService";
-import type { UserPhoto, UserPhotoVisibility } from "../../types/driver";
-import {
-  createImageFramingProfiles,
-  type ImageFramingProfiles,
-} from "../../utils/imageFocus";
+import type { UserPhoto } from "../../types/driver";
+import { createImageFramingProfiles } from "../../utils/imageFocus";
 import {
   formatImageFileSize,
   IMAGE_UPLOAD_ACCEPT,
-  MAX_SOURCE_IMAGE_SIZE_MB,
   prepareImageForUpload,
 } from "../../utils/imageUpload";
 import { getUserImageFraming } from "../../utils/userImageFraming";
+import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
 
-type ProfilePhotosManagerProps = {
-  onProfilePhotoChanged: () => Promise<void>;
-};
+function formatVisibility(photo: UserPhoto): string {
+  if (photo.visibility === "PRIVATE") return "Private";
+  if (photo.visibility === "MEMBERS_ONLY") return "Club Members";
+  return "Public Profile";
+}
 
-function ProfilePhotosManager({
-  onProfilePhotoChanged,
-}: ProfilePhotosManagerProps) {
+function ProfilePhotosManager() {
+  const { refreshCurrentUser } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [photos, setPhotos] = useState<UserPhoto[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [caption, setCaption] = useState("");
-  const [visibility, setVisibility] =
-    useState<UserPhotoVisibility>("MEMBERS_ONLY");
   const [rightsConfirmed, setRightsConfirmed] = useState(false);
-  const [imageFraming, setImageFraming] = useState<ImageFramingProfiles>(() =>
-    createImageFramingProfiles(),
-  );
-  const [editingPhotoId, setEditingPhotoId] = useState<number | null>(null);
-  const [editingFraming, setEditingFraming] = useState<ImageFramingProfiles>(
-    () => createImageFramingProfiles(),
-  );
   const [loading, setLoading] = useState(true);
   const [optimizing, setOptimizing] = useState(false);
-  const [busyPhotoId, setBusyPhotoId] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -58,9 +42,7 @@ function ProfilePhotosManager({
 
   useEffect(() => {
     return () => {
-      if (selectedImagePreview) {
-        URL.revokeObjectURL(selectedImagePreview);
-      }
+      if (selectedImagePreview) URL.revokeObjectURL(selectedImagePreview);
     };
   }, [selectedImagePreview]);
 
@@ -70,12 +52,9 @@ function ProfilePhotosManager({
 
   useEffect(() => {
     let active = true;
-
     void getCurrentUserPhotos()
       .then((loadedPhotos) => {
-        if (active) {
-          setPhotos(loadedPhotos);
-        }
+        if (active) setPhotos(loadedPhotos);
       })
       .catch((caughtError) => {
         if (active) {
@@ -87,9 +66,7 @@ function ProfilePhotosManager({
         }
       })
       .finally(() => {
-        if (active) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       });
 
     return () => {
@@ -100,22 +77,18 @@ function ProfilePhotosManager({
   async function selectImage(event: React.ChangeEvent<HTMLInputElement>) {
     const image = event.currentTarget.files?.[0] ?? null;
     event.currentTarget.value = "";
-
-    if (!image) {
-      return;
-    }
+    if (!image) return;
 
     setOptimizing(true);
     setError("");
     setMessage("");
-
     try {
       const preparedImage = await prepareImageForUpload(image);
       setSelectedImage(preparedImage);
-      setImageFraming(createImageFramingProfiles());
+      setRightsConfirmed(false);
       setMessage(
         preparedImage === image
-          ? `Ready to upload · ${formatImageFileSize(preparedImage.size)}`
+          ? `Ready to add · ${formatImageFileSize(preparedImage.size)}`
           : `Optimized ${formatImageFileSize(image.size)} → ${formatImageFileSize(preparedImage.size)}`,
       );
     } catch (caughtError) {
@@ -132,12 +105,10 @@ function ProfilePhotosManager({
 
   async function handleUpload(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     if (!selectedImage) {
       setError("Choose a photo first.");
       return;
     }
-
     if (!rightsConfirmed) {
       setError("Confirm that you own the photo or may publish it.");
       return;
@@ -146,22 +117,19 @@ function ProfilePhotosManager({
     setUploading(true);
     setError("");
     setMessage("");
-
     try {
       await uploadCurrentUserPhoto({
         file: selectedImage,
-        caption: caption.trim() || null,
-        visibility,
+        caption: null,
+        visibility: "MEMBERS_ONLY",
         rightsConfirmed,
-        imageFraming,
+        imageFraming: createImageFramingProfiles(),
       });
       await loadPhotos();
+      await refreshCurrentUser();
       setSelectedImage(null);
-      setCaption("");
-      setVisibility("MEMBERS_ONLY");
       setRightsConfirmed(false);
-      setImageFraming(createImageFramingProfiles());
-      setMessage("Photo added to your gallery.");
+      setMessage("Photo added. Personalize it whenever you want in Settings.");
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -173,136 +141,17 @@ function ProfilePhotosManager({
     }
   }
 
-  async function changeVisibility(
-    photo: UserPhoto,
-    nextVisibility: UserPhotoVisibility,
-  ) {
-    setBusyPhotoId(photo.id);
-    setError("");
-    setMessage("");
-
-    try {
-      await updateCurrentUserPhoto(photo.id, {
-        caption: photo.caption,
-        visibility: nextVisibility,
-      });
-      await loadPhotos();
-      await onProfilePhotoChanged();
-      setMessage(
-        nextVisibility === "PRIVATE"
-          ? "Photo hidden. Private photos cannot be used as an avatar or profile card."
-          : "Photo visibility updated.",
-      );
-    } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Failed to update photo");
-    } finally {
-      setBusyPhotoId(null);
-    }
-  }
-
-  async function editCaption(photo: UserPhoto) {
-    const nextCaption = window.prompt("Photo caption:", photo.caption ?? "");
-
-    if (nextCaption === null) {
-      return;
-    }
-
-    setBusyPhotoId(photo.id);
-    setError("");
-
-    try {
-      await updateCurrentUserPhoto(photo.id, {
-        caption: nextCaption.trim() || null,
-        visibility: photo.visibility,
-      });
-      await loadPhotos();
-      setMessage("Photo caption updated.");
-    } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Failed to update caption");
-    } finally {
-      setBusyPhotoId(null);
-    }
-  }
-
-  async function setProfilePhoto(photo: UserPhoto, target: "avatar" | "card") {
-    setBusyPhotoId(photo.id);
-    setError("");
-    setMessage("");
-
-    try {
-      if (target === "avatar") {
-        await setCurrentUserProfilePhoto(photo.id);
-      } else {
-        await setCurrentUserCardPhoto(photo.id);
-      }
-      await loadPhotos();
-      await onProfilePhotoChanged();
-      setMessage(target === "avatar" ? "Avatar updated." : "Profile card updated.");
-    } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Failed to set profile photo");
-    } finally {
-      setBusyPhotoId(null);
-    }
-  }
-
-  function startFramingEdit(photo: UserPhoto) {
-    setEditingPhotoId(photo.id);
-    setEditingFraming(getUserImageFraming(photo));
-    setError("");
-  }
-
-  async function saveFraming(photo: UserPhoto) {
-    setBusyPhotoId(photo.id);
-    setError("");
-
-    try {
-      await updateCurrentUserPhotoFraming(photo.id, editingFraming);
-      await loadPhotos();
-      await onProfilePhotoChanged();
-      setEditingPhotoId(null);
-      setMessage("Avatar and card framing saved.");
-    } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Failed to save framing");
-    } finally {
-      setBusyPhotoId(null);
-    }
-  }
-
-  async function deletePhoto(photo: UserPhoto) {
-    if (!window.confirm("Delete this photo permanently?")) {
-      return;
-    }
-
-    setBusyPhotoId(photo.id);
-    setError("");
-    setMessage("");
-
-    try {
-      await deleteCurrentUserPhoto(photo.id);
-      await loadPhotos();
-      await onProfilePhotoChanged();
-      setMessage("Photo deleted.");
-    } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Failed to delete photo");
-    } finally {
-      setBusyPhotoId(null);
-    }
-  }
-
   return (
     <section className="du-profile-photos">
       <div className="du-hub-header">
-        <div>
-          <p className="du-eyebrow">My Gallery</p>
-          <h3 className="du-title-sm">Profile Photos</h3>
+        <div className="du-photo-gallery-heading">
+          <h1 className="du-eyebrow">My Gallery</h1>
+          <span className="du-caption">{photos.length} / 50</span>
         </div>
-        <span className="du-caption">{photos.length} / 50 photos</span>
-      </div>
-
-      <form className="du-form du-photo-upload" onSubmit={handleUpload}>
-        <div className="du-inline du-inline-sm du-inline-wrap">
-          <label className="du-button du-button-small du-button-rect du-button-inline du-file-button">
-            {optimizing ? "Optimizing..." : "Choose Photo"}
+        <div className="du-photo-gallery-actions">
+          <label className="du-button du-button-primary du-button-small du-button-rect du-file-button">
+            <span aria-hidden="true">＋</span>
+            {optimizing ? "Preparing..." : "Add Photo"}
             <input
               hidden
               type="file"
@@ -311,76 +160,61 @@ function ProfilePhotosManager({
               onChange={selectImage}
             />
           </label>
-          <span className="du-caption">
-            JPG, PNG, or WebP · up to {MAX_SOURCE_IMAGE_SIZE_MB} MB
-          </span>
+          <button
+            type="button"
+            className="du-button du-button-small du-button-rect"
+            onClick={() => navigate("/dashboard")}
+          >
+            ← Back to Dashboard
+          </button>
         </div>
+      </div>
 
-        {selectedImagePreview && (
-          <>
-            <label className="du-field">
-              <span className="du-field-label">Caption</span>
-              <input
-                className="du-input"
-                value={caption}
-                maxLength={300}
-                onChange={(event) => setCaption(event.currentTarget.value)}
-              />
-            </label>
-            <label className="du-field">
-              <span className="du-field-label">Visibility</span>
-              <select
-                className="du-select"
-                value={visibility}
-                onChange={(event) =>
-                  setVisibility(event.currentTarget.value as UserPhotoVisibility)
-                }
-              >
-                <option value="PRIVATE">Private</option>
-                <option value="MEMBERS_ONLY">Club Members</option>
-                <option value="PUBLIC">Public Profile</option>
-              </select>
-            </label>
-
-            <ImageFocusPicker
-              imageUrl={selectedImagePreview}
-              framingProfiles={imageFraming}
-              onFramingProfilesChange={setImageFraming}
-              imageAlt="Profile photo"
-              disabled={uploading}
-            />
-
-            <label className="du-check-row du-photo-rights">
-              <input
-                type="checkbox"
-                checked={rightsConfirmed}
-                onChange={(event) => setRightsConfirmed(event.currentTarget.checked)}
-              />
-              <span>
-                I confirm that this is my photo or I have permission to publish it.
-              </span>
-            </label>
-
-            <div className="du-inline du-inline-sm du-inline-wrap">
-              <button
-                type="submit"
-                className="du-button du-button-primary du-button-small"
-                disabled={uploading || optimizing || !rightsConfirmed}
-              >
-                {uploading ? "Uploading..." : "Add to Gallery"}
-              </button>
-              <button
-                type="button"
-                className="du-button du-button-small"
-                disabled={uploading}
-                onClick={() => setSelectedImage(null)}
-              >
-                Cancel
-              </button>
+      {selectedImagePreview && (
+        <form className="du-photo-add-panel" onSubmit={handleUpload}>
+          <div className="du-photo-add-confirmation">
+            <img src={selectedImagePreview} alt="Selected upload preview" />
+            <div className="du-photo-add-copy">
+              <strong>Ready to add this photo?</strong>
+              <p className="du-text-soft">
+                Confirm that you may publish it. You can personalize everything
+                else later in Settings.
+              </p>
+              <label className="du-check-row du-photo-rights">
+                <input
+                  type="checkbox"
+                  checked={rightsConfirmed}
+                  onChange={(event) =>
+                    setRightsConfirmed(event.currentTarget.checked)
+                  }
+                />
+                <span>This is my photo, or I have permission to publish it.</span>
+              </label>
+              <div className="du-inline du-inline-sm du-inline-wrap">
+                <button
+                  type="submit"
+                  className="du-button du-button-primary du-button-small"
+                  disabled={uploading || optimizing || !rightsConfirmed}
+                >
+                  {uploading ? "Adding..." : "Add to My Gallery"}
+                </button>
+                <button
+                  type="button"
+                  className="du-button du-button-small"
+                  disabled={uploading}
+                  onClick={() => {
+                    setSelectedImage(null);
+                    setRightsConfirmed(false);
+                    setMessage("");
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
-          </>
-        )}
-      </form>
+          </div>
+        </form>
+      )}
 
       {message && <p className="du-image-optimization-message">{message}</p>}
       {error && <p className="du-error">{error}</p>}
@@ -390,14 +224,21 @@ function ProfilePhotosManager({
       ) : photos.length === 0 ? (
         <p className="du-text-soft">No gallery photos yet.</p>
       ) : (
-        <div className="du-profile-photo-list du-soft-scroll du-scroll-large">
+        <div className="du-profile-photo-list">
           {photos.map((photo) => {
             const card = getUserImageFraming(photo).card;
-            const disabled = busyPhotoId === photo.id;
-
             return (
-              <article key={photo.id} className="du-profile-photo-item">
-                <div className="du-profile-photo-preview">
+              <article key={photo.id} className="du-photo-card du-profile-photo-item">
+                <button
+                  type="button"
+                  className="du-profile-photo-preview"
+                  aria-label={`View ${photo.caption || "gallery photo"}`}
+                  onClick={() =>
+                    navigate(`/profile/photos/${photo.id}`, {
+                      state: { from: location.pathname },
+                    })
+                  }
+                >
                   <AuthenticatedFocalImage
                     src={photo.imageUrl}
                     alt={photo.caption || "Profile gallery photo"}
@@ -405,107 +246,27 @@ function ProfilePhotosManager({
                     focusY={card.focusY}
                     cropPercent={card.cropPercent}
                   />
-                </div>
-                <div className="du-profile-photo-copy">
-                  <strong>{photo.caption || "Untitled photo"}</strong>
+                </button>
+                <div className="du-photo-card-copy du-profile-photo-copy">
+                  <p>{photo.caption || "No description"}</p>
                   <span className="du-caption">
-                    {photo.visibility.replace("_", " ")}
-                    {photo.profilePhoto ? " · AVATAR" : ""}
-                    {photo.cardProfilePhoto ? " · PROFILE CARD" : ""}
+                    {formatVisibility(photo)}
+                    {photo.profilePhoto ? " · Avatar" : ""}
+                    {photo.cardProfilePhoto ? " · Profile Card" : ""}
                   </span>
-                  <div className="du-inline du-inline-sm du-inline-wrap">
-                    {!photo.profilePhoto && photo.visibility !== "PRIVATE" && (
-                      <button
-                        type="button"
-                        className="du-button du-button-small"
-                        disabled={disabled}
-                        onClick={() => setProfilePhoto(photo, "avatar")}
-                      >
-                        Use as Avatar
-                      </button>
-                    )}
-                    {!photo.cardProfilePhoto && photo.visibility !== "PRIVATE" && (
-                      <button
-                        type="button"
-                        className="du-button du-button-small"
-                        disabled={disabled}
-                        onClick={() => setProfilePhoto(photo, "card")}
-                      >
-                        Use as Profile Card
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      className="du-button du-button-small"
-                      disabled={disabled}
-                      onClick={() => editCaption(photo)}
-                    >
-                      Edit Caption
-                    </button>
-                    <button
-                      type="button"
-                      className="du-button du-button-small"
-                      disabled={disabled}
-                      onClick={() => startFramingEdit(photo)}
-                    >
-                      Edit Framing
-                    </button>
-                    <select
-                      className="du-select du-photo-visibility-select"
-                      aria-label="Photo visibility"
-                      value={photo.visibility}
-                      disabled={disabled}
-                      onChange={(event) =>
-                        changeVisibility(
-                          photo,
-                          event.currentTarget.value as UserPhotoVisibility,
-                        )
-                      }
-                    >
-                      <option value="PRIVATE">Private</option>
-                      <option value="MEMBERS_ONLY">Club Members</option>
-                      <option value="PUBLIC">Public</option>
-                    </select>
-                    <button
-                      type="button"
-                      className="du-button du-button-small du-button-danger"
-                      disabled={disabled}
-                      onClick={() => deletePhoto(photo)}
-                    >
-                      Delete
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="du-button du-button-rect du-photo-settings-button"
+                    onClick={() =>
+                      navigate(`/profile/photos/${photo.id}/settings`, {
+                        state: { from: location.pathname },
+                      })
+                    }
+                  >
+                    <span aria-hidden="true">⚙</span>
+                    Settings
+                  </button>
                 </div>
-
-                {editingPhotoId === photo.id && (
-                  <div className="du-profile-photo-framing">
-                    <ImageFocusPicker
-                      imageUrl={photo.imageUrl}
-                      framingProfiles={editingFraming}
-                      onFramingProfilesChange={setEditingFraming}
-                      imageAlt="Gallery photo"
-                      disabled={disabled}
-                    />
-                    <div className="du-inline du-inline-sm du-inline-wrap">
-                      <button
-                        type="button"
-                        className="du-button du-button-primary du-button-small"
-                        disabled={disabled}
-                        onClick={() => saveFraming(photo)}
-                      >
-                        Save Framing
-                      </button>
-                      <button
-                        type="button"
-                        className="du-button du-button-small"
-                        disabled={disabled}
-                        onClick={() => setEditingPhotoId(null)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
               </article>
             );
           })}

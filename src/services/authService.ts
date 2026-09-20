@@ -7,6 +7,10 @@ import type {
 const TOKEN_STORAGE_KEY = "token";
 const AUTH_STATE_CHANGED_EVENT = "auth-state-changed";
 
+type RemoveTokenOptions = {
+  notify?: boolean;
+};
+
 function notifyAuthStateChanged(): void {
   window.dispatchEvent(new Event(AUTH_STATE_CHANGED_EVENT));
 }
@@ -20,9 +24,12 @@ export function setToken(token: string): void {
   notifyAuthStateChanged();
 }
 
-export function removeToken(): void {
+export function removeToken({ notify = true }: RemoveTokenOptions = {}): void {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
-  notifyAuthStateChanged();
+
+  if (notify) {
+    notifyAuthStateChanged();
+  }
 }
 
 export function hasToken(): boolean {
@@ -44,10 +51,10 @@ export async function authenticatedFetch(
   init: RequestInit = {},
 ): Promise<Response> {
   const headers = new Headers(init.headers);
-  const token = getToken();
+  const requestToken = getToken();
 
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
+  if (requestToken) {
+    headers.set("Authorization", `Bearer ${requestToken}`);
   }
 
   const response = await fetch(input, {
@@ -56,10 +63,17 @@ export async function authenticatedFetch(
   });
 
   if (response.status === 401) {
-    removeToken();
+    const activeToken = getToken();
+    const responseBelongsToActiveSession =
+      Boolean(requestToken) && activeToken === requestToken;
 
-    if (window.location.pathname !== "/login") {
-      window.location.replace("/login");
+    // Ignore a late response from a request started before logout or re-login.
+    if (responseBelongsToActiveSession) {
+      removeToken();
+
+      if (window.location.pathname !== "/login") {
+        window.location.replace("/login");
+      }
     }
   }
 

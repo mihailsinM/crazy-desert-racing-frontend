@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 
 function Navbar() {
-  const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -14,7 +13,6 @@ function Navbar() {
   function handleLogout() {
     setMenuOpen(false);
     logout();
-    navigate("/login", { replace: true });
   }
 
   return (
@@ -67,17 +65,17 @@ function Navbar() {
           </>
         ) : (
           <>
-            <NavLink to="/races" className={getNavLinkClass} onClick={() => setMenuOpen(false)}>
-              Racing
-            </NavLink>
+            <a href="#races" className="du-nav-link" onClick={() => setMenuOpen(false)}>
+              Races
+            </a>
 
-            <NavLink to="/vip" className={getNavLinkClass} onClick={() => setMenuOpen(false)}>
+            <a href="#vip" className="du-nav-link" onClick={() => setMenuOpen(false)}>
               VIP Club
-            </NavLink>
+            </a>
 
-            <NavLink to="/festival" className={getNavLinkClass} onClick={() => setMenuOpen(false)}>
+            <a href="#festival" className="du-nav-link" onClick={() => setMenuOpen(false)}>
               Festival
-            </NavLink>
+            </a>
 
             <NavLink
               to="/login"

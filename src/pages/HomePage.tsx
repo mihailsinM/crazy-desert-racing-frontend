@@ -8,13 +8,15 @@ import VipPreviewSection from "../components/VipPreviewSection";
 
 function HomePage() {
   return (
-    <main className="home-page du-page-scroll">
+    <main className="home-page">
       <Navbar />
-      <HeroSection />
-      <UpcomingRacesSection />
-      <WhyJoinSection />
-      <FestivalExperienceSection />
-      <VipPreviewSection />
+      <div className="home-page-content du-page-scroll">
+        <HeroSection />
+        <UpcomingRacesSection />
+        <WhyJoinSection />
+        <FestivalExperienceSection />
+        <VipPreviewSection />
+      </div>
     </main>
   );
 }

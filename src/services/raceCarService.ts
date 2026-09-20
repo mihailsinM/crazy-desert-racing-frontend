@@ -5,6 +5,7 @@ import type {
   RaceCarImageFramingProfilesRequest,
   RaceCarWriteRequest,
 } from "../types/raceCar";
+import type { UserPhoto } from "../types/driver";
 
 async function getResponseError(
   response: Response,
@@ -143,6 +144,26 @@ export async function deleteRaceCarImage(id: number): Promise<RaceCar> {
   );
 
   return readJson(response, "Failed to remove race car image");
+}
+
+export async function assignGalleryPhotoToRaceCar(
+  carId: number,
+  photoId: number,
+): Promise<RaceCar> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/race-cars/${carId}/gallery-photo/${photoId}`,
+    { method: "PUT" },
+  );
+
+  return readJson(response, "Failed to use gallery photo for this car");
+}
+
+export async function getRaceCarGallery(id: number): Promise<UserPhoto[]> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/race-cars/${id}/gallery`,
+  );
+
+  return readJson(response, "Failed to load the car gallery");
 }
 
 export async function deleteRaceCar(id: number): Promise<void> {
