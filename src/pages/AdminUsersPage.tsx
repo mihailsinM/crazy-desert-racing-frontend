@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import raceBackground from "../assets/race.png";
-import {
-  getAllUsers,
-  verifyUserLicense,
-  makeUserAdmin,
-} from "../services/userService";
+import { getAllUsers, verifyUserLicense } from "../services/userService";
 import { getDrivers } from "../services/driverService";
 import UserAvatar from "../components/users/UserAvatar";
 import AdaptiveCardList from "../components/lists/AdaptiveCardList";
 import CatalogPage from "../components/lists/CatalogPage";
 import type { UserResponse } from "../types/user";
-import { hasAdminAccess } from "../utils/userRole";
+import { useAuth } from "../context/authContext";
 
 function AdminUsersPage() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -66,12 +63,6 @@ function AdminUsersPage() {
 
   async function handleVerifyLicense(userId: number) {
     await verifyUserLicense(userId);
-    const data = await loadUsersWithPublicAvatars();
-    setUsers(data);
-  }
-
-  async function handleMakeAdmin(userId: number) {
-    await makeUserAdmin(userId);
     const data = await loadUsersWithPublicAvatars();
     setUsers(data);
   }
@@ -167,13 +158,13 @@ function AdminUsersPage() {
                     </button>
                   )}
 
-                  {!hasAdminAccess(user.role) && (
+                  {currentUser?.role === "SUPER_ADMIN" && user.role !== "SUPER_ADMIN" && (
                     <button
                       className="du-button"
                       type="button"
-                      onClick={() => handleMakeAdmin(user.id)}
+                      onClick={() => navigate(`/admin/users/${user.id}/admin-access`)}
                     >
-                      Make Admin
+                      {user.role === "ADMIN" ? "Manage Admin" : "Review Admin Access"}
                     </button>
                   )}
                 </div>

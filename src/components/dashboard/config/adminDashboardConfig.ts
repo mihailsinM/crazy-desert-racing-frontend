@@ -47,9 +47,9 @@ export function createAdminDashboardConfig(
           path: "/races",
         },
         {
-          title: "🚩 Photo Reports",
-          text: "Review privacy, copyright and community photo reports.",
-          path: "/admin/photo-reports",
+          title: "📥 Admin Inbox",
+          text: "Support chats, marketplace complaints and reports in one place.",
+          path: "/admin/inbox",
         },
         {
           title: "⭐ VIP Club",
@@ -67,6 +67,7 @@ export function createAdminDashboardConfig(
     activity: {
       title: "🔥 Desert Live",
       viewAllPath: "/activity",
+      addPath: "/activity/new",
     },
   };
 }

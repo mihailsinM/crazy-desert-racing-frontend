@@ -144,6 +144,14 @@ export async function getAllUsers(): Promise<UserResponse[]> {
   return response.json();
 }
 
+export async function getUserById(userId: number): Promise<UserResponse> {
+  const response = await authenticatedFetch(`${API_BASE_URL}/users/${userId}`);
+  if (!response.ok) {
+    throw new Error(await getResponseError(response, "Failed to load user"));
+  }
+  return response.json();
+}
+
 export async function verifyUserLicense(userId: number): Promise<UserResponse> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/users/${userId}/verify-license`,
@@ -171,5 +179,16 @@ export async function makeUserAdmin(userId: number): Promise<UserResponse> {
     throw new Error("Failed to make admin");
   }
 
+  return response.json();
+}
+
+export async function removeUserAdmin(userId: number): Promise<UserResponse> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/users/${userId}/admin-role`,
+    { method: "DELETE" },
+  );
+  if (!response.ok) {
+    throw new Error(await getResponseError(response, "Failed to remove admin access"));
+  }
   return response.json();
 }

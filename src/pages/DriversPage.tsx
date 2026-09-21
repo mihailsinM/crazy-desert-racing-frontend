@@ -10,7 +10,9 @@ import EntityListToolbar from "../components/lists/EntityListToolbar";
 import AdaptiveCardList from "../components/lists/AdaptiveCardList";
 import CatalogPage from "../components/lists/CatalogPage";
 import UserAvatar from "../components/users/UserAvatar";
+import ChatBubbleIcon from "../components/chat/ChatBubbleIcon";
 import { useAuth } from "../context/authContext";
+import { openDirectChat } from "../services/chatService";
 import { getDrivers } from "../services/driverService";
 import type { DriverSummary } from "../types/driver";
 import { formatUserRole, hasAdminAccess } from "../utils/userRole";
@@ -47,6 +49,26 @@ function DriversPage() {
     useState<DriverStatusFilter>("ALL");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [busyChatDriverId, setBusyChatDriverId] = useState<number | null>(null);
+
+  async function handleStartChat(driver: DriverSummary) {
+    setBusyChatDriverId(driver.id);
+    setActionError("");
+
+    try {
+      const conversation = await openDirectChat(driver.id);
+      navigate(`/chats/${conversation.id}`);
+    } catch (caughtError) {
+      setActionError(
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Failed to open chat",
+      );
+    } finally {
+      setBusyChatDriverId(null);
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -135,6 +157,14 @@ function DriversPage() {
             onChange={setDriverStatus}
           />
 
+          <button
+            type="button"
+            className="du-button du-button-small du-button-rect"
+            onClick={() => navigate("/chats")}
+          >
+            My Chats
+          </button>
+
           {hasAdminAccess(currentUser?.role) && (
             <button
               type="button"
@@ -154,6 +184,8 @@ function DriversPage() {
           </button>
         </EntityListToolbar>
 
+        {actionError && <p className="du-error">{actionError}</p>}
+
         <AdaptiveCardList className="du-list-row-large">
           {filteredDrivers.length === 0 ? (
             <div className="du-row-panel">
@@ -166,11 +198,9 @@ function DriversPage() {
             </div>
           ) : (
             filteredDrivers.map((driver) => (
-              <button
+              <article
                 key={driver.id}
-                type="button"
                 className="du-row-panel du-driver-row"
-                onClick={() => navigate(`/drivers/${driver.id}`)}
               >
                 <UserAvatar
                   name={driver.name}
@@ -200,10 +230,29 @@ function DriversPage() {
                   </span>
                 </span>
 
-                <span className="du-button du-button-small du-button-rect">
-                  View Profile
+                <span className="du-row-actions du-driver-row-actions">
+                  {driver.id !== currentUser?.id && (
+                    <button
+                      type="button"
+                      className="du-button du-button-small du-button-rect du-driver-chat-button"
+                      disabled={busyChatDriverId === driver.id}
+                      onClick={() => handleStartChat(driver)}
+                    >
+                      <ChatBubbleIcon className="du-driver-chat-icon" />
+                      <span>
+                        {busyChatDriverId === driver.id ? "Opening..." : "Chat"}
+                      </span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="du-button du-button-small du-button-rect"
+                    onClick={() => navigate(`/drivers/${driver.id}`)}
+                  >
+                    View Profile
+                  </button>
                 </span>
-              </button>
+              </article>
             ))
           )}
         </AdaptiveCardList>

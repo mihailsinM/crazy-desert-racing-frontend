@@ -27,6 +27,12 @@ import AdminPhotoReportsPage from "./pages/AdminPhotoReportsPage";
 import ProfilePhotosPage from "./pages/ProfilePhotosPage";
 import ProfilePhotoViewerPage from "./pages/ProfilePhotoViewerPage";
 import ProfilePhotoSettingsPage from "./pages/ProfilePhotoSettingsPage";
+import ChatPage from "./pages/ChatPage";
+import ChatPrivacyPage from "./pages/ChatPrivacyPage";
+import AdminChatReportsPage from "./pages/AdminChatReportsPage";
+import AdminRoleReviewPage from "./pages/AdminRoleReviewPage";
+import AdminInboxPage from "./pages/AdminInboxPage";
+import SuperAdminRoute from "./routes/SuperAdminRoute";
 import AdminRoute from "./routes/AdminRoute";
 import { useAuth } from "./context/authContext";
 
@@ -54,6 +60,7 @@ function App() {
 
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/privacy/chat" element={<ChatPrivacyPage />} />
           <Route
             element={
               isAuthenticated ? (
@@ -71,6 +78,8 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route path="/admin/users/:id/admin-access" element={<SuperAdminRoute><AdminRoleReviewPage /></SuperAdminRoute>} />
+            <Route path="/admin/inbox" element={<AdminRoute><AdminInboxPage /></AdminRoute>} />
             <Route
               path="/admin/photo-reports"
               element={
@@ -79,9 +88,19 @@ function App() {
                 </AdminRoute>
               }
             />
+            <Route
+              path="/admin/chat-reports"
+              element={
+                <AdminRoute>
+                  <AdminChatReportsPage />
+                </AdminRoute>
+              }
+            />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/drivers" element={<DriversPage />} />
             <Route path="/drivers/:id" element={<DriverDetailsPage />} />
+            <Route path="/chats" element={<ChatPage />} />
+            <Route path="/chats/:conversationId" element={<ChatPage />} />
             <Route path="/profile/photos" element={<ProfilePhotosPage />} />
             <Route
               path="/profile/photos/:photoId"

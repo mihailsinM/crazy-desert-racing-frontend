@@ -27,5 +27,6 @@ export type DashboardConfig = {
   activity: {
     title: string;
     viewAllPath: string;
+    addPath?: string;
   };
 };

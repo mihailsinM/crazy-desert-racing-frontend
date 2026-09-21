@@ -39,6 +39,11 @@ export function createUserDashboardConfig(user: UserResponse): DashboardConfig {
           path: "/drivers",
         },
         {
+          title: "💬 My Chats",
+          text: "Talk privately with club members or contact the admins.",
+          path: "/chats",
+        },
+        {
           title: "⭐ VIP Club",
           text: "Unlock premium festival and racing experiences.",
           path: "/vip",
@@ -54,6 +59,7 @@ export function createUserDashboardConfig(user: UserResponse): DashboardConfig {
     activity: {
       title: "🔥 Desert Live",
       viewAllPath: "/activity",
+      addPath: "/activity/new",
     },
   };
 }

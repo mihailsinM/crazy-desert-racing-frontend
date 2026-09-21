@@ -11,7 +11,8 @@ type AuthenticatedFocalImageProps = FocalImageProps & {
 function requiresAuthentication(source: string): boolean {
   try {
     const path = new URL(source, window.location.origin).pathname;
-    return path.startsWith("/driver-photos/");
+    return path.startsWith("/driver-photos/")
+      || path.startsWith("/chat/messages/");
   } catch {
     return false;
   }
