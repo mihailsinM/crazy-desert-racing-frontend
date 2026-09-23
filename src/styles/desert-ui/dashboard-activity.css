@@ -77,6 +77,8 @@
   -webkit-line-clamp: 2;
 }
 
+.du-dashboard-activity-period { color: var(--du-orange-soft); font-size: 12px; }
+
 .du-dashboard-empty-state {
   display: grid;
   width: 100%;

@@ -2,8 +2,23 @@
   color: inherit;
   font: inherit;
   text-align: left;
-  cursor: pointer;
+  cursor: default;
   appearance: none;
+}
+
+.du-driver-row-actions {
+  align-items: center;
+}
+
+.du-driver-chat-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.du-driver-chat-icon {
+  width: 19px;
+  height: 19px;
 }
 
 .du-driver-row:hover {
@@ -53,10 +68,20 @@
 
 .du-driver-intro {
   display: grid;
-  grid-template-columns: 116px minmax(0, 1fr);
+  flex: 1 0 330px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 263px);
   align-items: center;
   gap: 24px;
-  max-width: 680px;
+  width: 100%;
+  min-height: 330px;
+}
+
+.du-driver-profile-summary {
+  display: grid;
+  align-self: start;
+  justify-items: start;
+  gap: 18px;
+  margin-top: -10px;
 }
 
 .du-driver-profile-avatar {
@@ -64,11 +89,42 @@
   border-width: 2px;
 }
 
+.du-driver-profile-bio {
+  grid-column: 2;
+  width: min(100%, 263px);
+  justify-self: end;
+  margin-right: -12px;
+}
+
+.du-driver-profile-bio .du-details-description {
+  max-width: none;
+  margin: 0;
+}
+
+.du-driver-profile-bio .du-text-soft {
+  margin: 12px 0 0;
+}
+
+.du-driver-profile-bio :is(.du-details-description, .du-text-soft) {
+  text-shadow:
+    -1px 0 2px rgba(18, 11, 7, 1),
+    1px 0 2px rgba(18, 11, 7, 1),
+    0 -1px 2px rgba(18, 11, 7, 1),
+    0 1px 2px rgba(18, 11, 7, 1),
+    -1px -1px 2px rgba(18, 11, 7, 0.98),
+    1px -1px 2px rgba(18, 11, 7, 0.98),
+    -1px 1px 2px rgba(18, 11, 7, 0.98),
+    1px 1px 2px rgba(18, 11, 7, 0.98),
+    0 0 6px rgba(18, 11, 7, 1),
+    0 0 12px rgba(18, 11, 7, 0.98),
+    0 0 20px rgba(18, 11, 7, 0.9);
+}
+
 .du-driver-profile-stats {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 18px;
+  margin-top: 0;
 }
 
 .du-driver-stat {
@@ -459,7 +515,20 @@
 
 @media (max-width: 800px) {
   .du-driver-intro {
+    flex: 0 0 auto;
     grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .du-driver-profile-summary {
+    margin-top: 0;
+  }
+
+  .du-driver-profile-bio {
+    grid-column: 1;
+    width: min(100%, 320px);
+    justify-self: stretch;
+    margin-right: 0;
   }
 
   .du-driver-profile-avatar {

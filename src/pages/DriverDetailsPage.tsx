@@ -271,48 +271,51 @@ function DriverDetailsPage() {
         }
       >
         <div className="du-driver-intro">
-          <UserAvatar
-            name={driver.name}
-            avatarUrl={driver.avatarUrl}
-            imageFraming={driver.imageFraming}
-            className="du-driver-profile-avatar"
-          />
-          <div>
+          <div className="du-driver-profile-summary">
+            <UserAvatar
+              name={driver.name}
+              avatarUrl={driver.avatarUrl}
+              imageFraming={driver.imageFraming}
+              className="du-driver-profile-avatar"
+            />
+
+            <div className="du-driver-profile-stats">
+              <button
+                type="button"
+                className="du-driver-stat"
+                disabled={!ownerView && !driver.carsVisible}
+                aria-pressed={activeSection === "cars"}
+                onClick={() => selectSection("cars")}
+              >
+                <strong>{ownerView || driver.carsVisible ? driver.cars.length : "Private"}</strong> Cars
+              </button>
+              <button
+                type="button"
+                className="du-driver-stat"
+                disabled={!ownerView && !driver.raceHistoryVisible}
+                aria-pressed={activeSection === "races"}
+                onClick={() => selectSection("races")}
+              >
+                <strong>{ownerView || driver.raceHistoryVisible ? driver.races.length : "Private"}</strong> Races
+              </button>
+              <button
+                type="button"
+                className="du-driver-stat"
+                disabled={!galleryVisible}
+                aria-pressed={activeSection === "photos"}
+                onClick={() => selectSection("photos")}
+              >
+                <strong>{galleryVisible ? galleryItemCount : "Private"}</strong> Driver Gallery
+              </button>
+            </div>
+          </div>
+
+          <div className="du-driver-profile-bio">
             <p className="du-details-description">
               {driver.bio || "This driver has not added a public bio yet."}
             </p>
             {driver.location && <p className="du-text-soft">📍 {driver.location}</p>}
           </div>
-        </div>
-
-        <div className="du-driver-profile-stats">
-          <button
-            type="button"
-            className="du-driver-stat"
-            disabled={!ownerView && !driver.carsVisible}
-            aria-pressed={activeSection === "cars"}
-            onClick={() => selectSection("cars")}
-          >
-            <strong>{ownerView || driver.carsVisible ? driver.cars.length : "Private"}</strong> Cars
-          </button>
-          <button
-            type="button"
-            className="du-driver-stat"
-            disabled={!ownerView && !driver.raceHistoryVisible}
-            aria-pressed={activeSection === "races"}
-            onClick={() => selectSection("races")}
-          >
-            <strong>{ownerView || driver.raceHistoryVisible ? driver.races.length : "Private"}</strong> Races
-          </button>
-          <button
-            type="button"
-            className="du-driver-stat"
-            disabled={!galleryVisible}
-            aria-pressed={activeSection === "photos"}
-            onClick={() => selectSection("photos")}
-          >
-            <strong>{galleryVisible ? galleryItemCount : "Private"}</strong> Driver Gallery
-          </button>
         </div>
 
         {ownerView && (!driver.carsVisible || !driver.raceHistoryVisible || !driver.photosVisible) && (

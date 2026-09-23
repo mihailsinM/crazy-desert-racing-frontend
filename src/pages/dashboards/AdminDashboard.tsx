@@ -52,6 +52,7 @@ function AdminDashboard({
         <DashboardActivity
           title={config.activity.title}
           viewAllPath={config.activity.viewAllPath}
+          addPath={config.activity.addPath}
           visibleItemCount={workspaceView === "PROFILE" ? 4 : 3}
         />
       </section>

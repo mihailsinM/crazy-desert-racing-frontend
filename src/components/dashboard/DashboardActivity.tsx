@@ -18,6 +18,7 @@ import FocalImage from "../images/FocalImage";
 type DashboardActivityProps = {
   title: string;
   viewAllPath: string;
+  addPath?: string;
   visibleItemCount: 3 | 4;
 };
 
@@ -65,6 +66,9 @@ function DashboardActivityItem({
         <span className="du-dashboard-activity-description">
           {item.description}
         </span>
+        {(item.activeFrom || item.activeUntil) && <span className="du-dashboard-activity-period">
+          {item.activeFrom ? new Date(item.activeFrom).toLocaleDateString() : "Now"} – {item.activeUntil ? new Date(item.activeUntil).toLocaleDateString() : "Ongoing"}
+        </span>}
       </span>
     </button>
   );
@@ -73,6 +77,7 @@ function DashboardActivityItem({
 function DashboardActivity({
   title,
   viewAllPath,
+  addPath,
   visibleItemCount,
 }: DashboardActivityProps) {
   const navigate = useNavigate();
@@ -148,6 +153,12 @@ function DashboardActivity({
             options={desertLiveCategoryOptions}
             onChange={setActiveFilter}
           />
+
+          {addPath && <button
+            type="button"
+            className="du-button du-button-small du-button-rect"
+            onClick={() => navigate(addPath)}
+          >+ Add</button>}
 
           <button
             type="button"

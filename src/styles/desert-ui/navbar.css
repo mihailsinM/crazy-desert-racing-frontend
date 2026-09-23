@@ -108,6 +108,41 @@
   opacity: 1;
 }
 
+.du-nav-chat-link {
+  position: relative;
+  gap: 7px;
+}
+
+.du-nav-chat-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.du-nav-unread-dot {
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid rgba(18, 11, 7, 0.9);
+  border-radius: 50%;
+  background: var(--du-orange-main);
+  box-shadow: 0 0 8px rgba(255, 122, 26, 0.9);
+  animation: duChatUnreadPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes duChatUnreadPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 6px rgba(255, 122, 26, 0.58);
+  }
+  50% {
+    transform: scale(1.24);
+    box-shadow: 0 0 12px rgba(255, 122, 26, 1);
+  }
+}
+
 @media (max-width: 700px) {
   .du-navbar {
     padding: 16px 20px;
@@ -144,7 +179,29 @@
     justify-content: flex-start;
   }
 
+  .du-nav-chat-link {
+    padding-right: 28px;
+  }
+
+  .du-nav-unread-dot {
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+  }
+
   .du-navbar-logo {
     font-size: 22px;
+  }
+}
+
+@media (min-width: 701px) {
+  .du-nav-chat-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .du-nav-unread-dot {
+    animation: none;
   }
 }

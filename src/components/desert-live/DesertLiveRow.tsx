@@ -88,6 +88,10 @@ function DesertLiveRow({
           {" · "}
           {formatDate(item.createdAt)}
         </span>
+        {(item.activeFrom || item.activeUntil) && <span className="du-desert-live-row-meta">
+          Event: {item.activeFrom ? new Date(item.activeFrom).toLocaleString() : "Now"}
+          {" – "}{item.activeUntil ? new Date(item.activeUntil).toLocaleString() : "Ongoing"}
+        </span>}
       </div>
 
       <div className="du-row-actions du-desert-live-row-actions">
