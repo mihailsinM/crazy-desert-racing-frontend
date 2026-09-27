@@ -48,6 +48,9 @@ const ALLOWED_IMAGE_TYPES = new Set([
   "image/webp",
 ]);
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+const ACTIVE_CHAT_POLL_MS = 15_000;
+const IDLE_CHAT_POLL_MS = 60_000;
+const CHAT_IDLE_AFTER_MS = 2 * 60_000;
 const REPORT_REASON_OPTIONS: readonly DesertLiveFilterOption<ChatReportReason>[] = [
   {
     value: "INAPPROPRIATE",
@@ -185,8 +188,109 @@ function ChatPage() {
 
     const conversationId = activeConversationId;
     let active = true;
-    let polling = false;
+    let polling = true;
+    let pollTimer: number | null = null;
+    let lastInteractionAt = Date.now();
+    let consecutiveFailures = 0;
+    let refreshWhenReady = false;
+    let initialLoadSucceeded = false;
     latestMessageIdRef.current = 0;
+
+    function clearPollTimer() {
+      if (pollTimer !== null) {
+        window.clearTimeout(pollTimer);
+        pollTimer = null;
+      }
+    }
+
+    function scheduleNextPoll() {
+      clearPollTimer();
+      if (!active || document.visibilityState !== "visible") {
+        return;
+      }
+
+      const idle = Date.now() - lastInteractionAt >= CHAT_IDLE_AFTER_MS;
+      const baseDelay = idle ? IDLE_CHAT_POLL_MS : ACTIVE_CHAT_POLL_MS;
+      const delay = Math.min(120_000,
+        baseDelay * 2 ** Math.min(consecutiveFailures, 3));
+      pollTimer = window.setTimeout(poll, delay);
+    }
+
+    async function poll() {
+      if (polling || !active || document.visibilityState !== "visible") {
+        return;
+      }
+
+      polling = true;
+      try {
+        const newMessages = initialLoadSucceeded
+          ? await getChatMessages(conversationId, latestMessageIdRef.current)
+          : await getChatMessages(conversationId);
+        consecutiveFailures = 0;
+        if (!active || document.visibilityState !== "visible") {
+          return;
+        }
+
+        if (!initialLoadSucceeded) {
+          setMessages(newMessages);
+          setLoadedConversationId(conversationId);
+          setError("");
+          latestMessageIdRef.current = newMessages.at(-1)?.id ?? 0;
+          initialLoadSucceeded = true;
+          await markChatRead(conversationId);
+          if (active) {
+            await loadConversations();
+          }
+          return;
+        }
+
+        if (newMessages.length === 0) {
+          return;
+        }
+
+        setMessages((currentMessages) => {
+          const knownIds = new Set(currentMessages.map((message) => message.id));
+          return [
+            ...currentMessages,
+            ...newMessages.filter((message) => !knownIds.has(message.id)),
+          ];
+        });
+        latestMessageIdRef.current = newMessages.at(-1)!.id;
+        await markChatRead(conversationId);
+        if (active) {
+          await loadConversations();
+        }
+      } catch {
+        consecutiveFailures += 1;
+        // A temporary polling failure should not replace the open chat.
+      } finally {
+        polling = false;
+        if (refreshWhenReady) {
+          refreshWhenReady = false;
+          void poll();
+        } else {
+          scheduleNextPoll();
+        }
+      }
+    }
+
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") {
+        clearPollTimer();
+        if (polling) {
+          refreshWhenReady = true;
+        } else {
+          void poll();
+        }
+      } else {
+        clearPollTimer();
+        refreshWhenReady = false;
+      }
+    }
+
+    function handleInteraction() {
+      lastInteractionAt = Date.now();
+    }
 
     void getChatMessages(conversationId)
       .then(async (loadedMessages) => {
@@ -198,6 +302,7 @@ function ChatPage() {
         setLoadedConversationId(conversationId);
         setError("");
         latestMessageIdRef.current = loadedMessages.at(-1)?.id ?? 0;
+        initialLoadSucceeded = true;
         await markChatRead(conversationId);
         await loadConversations();
       })
@@ -210,46 +315,27 @@ function ChatPage() {
               : "Failed to load messages",
           );
         }
+      })
+      .finally(() => {
+        polling = false;
+        if (refreshWhenReady) {
+          refreshWhenReady = false;
+          void poll();
+        } else {
+          scheduleNextPoll();
+        }
       });
 
-    const pollTimer = window.setInterval(() => {
-      if (polling || !active) {
-        return;
-      }
-
-      polling = true;
-      const afterId = latestMessageIdRef.current;
-
-      void getChatMessages(conversationId, afterId)
-        .then(async (newMessages) => {
-          if (!active || newMessages.length === 0) {
-            return;
-          }
-
-          setMessages((currentMessages) => {
-            const knownIds = new Set(
-              currentMessages.map((message) => message.id),
-            );
-            return [
-              ...currentMessages,
-              ...newMessages.filter((message) => !knownIds.has(message.id)),
-            ];
-          });
-          latestMessageIdRef.current = newMessages.at(-1)!.id;
-          await markChatRead(conversationId);
-          await loadConversations();
-        })
-        .catch(() => {
-          // A temporary polling failure should not replace the open chat.
-        })
-        .finally(() => {
-          polling = false;
-        });
-    }, 3000);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("pointerdown", handleInteraction);
+    document.addEventListener("keydown", handleInteraction);
 
     return () => {
       active = false;
-      window.clearInterval(pollTimer);
+      clearPollTimer();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("pointerdown", handleInteraction);
+      document.removeEventListener("keydown", handleInteraction);
     };
   }, [activeConversationId, loadConversations]);
 

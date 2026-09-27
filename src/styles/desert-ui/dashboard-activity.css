@@ -8,6 +8,8 @@
   margin-top: 20px;
   overflow-y: auto;
   overflow-x: hidden;
+  overflow-anchor: none;
+  scroll-snap-type: none;
   scrollbar-gutter: stable;
   padding-right: 10px;
 }
@@ -26,6 +28,30 @@
   gap: 14px;
   padding: 12px 16px;
   text-align: left;
+}
+
+.du-dashboard-activity-item.du-auto-highlight,
+.du-dashboard-activity-item.du-auto-highlight:hover,
+.du-dashboard-activity-item.du-auto-highlight:focus-visible {
+  background: rgba(255, 122, 26, 0.2);
+  border-color: rgba(255, 179, 71, 0.82);
+}
+
+.du-dashboard-activity-list-rolling > .du-dashboard-activity-item:nth-child(-n + 5) {
+  pointer-events: none;
+  animation: du-dashboard-activity-roll 1.15s cubic-bezier(0.3, 0.1, 0.14, 1) both;
+}
+
+@keyframes du-dashboard-activity-roll {
+  to {
+    transform: translateY(calc(0px - var(--du-card-height) - var(--du-list-gap)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .du-dashboard-activity-item.du-auto-highlight {
+    animation: none;
+  }
 }
 
 .du-dashboard-activity-media {
@@ -92,12 +118,15 @@
 }
 
 .du-dashboard-activity-header {
+  flex-wrap: wrap;
   padding-inline: 4px 20px;
 }
 
 .du-dashboard-activity-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
   margin-right: 2px;
 }

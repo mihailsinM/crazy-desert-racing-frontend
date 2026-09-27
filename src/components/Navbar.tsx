@@ -20,6 +20,10 @@ function Navbar() {
     let active = true;
 
     function refreshUnreadCount() {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+
       void getChatUnreadCount()
         .then((count) => {
           if (active) {
@@ -38,13 +42,11 @@ function Navbar() {
     }
 
     refreshUnreadCount();
-    const pollTimer = window.setInterval(refreshUnreadCount, 10000);
     window.addEventListener(CHAT_UNREAD_CHANGED_EVENT, refreshUnreadCount);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       active = false;
-      window.clearInterval(pollTimer);
       window.removeEventListener(CHAT_UNREAD_CHANGED_EVENT, refreshUnreadCount);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import DesertLiveMenuFilter from "../desert-live/DesertLiveMenuFilter";
@@ -27,11 +27,13 @@ const DASHBOARD_ROTATION_ITEM_LIMIT = 12;
 type DashboardActivityItemProps = {
   item: DesertLiveItem;
   onOpen: () => void;
+  highlighted: boolean;
 };
 
 function DashboardActivityItem({
   item,
   onOpen,
+  highlighted,
 }: DashboardActivityItemProps) {
   const imageUrl = getDesertLiveAssetUrl(item.imageUrl);
   const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
@@ -41,7 +43,7 @@ function DashboardActivityItem({
   return (
     <button
       type="button"
-      className="du-hub-card du-dashboard-activity-item"
+      className={`du-hub-card du-dashboard-activity-item${highlighted ? " du-auto-highlight" : ""}`}
       onClick={onOpen}
     >
       <span className="du-dashboard-activity-media" aria-hidden="true">
@@ -85,10 +87,18 @@ function DashboardActivity({
 
   const [items, setItems] = useState<DesertLiveItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRolling, setIsRolling] = useState(false);
   const [error, setError] = useState("");
+  const [refreshIndex, setRefreshIndex] = useState(0);
 
   const [activeFilter, setActiveFilter] =
     useState<DesertLiveCategoryFilter>("ALL");
+
+  useLayoutEffect(() => {
+    if (!isRolling && listRef.current) {
+      listRef.current.scrollTop = 0;
+    }
+  }, [isRolling]);
 
   useEffect(() => {
     let active = true;
@@ -97,10 +107,9 @@ function DashboardActivity({
       listRef.current.scrollTop = 0;
     }
 
-    async function loadItems(showLoading: boolean) {
-      if (showLoading) {
-        setIsLoading(true);
-      }
+    async function loadItems() {
+      setIsLoading(true);
+      setIsRolling(false);
 
       try {
         const category = activeFilter === "ALL" ? undefined : activeFilter;
@@ -122,23 +131,79 @@ function DashboardActivity({
           );
         }
       } finally {
-        if (active && showLoading) {
+        if (active) {
           setIsLoading(false);
         }
       }
     }
 
-    void loadItems(true);
-
-    const rotationTimer = window.setInterval(() => {
-      void loadItems(false);
-    }, 30_000);
+    void loadItems();
 
     return () => {
       active = false;
-      window.clearInterval(rotationTimer);
     };
-  }, [activeFilter, visibleItemCount]);
+  }, [activeFilter, refreshIndex]);
+
+  useEffect(() => {
+    if (isLoading || items.length < 2) {
+      return;
+    }
+
+    let finishingTimer: number | null = null;
+    let rolling = false;
+    const rotationTimer = window.setInterval(() => {
+      const list = listRef.current;
+      if (document.visibilityState !== "visible" || !list || rolling
+        || list.matches(":hover") || list.contains(document.activeElement)) {
+        return;
+      }
+
+      if (list.scrollTop > 0) {
+        list.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+
+      setItems((current) => {
+        if (current.length <= visibleItemCount) {
+          return current;
+        }
+
+        const nextItems = [...current];
+        const randomIndex = visibleItemCount + Math.floor(
+          Math.random() * (current.length - visibleItemCount),
+        );
+        [nextItems[visibleItemCount], nextItems[randomIndex]] = [
+          nextItems[randomIndex], nextItems[visibleItemCount],
+        ];
+        return nextItems;
+      });
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        setItems((current) => [...current.slice(1), current[0]]);
+        return;
+      }
+
+      rolling = true;
+      setIsRolling(true);
+      finishingTimer = window.setTimeout(() => {
+        setItems((current) => [...current.slice(1), current[0]]);
+        setIsRolling(false);
+        rolling = false;
+        finishingTimer = null;
+      }, 1_150);
+    }, 15_000);
+
+    return () => {
+      window.clearInterval(rotationTimer);
+      if (finishingTimer !== null) {
+        window.clearTimeout(finishingTimer);
+      }
+    };
+  }, [items.length, isLoading, visibleItemCount]);
+
+  const displayedItems = isRolling && items.length <= visibleItemCount
+    ? [...items, items[0]]
+    : items;
 
   return (
     <aside className="du-dashboard-card du-card-scroll du-dashboard-activity-panel">
@@ -153,6 +218,15 @@ function DashboardActivity({
             options={desertLiveCategoryOptions}
             onChange={setActiveFilter}
           />
+
+          <button
+            type="button"
+            className="du-button du-button-small du-button-rect"
+            onClick={() => setRefreshIndex((current) => current + 1)}
+            disabled={isLoading}
+          >
+            Refresh
+          </button>
 
           {addPath && <button
             type="button"
@@ -175,13 +249,16 @@ function DashboardActivity({
         className={
           items.length === 0
             ? `du-card-list du-soft-scroll du-list-${visibleItemCount} du-dashboard-activity-list du-dashboard-activity-list-empty`
-            : `du-card-list du-soft-scroll du-list-${visibleItemCount} du-list-row-medium du-dashboard-activity-list`
+            : `du-card-list du-soft-scroll du-list-${visibleItemCount} du-list-row-medium du-dashboard-activity-list${isRolling ? " du-dashboard-activity-list-rolling" : ""}`
         }
       >
-        {items.map((item) => (
+        {displayedItems.map((item, index) => (
           <DashboardActivityItem
-            key={item.id}
+            key={index === items.length ? `rolling-${item.id}` : item.id}
             item={item}
+            highlighted={!isRolling && items.length > 1 && index === Math.min(
+              Math.floor(visibleItemCount / 2), items.length - 1,
+            )}
             onOpen={() =>
               navigate(
                 item.linkedRaceId
