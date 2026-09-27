@@ -86,6 +86,7 @@ function DashboardActivity({
   const [items, setItems] = useState<DesertLiveItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [refreshIndex, setRefreshIndex] = useState(0);
 
   const [activeFilter, setActiveFilter] =
     useState<DesertLiveCategoryFilter>("ALL");
@@ -97,10 +98,8 @@ function DashboardActivity({
       listRef.current.scrollTop = 0;
     }
 
-    async function loadItems(showLoading: boolean) {
-      if (showLoading) {
-        setIsLoading(true);
-      }
+    async function loadItems() {
+      setIsLoading(true);
 
       try {
         const category = activeFilter === "ALL" ? undefined : activeFilter;
@@ -122,23 +121,32 @@ function DashboardActivity({
           );
         }
       } finally {
-        if (active && showLoading) {
+        if (active) {
           setIsLoading(false);
         }
       }
     }
 
-    void loadItems(true);
-
-    const rotationTimer = window.setInterval(() => {
-      void loadItems(false);
-    }, 30_000);
+    void loadItems();
 
     return () => {
       active = false;
-      window.clearInterval(rotationTimer);
     };
-  }, [activeFilter, visibleItemCount]);
+  }, [activeFilter, refreshIndex]);
+
+  useEffect(() => {
+    const rotationTimer = window.setInterval(() => {
+      if (document.visibilityState !== "visible" || listRef.current?.scrollTop) {
+        return;
+      }
+
+      setItems((current) => current.length > visibleItemCount
+        ? [...current.slice(visibleItemCount), ...current.slice(0, visibleItemCount)]
+        : current);
+    }, 30_000);
+
+    return () => window.clearInterval(rotationTimer);
+  }, [visibleItemCount]);
 
   return (
     <aside className="du-dashboard-card du-card-scroll du-dashboard-activity-panel">
@@ -153,6 +161,15 @@ function DashboardActivity({
             options={desertLiveCategoryOptions}
             onChange={setActiveFilter}
           />
+
+          <button
+            type="button"
+            className="du-button du-button-small du-button-rect"
+            onClick={() => setRefreshIndex((current) => current + 1)}
+            disabled={isLoading}
+          >
+            Refresh
+          </button>
 
           {addPath && <button
             type="button"

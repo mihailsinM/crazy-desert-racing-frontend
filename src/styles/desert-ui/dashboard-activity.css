@@ -92,12 +92,15 @@
 }
 
 .du-dashboard-activity-header {
+  flex-wrap: wrap;
   padding-inline: 4px 20px;
 }
 
 .du-dashboard-activity-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
   margin-right: 2px;
 }
