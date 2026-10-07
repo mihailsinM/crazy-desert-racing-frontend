@@ -6,6 +6,7 @@ type ChatSafetyMenuProps = {
   reportDisabled: boolean;
   onReport: () => void;
   onToggleBlock: () => void;
+  onDelete: () => void;
 };
 
 function ChatSafetyIcon() {
@@ -42,12 +43,31 @@ function ChatSafetyIcon() {
   );
 }
 
+export function ChatTrashIcon() {
+  return (
+    <svg
+      className="du-chat-trash-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6m4-6v6" />
+    </svg>
+  );
+}
+
 function ChatSafetyMenu({
   blocked,
   busy,
   reportDisabled,
   onReport,
   onToggleBlock,
+  onDelete,
 }: ChatSafetyMenuProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [open, setOpen] = useState(false);
@@ -124,6 +144,19 @@ function ChatSafetyMenu({
               ⊘
             </span>
             <span>{blocked ? "Unblock this member" : "Block this member"}</span>
+            <span />
+          </button>
+
+          <button
+            type="button"
+            role="menuitem"
+            className="du-filter-option"
+            onClick={() => chooseAction(onDelete)}
+          >
+            <span className="du-filter-option-icon" aria-hidden="true">
+              <ChatTrashIcon />
+            </span>
+            <span>Delete chat</span>
             <span />
           </button>
         </div>

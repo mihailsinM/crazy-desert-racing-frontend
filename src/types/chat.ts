@@ -26,6 +26,7 @@ export type ChatConversation = {
   imageFraming: ImageFramingProfiles | null;
   lastMessagePreview: string;
   lastMessageAt: string;
+  visibleInList: boolean;
   unreadCount: number;
   blockedByMe: boolean;
   blockedByOther: boolean;

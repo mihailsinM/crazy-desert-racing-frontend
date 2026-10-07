@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import raceBackground from "../assets/race.png";
+import ChatBubbleIcon from "../components/chat/ChatBubbleIcon";
 import DetailsCard from "../components/details/DetailsCard";
 import AuthenticatedFocalImage from "../components/images/AuthenticatedFocalImage";
 import GalleryPhotoViewer from "../components/images/GalleryPhotoViewer";
 import RaceCarImage from "../components/images/RaceCarImage";
 import UserAvatar from "../components/users/UserAvatar";
 import { useAuth } from "../context/authContext";
+import { openDirectChat } from "../services/chatService";
 import { getDriver } from "../services/driverService";
 import { getRaceCarAssetUrl } from "../services/raceCarService";
 import {
@@ -47,6 +49,7 @@ function DriverDetailsPage() {
   const [driver, setDriver] = useState<DriverProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [busyPhotoId, setBusyPhotoId] = useState<number | null>(null);
+  const [openingChat, setOpeningChat] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [selectedSection, setSelectedSection] = useState<{
@@ -56,9 +59,6 @@ function DriverDetailsPage() {
   const [galleryFilter, setGalleryFilter] = useState<GalleryFilter>("all");
   const [viewedPhoto, setViewedPhoto] = useState<UserPhoto | null>(null);
   const routeState = location.state as { from?: string } | null;
-  const ownerBackTarget = routeState?.from || "/drivers";
-  const ownerBackLabel =
-    ownerBackTarget === "/dashboard" ? "Back to Dashboard" : "Back";
 
   useEffect(() => {
     if (!validDriverId) {
@@ -95,6 +95,20 @@ function DriverDetailsPage() {
 
   async function refreshDriver() {
     setDriver(await getDriver(driverId));
+  }
+
+  async function handleOpenChat(recipientId: number) {
+    setOpeningChat(true);
+    setError("");
+
+    try {
+      const conversation = await openDirectChat(recipientId);
+      navigate(`/chats/${conversation.id}`);
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Failed to open chat");
+    } finally {
+      setOpeningChat(false);
+    }
   }
 
   async function handleReport(photo: UserPhoto) {
@@ -159,6 +173,7 @@ function DriverDetailsPage() {
   }
 
   const ownerView = currentUser?.id === driver.id;
+  const backTarget = routeState?.from || "/drivers";
 
   if (viewedPhoto) {
     return (
@@ -239,6 +254,17 @@ function DriverDetailsPage() {
             <span className="du-status du-status-approved">
               {formatTier(driver.membershipTier)} Member
             </span>
+            {!ownerView && (
+              <button
+                type="button"
+                className="du-button du-button-small du-driver-chat-button du-driver-profile-chat-button"
+                disabled={openingChat}
+                onClick={() => void handleOpenChat(driver.id)}
+              >
+                <ChatBubbleIcon className="du-driver-chat-icon" />
+                <span>{openingChat ? "Opening..." : "Chat"}</span>
+              </button>
+            )}
           </span>
         }
         actions={
@@ -254,19 +280,19 @@ function DriverDetailsPage() {
                 Edit My Profile
               </button>
             )}
-            {ownerView && routeState?.from ? (
+            {!ownerView && (
               <button
                 className="du-button"
                 type="button"
-                onClick={() => navigate(ownerBackTarget)}
+                title="Group chat invitations are coming soon"
+                disabled
               >
-                ← {ownerBackLabel}
-              </button>
-            ) : (
-              <button className="du-button" type="button" onClick={() => navigate("/drivers")}>
-                ← All Drivers
+                Invite to Group · Soon
               </button>
             )}
+            <button className="du-button" type="button" onClick={() => navigate(backTarget)}>
+              ← Back
+            </button>
           </div>
         }
       >

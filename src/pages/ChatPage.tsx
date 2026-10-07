@@ -15,7 +15,7 @@ import ChatBubbleIcon from "../components/chat/ChatBubbleIcon";
 import ChatComposerMenu from "../components/chat/ChatComposerMenu";
 import type { ChatSticker } from "../components/chat/chatStickers";
 import { supportTopicLabel, supportTopicOptions } from "../components/chat/chatSupportOptions";
-import ChatSafetyMenu from "../components/chat/ChatSafetyMenu";
+import ChatSafetyMenu, { ChatTrashIcon } from "../components/chat/ChatSafetyMenu";
 import ChatSendButton from "../components/chat/ChatSendButton";
 import DetailsCard from "../components/details/DetailsCard";
 import DesertLiveMenuFilter, {
@@ -25,6 +25,7 @@ import UserAvatar from "../components/users/UserAvatar";
 import { useAuth } from "../context/authContext";
 import {
   blockChatUser,
+  deleteChatConversation,
   getChatConversations,
   getChatMessages,
   markChatRead,
@@ -106,6 +107,8 @@ function ChatPage() {
   const [sending, setSending] = useState(false);
   const [sendFlashed, setSendFlashed] = useState(false);
   const [safetyBusy, setSafetyBusy] = useState(false);
+  const [deletingConversation, setDeletingConversation] = useState<ChatConversation | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [reportingMessage, setReportingMessage] =
@@ -122,6 +125,7 @@ function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const latestMessageIdRef = useRef(0);
   const sendFlashTimerRef = useRef<number | null>(null);
+  const cancelDeleteRef = useRef<HTMLButtonElement | null>(null);
 
   const activeConversation = useMemo(
     () => conversations.find(
@@ -139,11 +143,14 @@ function ChatPage() {
     : conversations.find((conversation) =>
       conversation.type === "SUPPORT"
     ) ?? null;
-  const listedConversations = supportConversation
-    ? conversations.filter(
-      (conversation) => conversation.id !== supportConversation.id,
-    )
-    : conversations;
+  const listedConversations = conversations.filter(
+    (conversation) => conversation.visibleInList
+      && conversation.id !== supportConversation?.id,
+  );
+
+  useEffect(() => {
+    if (deletingConversation) cancelDeleteRef.current?.focus();
+  }, [deletingConversation]);
 
   const loadConversations = useCallback(async () => {
     const loadedConversations = await getChatConversations();
@@ -513,6 +520,33 @@ function ChatPage() {
     }
   }
 
+  async function handleDeleteConversation() {
+    if (!deletingConversation || deleting) return;
+
+    const conversationId = deletingConversation.id;
+    setDeleting(true);
+    setError("");
+
+    try {
+      await deleteChatConversation(conversationId);
+      setDeletingConversation(null);
+      if (activeConversationId === conversationId) {
+        navigate("/chats", { replace: true });
+        setMessages([]);
+        setLoadedConversationId(null);
+      }
+      setConversations((current) => current.filter(
+        (conversation) => conversation.id !== conversationId,
+      ));
+      setNotice("Chat removed from your list.");
+      void loadConversations().catch(() => setError("Failed to refresh chats"));
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "Failed to delete chat");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   function openMessageReport(message: ChatMessage) {
     setReportMode("MESSAGE");
     setReportReason("INAPPROPRIATE");
@@ -662,44 +696,60 @@ function ChatPage() {
                   </div>
                 ) : (
                   listedConversations.map((conversation) => (
-                    <button
+                    <div
                       key={conversation.id}
-                      type="button"
                       className={`du-chat-conversation-row${
                         conversation.id === activeConversationId
                           ? " du-chat-conversation-row-active"
                           : ""
                       }`}
-                      onClick={() => navigate(`/chats/${conversation.id}`)}
                     >
-                      {conversation.type === "SUPPORT"
-                        && conversation.otherUserId === null ? (
-                          <span className="du-chat-admin-avatar" aria-hidden="true">
-                            CD
-                          </span>
-                        ) : (
-                          <UserAvatar
-                            name={conversation.title}
-                            avatarUrl={conversation.avatarUrl}
-                            imageFraming={conversation.imageFraming}
-                            className="du-chat-list-avatar"
-                          />
-                        )}
-
-                      <span className="du-chat-list-copy">
-                        <span className="du-chat-list-heading">
-                          <strong>{conversation.title}</strong>
-                          {conversation.unreadCount > 0 && (
-                            <span className="du-chat-unread-count">
-                              {conversation.unreadCount > 99
-                                ? "99+"
-                                : conversation.unreadCount}
+                      <button
+                        type="button"
+                        className="du-chat-conversation-open"
+                        aria-label={`Open chat with ${conversation.title}`}
+                        onClick={() => navigate(`/chats/${conversation.id}`)}
+                      >
+                        {conversation.type === "SUPPORT"
+                          && conversation.otherUserId === null ? (
+                            <span className="du-chat-admin-avatar" aria-hidden="true">
+                              CD
                             </span>
+                          ) : (
+                            <UserAvatar
+                              name={conversation.title}
+                              avatarUrl={conversation.avatarUrl}
+                              imageFraming={conversation.imageFraming}
+                              className="du-chat-list-avatar"
+                            />
                           )}
+
+                        <span className="du-chat-list-copy">
+                          <span className="du-chat-list-heading">
+                            <strong>{conversation.title}</strong>
+                            {conversation.unreadCount > 0 && (
+                              <span className="du-chat-unread-count">
+                                {conversation.unreadCount > 99
+                                  ? "99+"
+                                  : conversation.unreadCount}
+                              </span>
+                            )}
+                          </span>
+                          <span>{conversation.lastMessagePreview}</span>
                         </span>
-                        <span>{conversation.lastMessagePreview}</span>
-                      </span>
-                    </button>
+                      </button>
+                      {conversation.type === "DIRECT" && (
+                        <button
+                          type="button"
+                          className="du-chat-list-delete"
+                          aria-label={`Delete chat with ${conversation.title}`}
+                          title="Delete chat"
+                          onClick={() => setDeletingConversation(conversation)}
+                        >
+                          <ChatTrashIcon />
+                        </button>
+                      )}
+                    </div>
                   ))
                 )}
               </div>
@@ -730,30 +780,51 @@ function ChatPage() {
                       ←
                     </button>
 
-                    {activeConversation.type === "SUPPORT"
-                      && activeConversation.otherUserId === null ? (
-                        <span className="du-chat-admin-avatar" aria-hidden="true">
-                          CD
-                        </span>
-                      ) : (
+                    {activeConversation.type === "DIRECT" && activeConversation.otherUserId ? (
+                      <NavLink
+                        to={`/drivers/${activeConversation.otherUserId}`}
+                        state={{ from: `/chats/${activeConversation.id}` }}
+                        className="du-chat-profile-link"
+                        aria-label={`View ${activeConversation.title}'s profile`}
+                      >
                         <UserAvatar
                           name={activeConversation.title}
                           avatarUrl={activeConversation.avatarUrl}
                           imageFraming={activeConversation.imageFraming}
                           className="du-chat-header-avatar"
                         />
-                      )}
-
-                    <div className="du-chat-thread-heading">
-                      <h2>{activeConversation.title}</h2>
-                      <span>
+                        <div className="du-chat-thread-heading">
+                          <h2>{activeConversation.title}</h2>
+                          <span>View Profile</span>
+                        </div>
+                      </NavLink>
+                    ) : (
+                      <>
                         {activeConversation.type === "SUPPORT"
-                          ? isAdmin
-                            ? `${supportTopicLabel(activeConversation.supportTopic)} · shared admin inbox`
-                            : "Your conversation with the administration"
-                          : "Private conversation"}
-                      </span>
-                    </div>
+                          && activeConversation.otherUserId === null ? (
+                            <span className="du-chat-admin-avatar" aria-hidden="true">
+                              CD
+                            </span>
+                          ) : (
+                            <UserAvatar
+                              name={activeConversation.title}
+                              avatarUrl={activeConversation.avatarUrl}
+                              imageFraming={activeConversation.imageFraming}
+                              className="du-chat-header-avatar"
+                            />
+                          )}
+                        <div className="du-chat-thread-heading">
+                          <h2>{activeConversation.title}</h2>
+                          <span>
+                            {activeConversation.type === "SUPPORT"
+                              ? isAdmin
+                                ? `${supportTopicLabel(activeConversation.supportTopic)} · shared admin inbox`
+                                : "Your conversation with the administration"
+                              : "Private conversation"}
+                          </span>
+                        </div>
+                      </>
+                    )}
 
                     {activeConversation.type === "SUPPORT" && !isAdmin && (
                       <DesertLiveMenuFilter
@@ -769,12 +840,13 @@ function ChatPage() {
                       && activeConversation.otherUserId && (
                         <ChatSafetyMenu
                           blocked={activeConversation.blockedByMe}
-                          busy={safetyBusy}
+                          busy={safetyBusy || deleting}
                           reportDisabled={!visibleMessages.some(
                             (message) => !message.mine,
                           )}
                           onReport={openMemberReport}
                           onToggleBlock={() => void handleBlockChange()}
+                          onDelete={() => setDeletingConversation(activeConversation)}
                         />
                       )}
                   </header>
@@ -887,6 +959,46 @@ function ChatPage() {
             </section>
           </div>
       </DetailsCard>
+
+      {deletingConversation && (
+        <div className="du-chat-dialog-backdrop">
+          <div
+            className="du-panel du-chat-report-dialog"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="chat-delete-title"
+            aria-describedby="chat-delete-description"
+            onKeyDown={(event) => {
+              if (event.key === "Escape" && !deleting) setDeletingConversation(null);
+            }}
+          >
+            <h2 id="chat-delete-title">Delete this chat?</h2>
+            <p id="chat-delete-description" className="du-text-soft">
+              Your messages with {deletingConversation.title} will disappear from your chats.
+              The other member will keep their copy.
+            </p>
+            <div className="du-chat-dialog-actions">
+              <button
+                ref={cancelDeleteRef}
+                type="button"
+                className="du-button du-button-small du-button-rect"
+                disabled={deleting}
+                onClick={() => setDeletingConversation(null)}
+              >
+                No
+              </button>
+              <button
+                type="button"
+                className="du-button du-button-danger du-button-small du-button-rect"
+                disabled={deleting}
+                onClick={() => void handleDeleteConversation()}
+              >
+                {deleting ? "Deleting..." : "Yes, delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {reportingMessage && (
         <div className="du-chat-dialog-backdrop">

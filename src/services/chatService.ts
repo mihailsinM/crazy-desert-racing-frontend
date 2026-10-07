@@ -53,6 +53,15 @@ export async function getChatConversations(): Promise<ChatConversation[]> {
   return readJson(response, "Failed to load chats");
 }
 
+export async function deleteChatConversation(conversationId: number): Promise<void> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/chat/conversations/${conversationId}`,
+    { method: "DELETE" },
+  );
+  await requireOk(response, "Failed to delete chat");
+  notifyUnreadChanged();
+}
+
 export async function openDirectChat(
   recipientId: number,
 ): Promise<ChatConversation> {
