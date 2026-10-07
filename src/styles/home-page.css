@@ -13,7 +13,7 @@
       rgba(18, 11, 7, 0.45) 45%,
       rgba(18, 11, 7, 0.7) 100%
     ),
-    url("/src/assets/home_page.jpg");
+    url("../assets/home_page.jpg");
 
   background-size: cover;
   background-position: center;
@@ -34,5 +34,5 @@
 }
 
 .app:has(> .home-page) {
-  background: url("/src/assets/home_page.jpg") center / cover;
+  background: url("../assets/home_page.jpg") center / cover;
 }

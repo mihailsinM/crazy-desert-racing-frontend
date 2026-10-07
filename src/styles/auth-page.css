@@ -73,7 +73,8 @@
   gap: 18px;
 }
 
-.auth-form label {
+.auth-form label,
+.auth-form .auth-field {
   display: grid;
   gap: 8px;
   font-weight: bold;
@@ -104,7 +105,60 @@
   box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.18);
 }
 
-.auth-form button {
+.auth-form input.auth-field-valid {
+  border-color: var(--du-status-approved-text);
+  background: var(--du-status-approved-bg);
+}
+
+.auth-form input.auth-field-valid:focus {
+  box-shadow: 0 0 0 3px var(--du-status-approved-bg);
+}
+
+.auth-form input[aria-invalid="true"],
+.auth-form .auth-field-invalid .du-menu-select .du-filter-trigger {
+  border-color: var(--du-status-rejected-text);
+  background: var(--du-status-rejected-bg);
+}
+
+.auth-form input[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px var(--du-status-rejected-bg);
+}
+
+.auth-field-error {
+  color: var(--du-status-rejected-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.auth-password-control {
+  position: relative;
+}
+
+.auth-password-control input {
+  padding-right: 52px;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--du-text-soft);
+  cursor: pointer;
+}
+
+.auth-password-toggle:focus-visible {
+  outline: 2px solid var(--du-orange-soft);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.auth-form > button[type="submit"] {
   margin-top: 8px;
   width: 100%;
 
@@ -119,8 +173,20 @@
   cursor: pointer;
 }
 
-.auth-form button:hover {
+.auth-form > button[type="submit"]:hover {
   opacity: 0.92;
+}
+
+.auth-form .du-menu-select .du-filter-trigger {
+  min-height: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  color: white;
+}
+
+.auth-form .du-menu-select .du-filter-trigger:focus-visible {
+  outline: 3px solid rgba(255, 179, 71, 0.5);
+  outline-offset: 2px;
 }
 
 .auth-message {

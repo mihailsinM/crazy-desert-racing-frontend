@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import ChatBubbleIcon from "./chat/ChatBubbleIcon";
 import { useAuth } from "../context/authContext";
@@ -11,6 +11,34 @@ function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [unreadChats, setUnreadChats] = useState(0);
+  const menuToggleRef = useRef<HTMLButtonElement>(null);
+  const navigationRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    function dismissMenu(event: PointerEvent) {
+      const target = event.target as Node;
+      if (!menuToggleRef.current?.contains(target) &&
+          !navigationRef.current?.contains(target)) {
+        setMenuOpen(false);
+      }
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        menuToggleRef.current?.focus();
+      }
+    }
+
+    document.addEventListener("pointerdown", dismissMenu);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("pointerdown", dismissMenu);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -65,11 +93,12 @@ function Navbar() {
 
   return (
     <header className="du-navbar">
-      <NavLink to="/" className="du-navbar-logo">
+      <NavLink to="/" className="du-navbar-logo" onClick={() => setMenuOpen(false)}>
         🏜 Crazy Desert Racing
       </NavLink>
 
       <button
+        ref={menuToggleRef}
         type="button"
         className="du-navbar-menu-toggle du-button du-button-small"
         aria-label={menuOpen ? "Close navigation" : "Open navigation"}
@@ -81,6 +110,7 @@ function Navbar() {
       </button>
 
       <nav
+        ref={navigationRef}
         id="du-navbar-navigation"
         className={`du-navbar-links${menuOpen ? " du-navbar-links-open" : ""}`}
         aria-label="Main navigation"
@@ -120,7 +150,7 @@ function Navbar() {
               className={getNavLinkClass}
               onClick={() => setMenuOpen(false)}
             >
-              All Drivers
+              Drivers
             </NavLink>
 
             <NavLink

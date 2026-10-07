@@ -52,11 +52,11 @@
 }
 
 .du-status.du-status-approved {
-  background: rgba(102, 205, 129, 0.16);
-  color: #baf0c8;
+  background: var(--du-status-approved-bg);
+  color: var(--du-status-approved-text);
 }
 
 .du-status.du-status-rejected {
-  background: rgba(255, 103, 84, 0.16);
-  color: #ffc0b7;
+  background: var(--du-status-rejected-bg);
+  color: var(--du-status-rejected-text);
 }

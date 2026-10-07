@@ -18,19 +18,11 @@
   width: 220px;
   padding: 10px;
 
-  border: 1px solid rgba(255, 183, 77, 0.3);
+  border: var(--du-menu-border);
   border-radius: 16px;
 
-  background:
-    linear-gradient(
-      145deg,
-      rgba(91, 57, 31, 0.98),
-      rgba(57, 35, 22, 0.98)
-    );
-
-  box-shadow:
-    0 18px 40px rgba(24, 12, 5, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  background: var(--du-menu-background);
+  box-shadow: var(--du-menu-shadow);
 }
 
 .du-filter-menu-header {

@@ -11,6 +11,15 @@ type RemoveTokenOptions = {
   notify?: boolean;
 };
 
+export class LoginRequestError extends Error {
+  readonly status: number;
+
+  constructor(status: number) {
+    super("Login failed");
+    this.status = status;
+  }
+}
+
 function notifyAuthStateChanged(): void {
   window.dispatchEvent(new Event(AUTH_STATE_CHANGED_EVENT));
 }
@@ -92,7 +101,7 @@ export async function login(
   });
 
   if (!response.ok) {
-    throw new Error("Login failed");
+    throw new LoginRequestError(response.status);
   }
 
   const authentication = (await response.json()) as AuthenticationResponse;

@@ -70,9 +70,13 @@ function DesertLiveMenuFilter<T extends string>({
         disabled={disabled}
         onClick={() => setIsOpen((current) => !current)}
       >
-        <span aria-hidden="true">
-          {isSelect ? activeOption?.icon : "⏷"}
-        </span>
+        {isSelect ? (
+          activeOption?.value && activeOption.icon !== activeOption.label && (
+            <span aria-hidden="true">{activeOption.icon}</span>
+          )
+        ) : (
+          <span aria-hidden="true">⏷</span>
+        )}
         <span>{isSelect ? activeOption?.label : buttonLabel}</span>
         {isSelect && (
           <span className="du-menu-select-chevron" aria-hidden="true">
