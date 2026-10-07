@@ -71,3 +71,19 @@ without interrupting visitors.
 Definition of done: visitors can open the public site, use the main flows, and
 send feedback; administrators can review it; releases are repeatable and the
 database is backed up.
+
+## After launch: Group Chats
+
+- Keep **Invite to Group · Soon** visible in Drivers and Driver Details for
+  other members until real group invitations are ready. The button is disabled
+  so it cannot imply that an invitation was delivered.
+- Let a member create a named chat group, then invite people from the Drivers
+  list or their profiles by choosing an existing group.
+- Let invitees accept or decline; never add anyone to a group automatically.
+  Prevent duplicate invitations and limit repeated invitations.
+- Define who can invite, remove members, moderate messages, leave, or close a
+  group. Apply chat block and report rules to groups before enabling them.
+- Reuse the existing message, image, read state, and encryption flows with
+  group membership checks in every relevant API and a group chat UI.
+- Enable the buttons only after group creation, invitations, access checks,
+  and acceptance have been tested end to end.

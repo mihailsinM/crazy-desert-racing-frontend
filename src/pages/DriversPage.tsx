@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import raceBackground from "../assets/race.png";
 import DetailsCard from "../components/details/DetailsCard";
@@ -202,33 +202,39 @@ function DriversPage() {
                 key={driver.id}
                 className="du-row-panel du-driver-row"
               >
-                <UserAvatar
-                  name={driver.name}
-                  avatarUrl={driver.avatarUrl}
-                  imageFraming={driver.imageFraming}
-                />
+                <Link
+                  to={`/drivers/${driver.id}`}
+                  className="du-driver-profile-link"
+                  aria-label={`View ${driver.name}'s profile`}
+                >
+                  <UserAvatar
+                    name={driver.name}
+                    avatarUrl={driver.avatarUrl}
+                    imageFraming={driver.imageFraming}
+                  />
 
-                <span className="du-row-main">
-                  <span className="du-row-heading">
-                    <span className="du-row-title">{driver.name}</span>
-                    {driver.verifiedDriver && (
-                      <span className="du-status du-status-small du-status-verified">
-                        Verified Driver
+                  <span className="du-row-main">
+                    <span className="du-row-heading">
+                      <span className="du-row-title">{driver.name}</span>
+                      {driver.verifiedDriver && (
+                        <span className="du-status du-status-small du-status-verified">
+                          Verified Driver
+                        </span>
+                      )}
+                      <span className="du-badge du-driver-tier">
+                        {formatTier(driver.membershipTier)}
                       </span>
-                    )}
-                    <span className="du-badge du-driver-tier">
-                      {formatTier(driver.membershipTier)}
+                    </span>
+
+                    <span className="du-row-subtitle">
+                      {formatUserRole(driver.role)}
+                    </span>
+                    <span className="du-row-subtitle">
+                      {driver.carCount} cars · {driver.raceCount} races ·{" "}
+                      {driver.photoCount} photos
                     </span>
                   </span>
-
-                  <span className="du-row-subtitle">
-                    {formatUserRole(driver.role)}
-                  </span>
-                  <span className="du-row-subtitle">
-                    {driver.carCount} cars · {driver.raceCount} races ·{" "}
-                    {driver.photoCount} photos
-                  </span>
-                </span>
+                </Link>
 
                 <span className="du-row-actions du-driver-row-actions">
                   {driver.id !== currentUser?.id && (
@@ -242,6 +248,16 @@ function DriversPage() {
                       <span>
                         {busyChatDriverId === driver.id ? "Opening..." : "Chat"}
                       </span>
+                    </button>
+                  )}
+                  {driver.id !== currentUser?.id && (
+                    <button
+                      type="button"
+                      className="du-button du-button-small du-button-rect"
+                      title="Group chat invitations are coming soon"
+                      disabled
+                    >
+                      Invite to Group · Soon
                     </button>
                   )}
                   <button
