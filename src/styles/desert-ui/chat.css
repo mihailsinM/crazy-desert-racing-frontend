@@ -378,6 +378,14 @@
   cursor: pointer;
 }
 
+.du-chat-messages-region {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
 .du-chat-messages {
   display: flex;
   flex: 1 1 auto;
@@ -387,6 +395,16 @@
   overflow-y: auto;
   padding: 18px;
   overscroll-behavior: contain;
+}
+
+.du-chat-jump-to-latest {
+  position: absolute;
+  right: 24px;
+  bottom: 16px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  font-size: 30px;
 }
 
 .du-chat-first-message {
@@ -485,18 +503,45 @@
   min-width: 180px;
   max-height: 320px;
   margin-bottom: 8px;
+  padding: 0;
   overflow: hidden;
   place-items: center;
+  border: 0;
   border-radius: 8px;
   background: rgba(18, 11, 7, 0.8);
   color: var(--du-text-soft);
-  text-decoration: none;
+  cursor: zoom-in;
+}
+
+.du-chat-message-image-link:focus-visible {
+  outline: 2px solid var(--du-orange-soft);
+  outline-offset: 2px;
 }
 
 .du-chat-message-image {
   width: 100%;
   max-height: 320px;
   object-fit: contain;
+}
+
+.du-chat-photo-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  padding: 16px;
+  place-items: center;
+  background: rgba(12, 7, 5, 0.94);
+}
+
+.du-chat-photo-backdrop .du-photo-viewer-page {
+  width: min(100%, 1150px);
+}
+
+.du-chat-photo-backdrop .du-photo-viewer-media {
+  width: 100%;
+  height: min(78dvh, 740px);
+  aspect-ratio: auto;
 }
 
 .du-chat-composer,
@@ -923,6 +968,10 @@
 
   .du-chat-messages {
     padding: 13px 10px;
+  }
+
+  .du-chat-jump-to-latest {
+    right: 14px;
   }
 
   .du-chat-message {

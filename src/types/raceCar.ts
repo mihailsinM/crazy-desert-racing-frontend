@@ -1,9 +1,10 @@
-import type { ImageFramingProfiles } from "../utils/imageFocus";
+import type { ImageFramingProfile, ImageFramingProfiles } from "../utils/imageFocus";
 
 export type ImagePosition = "CENTER" | "LEFT" | "RIGHT" | "TOP" | "BOTTOM";
 
 export type RaceCar = {
   id: number;
+  ownerId?: number | null;
   name: string;
   brand: string;
   horsePower: number;
@@ -13,6 +14,7 @@ export type RaceCar = {
   imageFocusY: number;
   imageCropPercent: number;
   imageFraming?: ImageFramingProfiles | null;
+  mobileImageFraming?: ImageFramingProfile | null;
   galleryPhotoIds?: number[];
 };
 

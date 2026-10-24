@@ -161,23 +161,6 @@
   flex-wrap: wrap;
 }
 
-.du-car-details-action-row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.du-car-details-action-row .du-button {
-  width: 100%;
-  justify-content: center;
-}
-
-@media (max-width: 720px) {
-  .du-car-details-action-row {
-    grid-template-columns: 1fr;
-  }
-}
-
 .du-details-message {
   max-width: 620px;
   margin-top: 10px;
@@ -310,6 +293,48 @@
 }
 
 @media (max-width: 800px) {
+  .du-viewport-page > .du-car-details {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .du-car-details::before {
+    display: none;
+  }
+
+  .du-car-details > .du-details-media {
+    position: relative;
+    inset: auto;
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto;
+    min-height: 180px;
+    max-height: 320px;
+    aspect-ratio: 16 / 9;
+  }
+
+  .du-viewport-page > .du-car-details > .du-details-overlay {
+    flex: 0 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    background: rgba(27, 18, 12, 0.96);
+  }
+
+  .du-car-details .du-details-body-scroll {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  .du-car-details .du-details-description {
+    max-width: none;
+    margin-bottom: 0;
+  }
+
   .du-details-card,
   .du-details-overlay {
     min-height: auto;

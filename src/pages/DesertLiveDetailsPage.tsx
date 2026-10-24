@@ -103,10 +103,10 @@ function DesertLiveDetailsPage({
         <p className="du-error">{error || "Publication not found"}</p>
         <button
           type="button"
-          className="du-button du-button-small du-button-rect"
+          className="du-button du-button-small du-button-rect du-button-back"
           onClick={() => navigate("/activity")}
         >
-          Back to Desert Live
+          ← Back
         </button>
       </section>
     );
@@ -116,6 +116,7 @@ function DesertLiveDetailsPage({
   const cardFraming = getDesertLiveImageFraming(item).card;
   const canManage =
     item.linkedRaceId === null &&
+    item.linkedMarketplaceListingId === null &&
     (isAdmin || currentUser?.id === item.authorId);
   const hasAllowedTargetUrl = Boolean(
     item.targetUrl && isDesertLiveTargetUrlAllowed(item.targetUrl),
@@ -180,6 +181,7 @@ function DesertLiveDetailsPage({
           focusX: itemImageUrl ? cardFraming.focusX : 50,
           focusY: itemImageUrl ? cardFraming.focusY : 50,
           cropPercent: itemImageUrl ? cardFraming.cropPercent : 0,
+          authenticated: Boolean(item.imageUrl?.includes("/driver-photos/")),
           ariaHidden: true,
         }}
         status={
@@ -206,7 +208,8 @@ function DesertLiveDetailsPage({
                 className="du-button du-button-primary du-button-small du-button-rect"
                 onClick={openTargetUrl}
               >
-                {item.linkedRaceId ? "View Race" : "Open Link"}
+                {item.linkedRaceId ? "View Race"
+                  : item.linkedMarketplaceListingId ? "View Listing" : "Open Link"}
               </button>
             )}
 

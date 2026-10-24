@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RaceCarImage from "../components/images/RaceCarImage";
 import raceBackground from "../assets/race.png";
+import { getMyMarketplaceListings } from "../services/marketplaceService";
 import {
   getMyRaceCars,
   getRaceCarAssetUrl,
 } from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
+import type { MarketplaceListing } from "../types/marketplace";
 import { getRaceCarImageFraming } from "../utils/raceCarImageFraming";
 
 
 function MyCarsPage() {
   const [cars, setCars] = useState<RaceCar[]>([]);
+  const [listings, setListings] = useState<MarketplaceListing[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -20,8 +23,11 @@ function MyCarsPage() {
   useEffect(() => {
     async function loadCars() {
       try {
-        const data = await getMyRaceCars();
+        const [data, myListings] = await Promise.all([
+          getMyRaceCars(), getMyMarketplaceListings(),
+        ]);
         setCars(data);
+        setListings(myListings);
       } catch {
         setError("Failed to load race cars");
       } finally {
@@ -44,6 +50,8 @@ function MyCarsPage() {
     <section className="du-page du-viewport-page du-collection-page">
       <header className="du-page-header">
         <h1 className="du-eyebrow du-my-cars-title">My Cars</h1>
+        <button type="button" className="du-button du-button-small du-button-rect du-button-inline"
+          onClick={() => navigate("/marketplace?mine=1")}>My sale listings</button>
       </header>
 
       <div className="du-collection-scroll du-soft-scroll">
@@ -61,6 +69,8 @@ function MyCarsPage() {
 
         {cars.map((car) => {
           const cardFraming = getRaceCarImageFraming(car).card;
+          const listing = listings.find((item) => item.car.id === car.id
+            && (item.expired || !["SOLD", "WITHDRAWN"].includes(item.status)));
 
           return (
             <article
@@ -84,7 +94,8 @@ function MyCarsPage() {
                 <div className="du-showcase-meta">
                   <span className="du-badge">{car.horsePower} HP</span>
                 </div>
-
+              </div>
+              <div className="du-showcase-actions">
                 <button
                   className="du-button du-button-primary du-showcase-action"
                   type="button"
@@ -94,6 +105,16 @@ function MyCarsPage() {
                   }}
                 >
                   View Details →
+                </button>
+                <button
+                  className="du-button du-showcase-secondary-action"
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    navigate(listing ? `/marketplace/${listing.id}` : `/cars/${car.id}/sell`);
+                  }}
+                >
+                  {listing ? "View Sale Details" : "Sell this car"}
                 </button>
               </div>
             </article>

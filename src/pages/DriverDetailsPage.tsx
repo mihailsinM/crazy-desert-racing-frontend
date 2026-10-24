@@ -180,7 +180,6 @@ function DriverDetailsPage() {
       <GalleryPhotoViewer
         photos={driver.photos}
         activePhotoId={viewedPhoto.id}
-        backLabel="Back to Gallery"
         fallbackCaption="Shared club photo"
         getAlt={(photo) => photo.caption || `${driver.name} photo`}
         onActivePhotoChange={(photoId) => {
@@ -290,7 +289,7 @@ function DriverDetailsPage() {
                 Invite to Group · Soon
               </button>
             )}
-            <button className="du-button" type="button" onClick={() => navigate(backTarget)}>
+            <button className="du-button du-button-small du-button-rect du-button-back" type="button" onClick={() => navigate(backTarget)}>
               ← Back
             </button>
           </div>

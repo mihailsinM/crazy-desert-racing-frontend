@@ -2,7 +2,8 @@ import { useEffect } from "react";
 
 import type { ImageFramingProfiles } from "../../utils/imageFocus";
 import { getUserImageFraming } from "../../utils/userImageFraming";
-import AuthenticatedFocalImage from "./AuthenticatedFocalImage";
+import type { FocalImageFit } from "./FocalImage";
+import ZoomablePhoto from "./ZoomablePhoto";
 
 export type GalleryPhotoViewerItem = {
   id: number;
@@ -14,23 +15,23 @@ export type GalleryPhotoViewerItem = {
 type GalleryPhotoViewerProps = {
   photos: GalleryPhotoViewerItem[];
   activePhotoId: number;
-  backLabel: string;
   fallbackCaption: string;
   getAlt: (photo: GalleryPhotoViewerItem) => string;
   onActivePhotoChange: (photoId: number) => void;
   onBack: () => void;
   onSettings?: (photoId: number) => void;
+  fit?: FocalImageFit;
 };
 
 function GalleryPhotoViewer({
   photos,
   activePhotoId,
-  backLabel,
   fallbackCaption,
   getAlt,
   onActivePhotoChange,
   onBack,
   onSettings,
+  fit,
 }: GalleryPhotoViewerProps) {
   const activeIndex = photos.findIndex((photo) => photo.id === activePhotoId);
   const activePhoto = photos[activeIndex];
@@ -67,9 +68,11 @@ function GalleryPhotoViewer({
   return (
     <section className="du-photo-viewer-page">
       <div className="du-photo-viewer-media">
-        <AuthenticatedFocalImage
+        <ZoomablePhoto
+          key={activePhoto.id}
           src={activePhoto.imageUrl}
           alt={getAlt(activePhoto)}
+          fit={fit}
           focusX={framing.focusX}
           focusY={framing.focusY}
           cropPercent={framing.cropPercent}
@@ -78,10 +81,10 @@ function GalleryPhotoViewer({
         <div className="du-photo-viewer-overlay-actions">
           <button
             type="button"
-            className="du-button du-button-small du-button-rect"
+            className="du-button du-button-small du-button-rect du-button-back"
             onClick={onBack}
           >
-            ← {backLabel}
+            ← Back
           </button>
           {onSettings && (
             <button

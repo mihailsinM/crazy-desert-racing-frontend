@@ -466,6 +466,12 @@
   border-radius: var(--du-radius-input);
 }
 
+.du-image-focus-preview-mobile {
+  width: min(300px, 100%);
+  aspect-ratio: 16 / 9;
+  border-radius: var(--du-radius-input);
+}
+
 .du-image-focus-workspace-profiles .du-image-focus-preview-wide {
   width: min(380px, 100%);
 }

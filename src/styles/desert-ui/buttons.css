@@ -29,7 +29,24 @@
 }
 
 .du-button-back {
+  width: auto;
+  align-self: flex-start;
   background: rgba(18, 11, 7, 0.2);
+}
+
+.du-button-options {
+  display: inline-grid;
+  width: 42px;
+  min-width: 42px;
+  height: 38px;
+  padding: 0;
+  place-items: center;
+  border-radius: var(--du-radius-pill);
+  background: rgba(18, 11, 7, 0.42);
+  color: var(--du-orange-soft);
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 2px;
 }
 
 .du-button-danger {

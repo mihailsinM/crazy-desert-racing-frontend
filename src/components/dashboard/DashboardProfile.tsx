@@ -132,8 +132,8 @@ function DashboardProfile({ title, onBack }: DashboardProfileProps) {
       <div className="du-hub-header">
         <h2 className="du-eyebrow">{title}</h2>
         {onBack && (
-          <button type="button" className="du-button du-button-small" onClick={onBack}>
-            Back to Hub
+          <button type="button" className="du-button du-button-small du-button-rect du-button-back" onClick={onBack}>
+            ← Back
           </button>
         )}
       </div>

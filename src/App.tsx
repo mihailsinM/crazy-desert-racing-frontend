@@ -6,6 +6,9 @@ import DashboardPage from "./pages/DashboardPage";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import LoginPage from "./pages/LoginPage";
 import MyCarsPage from "./pages/MyCarsPage";
+import MarketplacePage from "./pages/MarketplacePage";
+import MarketplaceEditorPage from "./pages/MarketplaceEditorPage";
+import MarketplaceDetailsPage from "./pages/MarketplaceDetailsPage";
 import RacesPage from "./pages/RacesPage";
 import VipClubPage from "./pages/VipClubPage";
 import HomePage from "./pages/HomePage";
@@ -115,6 +118,10 @@ function App() {
             <Route path="/cars/:id" element={<CarDetailsPage />} />
             <Route path="/cars" element={<MyCarsPage />} />
             <Route path="/cars/new" element={<AddCarPage />} />
+            <Route path="/cars/:carId/sell" element={<MarketplaceEditorPage />} />
+            <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/marketplace/:listingId/edit" element={<MarketplaceEditorPage />} />
+            <Route path="/marketplace/:id" element={<MarketplaceDetailsPage />} />
             <Route path="/races" element={<RacesPage />} />
             <Route
               path="/races/new"

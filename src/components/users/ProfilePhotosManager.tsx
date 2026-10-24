@@ -162,10 +162,10 @@ function ProfilePhotosManager() {
           </label>
           <button
             type="button"
-            className="du-button du-button-small du-button-rect"
+            className="du-button du-button-small du-button-rect du-button-back"
             onClick={() => navigate("/dashboard")}
           >
-            ← Back to Dashboard
+            ← Back
           </button>
         </div>
       </div>

@@ -34,11 +34,13 @@ export const desertLiveCategoryOptions = [
 
 export const desertLivePublicationCategoryOptions =
   desertLiveCategorySelectOptions.map((option) =>
-    option.value === "RACE"
+    option.value === "RACE" || option.value === "MARKETPLACE"
       ? {
           ...option,
-          label: "Race · manage in Races",
-          disabled: true,
+          label: option.value === "RACE"
+            ? "Race · manage in Races"
+            : "Marketplace · sell from My Cars",
+          disabled: option.value === "RACE",
         }
       : option,
   );

@@ -6,6 +6,7 @@ import DesertLiveMenuFilter from "../components/desert-live/DesertLiveMenuFilter
 import PhotoVisibilitySelect from "../components/users/PhotoVisibilitySelect";
 import { useAuth } from "../context/authContext";
 import {
+  addRaceCarGalleryPhoto,
   getMyRaceCars,
   assignGalleryPhotoToRaceCar,
 } from "../services/raceCarService";
@@ -19,10 +20,10 @@ import {
 } from "../services/userPhotoService";
 import type { UserPhoto, UserPhotoVisibility } from "../types/driver";
 import type { RaceCar } from "../types/raceCar";
-import type { ImageFramingProfiles } from "../utils/imageFocus";
+import type { ImageFramingProfileName, ImageFramingProfiles } from "../utils/imageFocus";
 import { getUserImageFraming } from "../utils/userImageFraming";
 
-type PhotoRouteState = { from?: string };
+type PhotoRouteState = { from?: string; initialProfile?: ImageFramingProfileName };
 
 function ProfilePhotoSettingsPage() {
   const { photoId } = useParams();
@@ -36,6 +37,7 @@ function ProfilePhotoSettingsPage() {
   const [framing, setFraming] = useState<ImageFramingProfiles | null>(null);
   const [cars, setCars] = useState<RaceCar[]>([]);
   const [selectedCarId, setSelectedCarId] = useState("");
+  const [galleryCarId, setGalleryCarId] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -45,8 +47,6 @@ function ProfilePhotoSettingsPage() {
   const validPhotoId = Number.isInteger(parsedPhotoId);
   const routeState = location.state as PhotoRouteState | null;
   const backTarget = routeState?.from || "/profile/photos";
-  const backLabel =
-    backTarget === "/profile/photos" ? "Back to My Gallery" : "Back to Photo";
 
   const loadPhoto = useCallback(async () => {
     const photos = await getCurrentUserPhotos();
@@ -157,6 +157,18 @@ function ProfilePhotoSettingsPage() {
     );
   }
 
+  async function addToCarGallery(carId: string) {
+    if (!photo || !carId) return;
+    setGalleryCarId(carId);
+    const selectedCar = cars.find((car) => String(car.id) === carId);
+    await runPhotoAction(
+      () => addRaceCarGalleryPhoto(Number(carId), photo.id),
+      selectedCar
+        ? `Photo added to ${selectedCar.brand} ${selectedCar.name}'s gallery.`
+        : "Photo added to the car gallery.",
+    );
+  }
+
   if (!validPhotoId) {
     return <p className="du-error">Invalid photo address.</p>;
   }
@@ -169,10 +181,10 @@ function ProfilePhotoSettingsPage() {
         <p className="du-error">{error || "Photo not found."}</p>
         <button
           type="button"
-          className="du-button du-button-rect"
+          className="du-button du-button-small du-button-rect du-button-back"
           onClick={() => navigate(backTarget)}
         >
-          ← {backLabel}
+          ← Back
         </button>
       </section>
     );
@@ -186,10 +198,10 @@ function ProfilePhotoSettingsPage() {
           <div className="du-photo-settings-primary-actions">
             <button
               type="button"
-              className="du-button du-button-small du-button-rect"
+              className="du-button du-button-small du-button-rect du-button-back"
               onClick={() => navigate(backTarget)}
             >
-              ← {backLabel}
+              ← Back
             </button>
             <button
               type="button"
@@ -204,7 +216,7 @@ function ProfilePhotoSettingsPage() {
                 )
               }
             >
-              {photo.profilePhoto ? "✓ Current Avatar" : "Use as Avatar"}
+              {photo.profilePhoto ? "✓ Current Profile Photo" : "Use as Profile Photo"}
             </button>
             <button
               type="button"
@@ -225,7 +237,7 @@ function ProfilePhotoSettingsPage() {
             </button>
             {cars.length > 0 ? (
               <DesertLiveMenuFilter
-                buttonLabel="Use as Car Photo"
+                buttonLabel="Use as Car Profile"
                 menuLabel="Choose which car"
                 value={selectedCarId}
                 options={cars.map((car) => ({
@@ -256,6 +268,20 @@ function ProfilePhotoSettingsPage() {
             >
               Delete
             </button>
+            {cars.length > 0 && (
+              <DesertLiveMenuFilter
+                buttonLabel="Add to Car Gallery"
+                menuLabel="Choose which car"
+                value={galleryCarId}
+                options={cars.map((car) => ({
+                  value: String(car.id),
+                  label: `${car.brand} ${car.name}`,
+                  icon: "🏎",
+                }))}
+                onChange={(carId) => void addToCarGallery(carId)}
+                disabled={saving}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -277,12 +303,14 @@ function ProfilePhotoSettingsPage() {
       <div className="du-photo-settings-framing">
         <div>
           <p className="du-eyebrow">Photo Framing</p>
-          <h2 className="du-title-sm">Avatar and Profile Card</h2>
+          <h2 className="du-title-sm">Avatar and Photo Cards</h2>
+          <p className="du-caption">Card framing is saved with this photo and used in car galleries and sale cards. A car's separate mobile framing is edited in Edit Car.</p>
         </div>
         <ImageFocusPicker
           imageUrl={photo.imageUrl}
           framingProfiles={framing}
           onFramingProfilesChange={setFraming}
+          initialProfile={routeState?.initialProfile}
           imageAlt={photo.caption || "Gallery photo"}
           disabled={saving}
         />
@@ -298,10 +326,10 @@ function ProfilePhotoSettingsPage() {
 
       <button
         type="button"
-        className="du-button du-button-rect du-photo-settings-back-bottom"
+        className="du-button du-button-small du-button-rect du-button-back du-photo-settings-back-bottom"
         onClick={() => navigate(backTarget)}
       >
-        ← {backLabel}
+        ← Back
       </button>
     </section>
   );

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { getDesertLiveAssetUrl } from "../../services/desertLiveService";
 import type { DesertLiveItem } from "../../types/desertLive";
 import { getDesertLiveImageFraming } from "../../utils/desertLiveImageFraming";
-import FocalImage from "../images/FocalImage";
+import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
 import {
   desertLiveCategoryIcons,
   desertLiveCategoryLabels,
@@ -52,7 +52,7 @@ function DesertLiveRow({
         aria-hidden={!showImage}
       >
         {showImage ? (
-          <FocalImage
+          <AuthenticatedFocalImage
             src={imageUrl}
             alt=""
             focusX={avatarFraming.focusX}

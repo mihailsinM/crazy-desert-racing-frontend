@@ -41,11 +41,13 @@ export type ChatMessage = {
   body: string | null;
   imageUrl: string | null;
   imageOriginalName: string | null;
+  marketplaceListingId: number | null;
   createdAt: string;
 };
 
 export type ChatUnread = {
   unreadCount: number;
+  marketplaceUnreadCount: number;
 };
 
 export type ChatReport = {

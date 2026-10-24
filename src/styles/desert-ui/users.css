@@ -257,6 +257,154 @@
   background: var(--du-glass-card-strong);
 }
 
+.du-car-gallery-photo-card {
+  position: relative;
+}
+
+.du-car-gallery-photo-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  left: 12px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.du-car-gallery-photo-label {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+}
+
+.du-car-gallery-photo-overlay .du-button-options,
+.du-car-gallery-photo-menu {
+  pointer-events: auto;
+}
+
+.du-car-gallery-photo-overlay .du-car-gallery-photo-menu {
+  top: calc(100% + 4px);
+  right: 0;
+  left: auto;
+  box-sizing: border-box;
+  width: min(220px, 100%);
+}
+
+.du-car-gallery-photo-menu .du-filter-option {
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 6px;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.du-car-photo-details .du-filter-menu {
+  right: 0;
+  left: auto;
+}
+
+.du-marketplace-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.du-marketplace-details .du-details-heading {
+  align-items: flex-start;
+  flex-wrap: nowrap;
+}
+
+.du-marketplace-heading-actions .du-badge {
+  padding: 6px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.du-viewport-page .du-marketplace-details .du-details-title {
+  font-size: clamp(26px, 4dvh, 36px);
+}
+
+.du-marketplace-details .du-details-info {
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.du-marketplace-details .du-details-info p {
+  margin: 0;
+}
+
+.du-marketplace-details .du-details-description {
+  max-width: none;
+  margin: 0 0 12px;
+}
+
+@media (min-width: 801px) {
+  .du-marketplace-details .du-car-gallery-photos-scroll {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+
+  .du-marketplace-details .du-details-description {
+    margin-top: auto;
+    padding-top: 24px;
+  }
+}
+
+.du-car-gallery-details .du-details-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.du-car-gallery-details .du-details-heading .du-button-back {
+  align-self: center;
+  color: var(--du-text-main);
+}
+
+.du-car-gallery-actions {
+  margin-bottom: 16px;
+}
+
+.du-car-gallery-photo-picker {
+  max-width: 620px;
+  margin-bottom: 16px;
+}
+
+.du-car-gallery-photo-picker > p {
+  margin: 0 0 10px;
+}
+
+.du-car-gallery-photo-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.du-car-gallery-photo-options .du-photo-card-media {
+  display: block;
+  width: 100%;
+}
+
+.du-car-gallery-photo-options .du-photo-card:hover {
+  border-color: var(--du-orange-soft);
+  box-shadow: var(--du-shadow-glow-soft);
+}
+
 .du-driver-photo-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
@@ -495,6 +643,16 @@
   gap: 8px;
 }
 
+.du-photo-settings-secondary-actions .du-filter-trigger {
+  width: 100%;
+  justify-content: center;
+}
+
+.du-photo-settings-secondary-actions .du-filter-menu {
+  right: 0;
+  left: auto;
+}
+
 .du-photo-settings-toolbar .du-menu-select {
   width: auto;
 }
@@ -530,10 +688,13 @@
   container-type: inline-size;
 }
 
-.du-save-photo-button,
-.du-photo-settings-back-bottom {
+.du-save-photo-button {
   width: 100%;
   justify-content: center;
+}
+
+.du-photo-settings-back-bottom {
+  justify-self: start;
 }
 
 .du-car-gallery-photo-panel {
@@ -601,6 +762,67 @@
 
   .du-photo-report-actions {
     grid-template-columns: 1fr;
+  }
+
+  .du-viewport-page > :is(.du-car-gallery-details, .du-car-photo-details) {
+    overflow: hidden;
+  }
+
+  .du-viewport-page > :is(.du-car-gallery-details, .du-car-photo-details) > .du-details-overlay.du-details-overlay-scrollable {
+    flex: 1 1 auto;
+    min-height: 0;
+    position: static;
+    padding-top: 16px;
+    overflow: visible;
+    scrollbar-gutter: auto;
+  }
+
+  :is(.du-car-gallery-details, .du-car-photo-details) .du-details-heading {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 18px;
+    z-index: 3;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+  }
+
+  :is(.du-car-gallery-details, .du-car-photo-details) .du-details-eyebrow {
+    font-size: 12px;
+  }
+
+  :is(.du-car-gallery-details, .du-car-photo-details) .du-details-body-scroll {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    scrollbar-gutter: auto;
+  }
+
+  .du-car-gallery-photos-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: calc(100% + 32px);
+    margin-left: -10px;
+    margin-right: -22px;
+    padding-right: 12px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-gutter: stable both-edges;
+  }
+
+  .du-car-photo-details-content-scroll {
+    padding-left: 4px;
+    padding-right: 16px;
+  }
+
+  .du-car-gallery-photo-options {
+    max-height: none;
+    overflow: visible;
   }
 }
 

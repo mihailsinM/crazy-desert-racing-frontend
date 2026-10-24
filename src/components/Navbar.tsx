@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import ChatBubbleIcon from "./chat/ChatBubbleIcon";
 import { useAuth } from "../context/authContext";
 import {
@@ -8,9 +8,11 @@ import {
 } from "../services/chatService";
 
 function Navbar() {
+  const location = useLocation();
   const { isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [unreadChats, setUnreadChats] = useState(0);
+  const [unreadMarketplace, setUnreadMarketplace] = useState(0);
   const menuToggleRef = useRef<HTMLButtonElement>(null);
   const navigationRef = useRef<HTMLElement>(null);
 
@@ -53,9 +55,10 @@ function Navbar() {
       }
 
       void getChatUnreadCount()
-        .then((count) => {
+        .then((counts) => {
           if (active) {
-            setUnreadChats(count);
+            setUnreadChats(counts.unreadCount);
+            setUnreadMarketplace(counts.marketplaceUnreadCount);
           }
         })
         .catch(() => {
@@ -78,9 +81,10 @@ function Navbar() {
       window.removeEventListener(CHAT_UNREAD_CHANGED_EVENT, refreshUnreadCount);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, location.key]);
 
   const visibleUnreadChats = isAuthenticated ? unreadChats : 0;
+  const visibleUnreadMarketplace = isAuthenticated ? unreadMarketplace : 0;
 
   function getNavLinkClass({ isActive }: { isActive: boolean }) {
     return isActive ? "du-nav-link du-nav-link-active" : "du-nav-link";
@@ -100,13 +104,16 @@ function Navbar() {
       <button
         ref={menuToggleRef}
         type="button"
-        className="du-navbar-menu-toggle du-button du-button-small"
-        aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+        className="du-navbar-menu-toggle du-button du-button-options"
+        aria-label={`${menuOpen ? "Close" : "Open"} navigation${isAuthenticated && unreadChats + unreadMarketplace > 0 ? ", unread messages" : ""}`}
         aria-controls="du-navbar-navigation"
         aria-expanded={menuOpen}
         onClick={() => setMenuOpen(!menuOpen)}
       >
-        {menuOpen ? "✕" : "☰"}
+        <span aria-hidden="true">•••</span>
+        {isAuthenticated && unreadChats + unreadMarketplace > 0 && (
+          <span className="du-nav-unread-dot" aria-hidden="true" />
+        )}
       </button>
 
       <nav
@@ -159,6 +166,22 @@ function Navbar() {
               onClick={() => setMenuOpen(false)}
             >
               Races
+            </NavLink>
+
+            <NavLink
+              to="/marketplace"
+              className={({ isActive }) =>
+                `${getNavLinkClass({ isActive })} du-nav-chat-link`
+              }
+              onClick={() => setMenuOpen(false)}
+              aria-label={visibleUnreadMarketplace > 0
+                ? `Marketplace, ${visibleUnreadMarketplace} unread inquiries`
+                : "Marketplace"}
+            >
+              Marketplace
+              {visibleUnreadMarketplace > 0 && (
+                <span className="du-nav-unread-dot" aria-hidden="true" />
+              )}
             </NavLink>
 
             <NavLink

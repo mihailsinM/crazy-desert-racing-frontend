@@ -6,6 +6,7 @@ import type {
   RaceCarWriteRequest,
 } from "../types/raceCar";
 import type { UserPhoto } from "../types/driver";
+import type { ImageFramingProfile } from "../utils/imageFocus";
 
 async function getResponseError(
   response: Response,
@@ -137,6 +138,17 @@ export async function updateRaceCarImageFraming(
   return readJson(response, "Failed to update race car image framing");
 }
 
+export async function updateRaceCarMobileFraming(
+  id: number, framing: ImageFramingProfile,
+): Promise<RaceCar> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/race-cars/${id}/image/mobile-framing`,
+    { method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(framing) },
+  );
+  return readJson(response, "Failed to update mobile car photo framing");
+}
+
 export async function deleteRaceCarImage(id: number): Promise<RaceCar> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/race-cars/${id}/image`,
@@ -166,12 +178,32 @@ export async function getRaceCarGallery(id: number): Promise<UserPhoto[]> {
   return readJson(response, "Failed to load the car gallery");
 }
 
+export async function addRaceCarGalleryPhoto(
+  carId: number, photoId: number,
+): Promise<RaceCar> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/race-cars/${carId}/gallery/${photoId}`,
+    { method: "POST" },
+  );
+  return readJson(response, "Failed to add photo to car gallery");
+}
+
+export async function removeRaceCarGalleryPhoto(
+  carId: number, photoId: number,
+): Promise<RaceCar> {
+  const response = await authenticatedFetch(
+    `${API_BASE_URL}/race-cars/${carId}/gallery/${photoId}`,
+    { method: "DELETE" },
+  );
+  return readJson(response, "Failed to remove photo from car gallery");
+}
+
 export async function deleteRaceCar(id: number): Promise<void> {
   const response = await authenticatedFetch(`${API_BASE_URL}/race-cars/${id}`, {
     method: "DELETE",
   });
 
   if (!response.ok) {
-    throw new Error("Failed to delete race car");
+    throw new Error(await getResponseError(response, "Failed to delete race car"));
   }
 }

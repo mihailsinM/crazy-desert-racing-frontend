@@ -375,6 +375,23 @@ function DesertLiveEditorPage({
     );
   }
 
+  if (existingItem?.linkedMarketplaceListingId) {
+    return (
+      <section className="du-page">
+        <section className="du-panel">
+          <h1 className="du-title-lg">Manage this sale in Marketplace</h1>
+          <p className="du-text-soft">
+            The car and its photos are connected to your existing garage entry.
+          </p>
+          <button type="button" className="du-button du-button-primary"
+            onClick={() => navigate(`/marketplace/${existingItem.linkedMarketplaceListingId}`)}>
+            View listing
+          </button>
+        </section>
+      </section>
+    );
+  }
+
   const currentImageUrl = getDesertLiveAssetUrl(existingItem?.imageUrl ?? null);
   const previewUrl = selectedImagePreview ?? currentImageUrl;
   const hasContentChanges = existingItem
@@ -435,7 +452,10 @@ function DesertLiveEditorPage({
                   menuLabel="Choose category"
                   value={category}
                   options={desertLivePublicationCategoryOptions}
-                  onChange={setCategory}
+                  onChange={(selected) => {
+                    if (selected === "MARKETPLACE") navigate("/cars");
+                    else setCategory(selected);
+                  }}
                   variant="SELECT"
                 />
               </div>

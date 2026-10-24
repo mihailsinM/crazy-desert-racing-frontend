@@ -135,7 +135,7 @@ export default function AdminInboxPage() {
 
   return <CatalogPage>
     <DetailsCard image={{ src: raceBackground, alt: "Desert road" }} eyebrow="Admin Panel" title="Admin Inbox" overlayClassName="du-scroll" topAligned
-      status={<button className="du-button du-button-small du-button-rect" type="button" onClick={() => navigate(-1)}>← Back</button>}>
+      status={<button className="du-button du-button-small du-button-rect du-button-back" type="button" onClick={() => navigate(-1)}>← Back</button>}>
       <div className="du-admin-inbox-toolbar">
         <p className="du-text-soft">Shared by all administrators. Private conversations are visible only to participants; reports show the selected message.</p>
         <DesertLiveMenuFilter buttonLabel="Filter" menuLabel="Show inbox" value={filter} options={filters} onChange={setFilter} />

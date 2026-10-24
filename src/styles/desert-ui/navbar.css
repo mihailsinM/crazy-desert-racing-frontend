@@ -154,10 +154,17 @@
 
   .du-navbar-menu-toggle {
     display: inline-flex;
+    position: relative;
     align-items: center;
     justify-content: center;
-    min-width: 42px;
-    min-height: 38px;
+    border-color: var(--du-border-orange);
+    background: transparent;
+    color: var(--du-text-main);
+  }
+
+  .du-navbar-menu-toggle:is(:hover, :focus-visible) {
+    border-color: rgba(255, 179, 71, 0.36);
+    color: var(--du-orange-soft);
   }
 
   .du-navbar-links.du-navbar-links-open {
@@ -188,6 +195,12 @@
     top: 50%;
     right: 12px;
     transform: translateY(-50%);
+  }
+
+  .du-navbar-menu-toggle .du-nav-unread-dot {
+    top: 1px;
+    right: 1px;
+    transform: none;
   }
 
   .du-navbar-logo {

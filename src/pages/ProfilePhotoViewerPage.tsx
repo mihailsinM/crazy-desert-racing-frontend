@@ -39,7 +39,6 @@ function ProfilePhotoViewerPage() {
     <GalleryPhotoViewer
       photos={photos}
       activePhotoId={parsedPhotoId}
-      backLabel="Back to My Gallery"
       fallbackCaption="No description"
       getAlt={(photo) => photo.caption || "Gallery photo"}
       onActivePhotoChange={(photoId) => navigate(`/profile/photos/${photoId}`, {

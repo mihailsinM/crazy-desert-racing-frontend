@@ -1,13 +1,14 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type ChangeEvent,
   type FormEvent,
 } from "react";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import raceBackground from "../assets/race.png";
 import ChatAttachmentImage from "../components/chat/ChatAttachmentImage";
@@ -35,6 +36,8 @@ import {
   unblockChatUser,
   updateSupportChatTopic,
 } from "../services/chatService";
+import { getMarketplaceListing } from "../services/marketplaceService";
+import type { MarketplaceListing } from "../types/marketplace";
 import type {
   ChatConversation,
   ChatMessage,
@@ -42,13 +45,8 @@ import type {
   ChatSupportTopic,
 } from "../types/chat";
 import { hasAdminAccess } from "../utils/userRole";
+import { prepareImageForUpload } from "../utils/imageUpload";
 
-const ALLOWED_IMAGE_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
-const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
 const ACTIVE_CHAT_POLL_MS = 15_000;
 const IDLE_CHAT_POLL_MS = 60_000;
 const CHAT_IDLE_AFTER_MS = 2 * 60_000;
@@ -90,6 +88,10 @@ function resizeComposer(textarea: HTMLTextAreaElement) {
 function ChatPage() {
   const navigate = useNavigate();
   const params = useParams();
+  const [searchParams] = useSearchParams();
+  const reportingSale = searchParams.has("reportListing");
+  const inquiryListingId = Number(searchParams.get("listing")
+    ?? searchParams.get("reportListing"));
   const { currentUser } = useAuth();
   const activeConversationId = params.conversationId
     ? Number(params.conversationId)
@@ -99,7 +101,9 @@ function ChatPage() {
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
+  const [inquiryListing, setInquiryListing] = useState<MarketplaceListing | null>(null);
   const [attachment, setAttachment] = useState<File | null>(null);
+  const [preparingAttachment, setPreparingAttachment] = useState(false);
   const [selectedSticker, setSelectedSticker] = useState<ChatSticker | null>(null);
   const [loadingChats, setLoadingChats] = useState(true);
   const [loadedConversationId, setLoadedConversationId] =
@@ -119,10 +123,14 @@ function ChatPage() {
     useState<ChatReportReason>("INAPPROPRIATE");
   const [reportDetails, setReportDetails] = useState("");
   const [reporting, setReporting] = useState(false);
+  const [showJumpToLatest, setShowJumpToLatest] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const attachmentRequestRef = useRef(0);
+  const messageListRef = useRef<HTMLDivElement | null>(null);
+  const lastOpenedConversationRef = useRef<number | null>(null);
+  const nearBottomRef = useRef(true);
   const latestMessageIdRef = useRef(0);
   const sendFlashTimerRef = useRef<number | null>(null);
   const cancelDeleteRef = useRef<HTMLButtonElement | null>(null);
@@ -133,6 +141,23 @@ function ChatPage() {
     ) ?? null,
     [activeConversationId, conversations],
   );
+  const canAttachListing = inquiryListing
+    && inquiryListing.id === inquiryListingId
+    && (reportingSale ? activeConversation?.type === "SUPPORT"
+      : activeConversation?.type === "DIRECT"
+        && activeConversation.otherUserId === inquiryListing.sellerId)
+    && inquiryListing.sellerId !== currentUser?.id;
+
+  useEffect(() => {
+    if (!Number.isInteger(inquiryListingId) || inquiryListingId < 1) {
+      return;
+    }
+    let active = true;
+    void getMarketplaceListing(inquiryListingId)
+      .then((listing) => { if (active) setInquiryListing(listing); })
+      .catch(() => { if (active) setInquiryListing(null); });
+    return () => { active = false; };
+  }, [inquiryListingId]);
   const loadingMessages = activeConversationId !== null
     && activeConversationId !== loadedConversationId;
   const visibleMessages = activeConversationId === loadedConversationId
@@ -346,9 +371,46 @@ function ChatPage() {
     };
   }, [activeConversationId, loadConversations]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length]);
+  useLayoutEffect(() => {
+    if (activeConversationId === null) {
+      lastOpenedConversationRef.current = null;
+      nearBottomRef.current = true;
+      const frame = window.requestAnimationFrame(() => setShowJumpToLatest(false));
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    if (loadedConversationId !== activeConversationId) return;
+    const list = messageListRef.current;
+    if (!list) return;
+
+    if (lastOpenedConversationRef.current !== activeConversationId) {
+      lastOpenedConversationRef.current = activeConversationId;
+      nearBottomRef.current = true;
+      list.scrollTop = list.scrollHeight;
+      const frame = window.requestAnimationFrame(() => {
+        if (nearBottomRef.current) setShowJumpToLatest(false);
+      });
+      return () => window.cancelAnimationFrame(frame);
+    } else if (nearBottomRef.current) {
+      list.scrollTop = list.scrollHeight;
+    }
+  }, [activeConversationId, loadedConversationId, visibleMessages.length]);
+
+  function handleMessageScroll() {
+    const list = messageListRef.current;
+    if (!list) return;
+    const nearBottom = list.scrollHeight - list.scrollTop - list.clientHeight <= 80;
+    nearBottomRef.current = nearBottom;
+    setShowJumpToLatest(!nearBottom);
+  }
+
+  function jumpToLatest() {
+    const list = messageListRef.current;
+    if (!list) return;
+    nearBottomRef.current = true;
+    list.scrollTop = list.scrollHeight;
+    setShowJumpToLatest(false);
+  }
 
   useEffect(() => () => {
     if (sendFlashTimerRef.current !== null) {
@@ -392,45 +454,53 @@ function ChatPage() {
     resizeComposer(event.currentTarget);
   }
 
-  function handleAttachmentChange(event: ChangeEvent<HTMLInputElement>) {
+  async function handleAttachmentChange(event: ChangeEvent<HTMLInputElement>) {
     const selectedFile = event.currentTarget.files?.[0] ?? null;
+    event.currentTarget.value = "";
+    const requestId = ++attachmentRequestRef.current;
 
     if (!selectedFile) {
       setAttachment(null);
       return;
     }
 
-    if (!ALLOWED_IMAGE_TYPES.has(selectedFile.type)) {
-      setError("Choose a JPG, PNG, or WebP image.");
-      event.currentTarget.value = "";
-      return;
-    }
-
-    if (selectedFile.size > MAX_IMAGE_SIZE) {
-      setError("Chat images must be 2 MB or smaller.");
-      event.currentTarget.value = "";
-      return;
-    }
-
     setError("");
     setSelectedSticker(null);
-    setAttachment(selectedFile);
+    setAttachment(null);
+    setPreparingAttachment(true);
+    try {
+      const prepared = await prepareImageForUpload(selectedFile);
+      if (requestId === attachmentRequestRef.current) setAttachment(prepared);
+    } catch (caughtError) {
+      if (requestId === attachmentRequestRef.current) {
+        setError(caughtError instanceof Error ? caughtError.message : "Could not attach image");
+      }
+    } finally {
+      if (requestId === attachmentRequestRef.current) setPreparingAttachment(false);
+    }
   }
 
   async function handleSticker(sticker: ChatSticker) {
+    const requestId = ++attachmentRequestRef.current;
+    setPreparingAttachment(false);
     try {
       const response = await fetch(sticker.image);
       if (!response.ok) throw new Error("Could not load sticker");
       const bytes = await response.blob();
-      setAttachment(new File([bytes], `crazy-desert-${sticker.filename}.png`, { type: "image/png" }));
-      setSelectedSticker(sticker);
-      setError("");
+      if (requestId === attachmentRequestRef.current) {
+        setAttachment(new File([bytes], `crazy-desert-${sticker.filename}.png`, { type: "image/png" }));
+        setSelectedSticker(sticker);
+        setError("");
+      }
     } catch {
-      setError("Could not attach the sticker. Try again.");
+      if (requestId === attachmentRequestRef.current)
+        setError("Could not attach the sticker. Try again.");
     }
   }
 
   function clearAttachment() {
+    ++attachmentRequestRef.current;
+    setPreparingAttachment(false);
     setAttachment(null);
     setSelectedSticker(null);
 
@@ -442,7 +512,8 @@ function ChatPage() {
   async function handleSend(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!activeConversation || (!draft.trim() && !attachment) || sending) {
+    if (!activeConversation || (!draft.trim() && !attachment)
+        || sending || preparingAttachment) {
       return;
     }
 
@@ -455,7 +526,9 @@ function ChatPage() {
         activeConversation.id,
         draft,
         attachment,
+        canAttachListing ? inquiryListing.id : undefined,
       );
+      nearBottomRef.current = true;
       setMessages((currentMessages) => [
         ...currentMessages.filter((message) => message.id !== sentMessage.id),
         sentMessage,
@@ -851,60 +924,87 @@ function ChatPage() {
                       )}
                   </header>
 
-                  <div className="du-chat-messages du-soft-scroll">
-                    {loadingMessages ? (
-                      <p className="du-text-soft">Loading messages...</p>
-                    ) : visibleMessages.length === 0 ? (
-                      <div className="du-chat-first-message">
-                        <p>Start the conversation.</p>
-                        <span>
-                          Be respectful. A report shares only the selected
-                          message with administrators.
-                        </span>
-                      </div>
-                    ) : (
-                      visibleMessages.map((message) => (
-                        <article
-                          key={message.id}
-                          className={`du-chat-message${
-                            message.mine ? " du-chat-message-mine" : ""
-                          }`}
-                        >
-                          {!message.mine && (
-                            <span className="du-chat-message-sender">
-                              {message.senderName}
-                            </span>
-                          )}
-
-                          {message.imageUrl && (
-                            <ChatAttachmentImage
-                              src={message.imageUrl}
-                              alt={message.imageOriginalName || "Chat attachment"}
-                            />
-                          )}
-
-                          {message.body && (
-                            <p className="du-chat-message-body">{message.body}</p>
-                          )}
-
-                          <footer className="du-chat-message-footer">
-                            <time dateTime={message.createdAt}>
-                              {formatChatTime(message.createdAt)}
-                            </time>
+                  <div className="du-chat-messages-region">
+                    <div
+                      ref={messageListRef}
+                      className="du-chat-messages du-soft-scroll"
+                      onScroll={handleMessageScroll}
+                      onLoadCapture={() => {
+                        const list = messageListRef.current;
+                        if (list && nearBottomRef.current) list.scrollTop = list.scrollHeight;
+                      }}
+                    >
+                      {loadingMessages ? (
+                        <p className="du-text-soft">Loading messages...</p>
+                      ) : visibleMessages.length === 0 ? (
+                        <div className="du-chat-first-message">
+                          <p>Start the conversation.</p>
+                          <span>
+                            Be respectful. A report shares only the selected
+                            message with administrators.
+                          </span>
+                        </div>
+                      ) : (
+                        visibleMessages.map((message) => (
+                          <article
+                            key={message.id}
+                            className={`du-chat-message${
+                              message.mine ? " du-chat-message-mine" : ""
+                            }`}
+                          >
                             {!message.mine && (
-                              <button
-                                type="button"
-                                className="du-chat-report-button"
-                                onClick={() => openMessageReport(message)}
-                              >
-                                Report
-                              </button>
+                              <span className="du-chat-message-sender">
+                                {message.senderName}
+                              </span>
                             )}
-                          </footer>
-                        </article>
-                      ))
+
+                            {message.imageUrl && (
+                              <ChatAttachmentImage
+                                src={message.imageUrl}
+                                alt={message.imageOriginalName || "Chat attachment"}
+                              />
+                            )}
+
+                            {message.body && (
+                              <p className="du-chat-message-body">{message.body}</p>
+                            )}
+                            {message.marketplaceListingId && (
+                              <NavLink className="du-button du-button-small du-button-rect du-button-inline"
+                                to={`/marketplace/${message.marketplaceListingId}${
+                                  isAdmin && activeConversation?.type === "SUPPORT" ? "?reported=1" : ""
+                                }`}>
+                                Marketplace sale #{message.marketplaceListingId} →
+                              </NavLink>
+                            )}
+
+                            <footer className="du-chat-message-footer">
+                              <time dateTime={message.createdAt}>
+                                {formatChatTime(message.createdAt)}
+                              </time>
+                              {!message.mine && (
+                                <button
+                                  type="button"
+                                  className="du-chat-report-button"
+                                  onClick={() => openMessageReport(message)}
+                                >
+                                  Report
+                                </button>
+                              )}
+                            </footer>
+                          </article>
+                        ))
+                      )}
+                    </div>
+                    {showJumpToLatest && !loadingMessages && visibleMessages.length > 0 && (
+                      <button
+                        type="button"
+                        className="du-photo-viewer-arrow du-chat-jump-to-latest"
+                        aria-label="Jump to latest messages"
+                        onClick={jumpToLatest}
+                      >
+                        ↓
+                      </button>
                     )}
-                    <div ref={messagesEndRef} />
                   </div>
 
                   {chatBlocked ? (
@@ -915,6 +1015,15 @@ function ChatPage() {
                     </div>
                   ) : (
                     <form className="du-chat-composer" onSubmit={handleSend}>
+                      {canAttachListing && (
+                        <div className="du-chat-selected-attachment">
+                          <span>{reportingSale ? "Reporting" : "About"} {inquiryListing.car.brand} {inquiryListing.car.name}</span>
+                          <NavLink to={`/marketplace/${inquiryListing.id}`}>View sale</NavLink>
+                        </div>
+                      )}
+                      {reportingSale && canAttachListing && (
+                        <p className="du-text-soft">Tell Administration what is wrong with this sale, then send the report.</p>
+                      )}
                       {attachment && (
                         <div className="du-chat-selected-attachment">
                           <span>{selectedSticker ? <img className="du-chat-selected-sticker" src={selectedSticker.image} alt="" /> : "📷 "}{selectedSticker?.name ?? attachment.name}</span>
@@ -941,13 +1050,14 @@ function ChatPage() {
                           value={draft}
                           maxLength={2000}
                           rows={1}
-                          placeholder="Write a message..."
+                          placeholder={reportingSale && canAttachListing
+                            ? "Describe the problem with this sale..." : "Write a message..."}
                           aria-label="Message"
                           onChange={handleDraftChange}
                         />
 
                         <ChatSendButton
-                          disabled={sending || (!draft.trim() && !attachment)}
+                          disabled={sending || preparingAttachment || (!draft.trim() && !attachment)}
                           sending={sending}
                           flashed={sendFlashed}
                         />

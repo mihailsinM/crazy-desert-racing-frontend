@@ -23,6 +23,7 @@ export type DesertLiveItem = {
   description: string;
   targetUrl: string | null;
   linkedRaceId: number | null;
+  linkedMarketplaceListingId: number | null;
   authorId: number;
   authorName: string;
   authorAvatarUrl: string | null;

@@ -13,7 +13,7 @@ import {
 } from "../../services/desertLiveService";
 import type { DesertLiveItem } from "../../types/desertLive";
 import { getDesertLiveImageFraming } from "../../utils/desertLiveImageFraming";
-import FocalImage from "../images/FocalImage";
+import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
 
 type DashboardActivityProps = {
   title: string;
@@ -48,7 +48,7 @@ function DashboardActivityItem({
     >
       <span className="du-dashboard-activity-media" aria-hidden="true">
         {showImage ? (
-          <FocalImage
+          <AuthenticatedFocalImage
             src={imageUrl}
             alt=""
             focusX={avatarFraming.focusX}
@@ -263,6 +263,8 @@ function DashboardActivity({
               navigate(
                 item.linkedRaceId
                   ? `/races/${item.linkedRaceId}`
+                  : item.linkedMarketplaceListingId
+                    ? `/marketplace/${item.linkedMarketplaceListingId}`
                   : `/activity/${item.id}`,
               )
             }

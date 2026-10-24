@@ -2,12 +2,13 @@
   --du-scrollbar-width: 4px;
   --du-scrollbar-thumb: rgba(255, 179, 71, 0.22);
   --du-scrollbar-thumb-hover: rgba(255, 179, 71, 0.42);
+  --du-scrollbar-track: transparent;
   --du-scrollbar-border: transparent;
 
   scroll-snap-type: y mandatory;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: var(--du-scrollbar-thumb) transparent;
+  scrollbar-color: var(--du-scrollbar-thumb) var(--du-scrollbar-track);
 }
 
 /* The page rail owns the browser edge below the application bar. */
@@ -41,6 +42,13 @@
   scrollbar-color: var(--du-scrollbar-thumb) transparent;
 }
 
+.du-car-gallery-photos-scroll {
+  --du-scrollbar-width: 6px;
+  --du-scrollbar-thumb: rgba(255, 179, 71, 0.48);
+
+  scrollbar-color: auto;
+}
+
 :is(
     .du-page-scroll,
     .du-soft-scroll,
@@ -65,7 +73,7 @@
     .du-collection-scroll,
     .du-scroll-large
   )::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--du-scrollbar-track, transparent);
 }
 
 :is(
@@ -120,7 +128,7 @@
   height: 13px;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: 8px 8px;
+  background-size: min(8px, var(--du-scrollbar-width)) min(8px, var(--du-scrollbar-width));
 }
 
 :is(

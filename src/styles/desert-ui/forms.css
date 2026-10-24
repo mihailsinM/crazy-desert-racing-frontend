@@ -79,6 +79,13 @@
   box-sizing: border-box;
 }
 
+.du-marketplace-price-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(100px, 150px);
+  align-items: end;
+  gap: 12px;
+}
+
 .du-form-panel {
   max-width: 650px;
   margin: 40px auto;

@@ -103,6 +103,7 @@ export async function sendChatMessage(
   conversationId: number,
   body: string,
   image: File | null,
+  marketplaceListingId?: number,
 ): Promise<ChatMessage> {
   const formData = new FormData();
 
@@ -112,6 +113,10 @@ export async function sendChatMessage(
 
   if (image) {
     formData.append("image", image);
+  }
+
+  if (marketplaceListingId) {
+    formData.append("marketplaceListingId", String(marketplaceListingId));
   }
 
   const response = await authenticatedFetch(
@@ -138,7 +143,7 @@ export async function markChatRead(conversationId: number): Promise<void> {
   notifyUnreadChanged();
 }
 
-export async function getChatUnreadCount(): Promise<number> {
+export async function getChatUnreadCount(): Promise<ChatUnread> {
   const response = await authenticatedFetch(
     `${API_BASE_URL}/chat/unread-count`,
   );
@@ -146,7 +151,7 @@ export async function getChatUnreadCount(): Promise<number> {
     response,
     "Failed to load unread messages",
   );
-  return result.unreadCount;
+  return result;
 }
 
 export async function blockChatUser(userId: number): Promise<void> {

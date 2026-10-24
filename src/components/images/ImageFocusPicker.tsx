@@ -23,13 +23,14 @@ import {
 } from "../../utils/imageFocus";
 import AuthenticatedFocalImage from "./AuthenticatedFocalImage";
 
-export type ImageFocusPreviewVariant = "circle" | "square" | "wide";
+export type ImageFocusPreviewVariant = "circle" | "square" | "wide" | "mobile";
 
 type SharedImageFocusPickerProps = {
   imageUrl: string;
   disabled?: boolean;
   imageAlt?: string;
   previewVariants?: readonly ImageFocusPreviewVariant[];
+  initialProfile?: ImageFramingProfileName;
 };
 
 type SingleImageFocusPickerProps = {
@@ -66,6 +67,7 @@ const PREVIEW_LABELS: Record<ImageFocusPreviewVariant, string> = {
   circle: "Round preview",
   square: "Square card",
   wide: "Wide card",
+  mobile: "Mobile car detail",
 };
 const PROFILE_BY_PREVIEW_VARIANT: Partial<
   Record<ImageFocusPreviewVariant, ImageFramingProfileName>
@@ -93,9 +95,10 @@ function ImageFocusPicker({
   disabled = false,
   imageAlt = "Image",
   previewVariants = DEFAULT_PREVIEW_VARIANTS,
+  initialProfile = "avatar",
 }: ImageFocusPickerProps) {
   const [activeProfile, setActiveProfile] = useState<ImageFramingProfileName>(
-    "avatar",
+    initialProfile,
   );
   const [sourceAspectRatio, setSourceAspectRatio] = useState(1);
   const usesFramingProfiles =
@@ -124,7 +127,11 @@ function ImageFocusPicker({
         sourceAspectRatio,
         PROFILE_ASPECT_RATIOS[activeProfile],
       )
-    : getImageCropFrame(activeFocus, normalizedCrop);
+    : previewVariants.includes("mobile")
+      ? getImageCropFrameForAspectRatio(
+          activeFocus, normalizedCrop, sourceAspectRatio, 16 / 9,
+        )
+      : getImageCropFrame(activeFocus, normalizedCrop);
   const cropProgress = (normalizedCrop / MAX_IMAGE_CROP_PERCENT) * 100;
   const renderedPreviewVariants = usesFramingProfiles
     ? FRAMING_PROFILE_PREVIEW_VARIANTS

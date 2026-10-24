@@ -176,10 +176,10 @@ function RaceDetailsPage() {
           actions={
             <button
               type="button"
-              className="du-button du-sand-text"
+              className="du-button du-button-small du-button-rect du-button-back du-sand-text"
               onClick={() => setShowParticipants(false)}
             >
-              Back to Race Details
+              ← Back
             </button>
           }
         >
@@ -236,10 +236,10 @@ function RaceDetailsPage() {
 
               <button
                 type="button"
-                className="du-button du-button-small du-sand-text"
+                className="du-button du-button-small du-sand-text du-button-back"
                 onClick={() => navigate("/races")}
               >
-                ← Back to Races
+                ← Back
               </button>
 
               {hasAdminAccess(currentUser?.role) && (

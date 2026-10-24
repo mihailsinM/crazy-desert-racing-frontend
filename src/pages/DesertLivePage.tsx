@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import DesertLiveMenuFilter from "../components/desert-live/DesertLiveMenuFilter";
 import DesertLiveRow from "../components/desert-live/DesertLiveRow";
@@ -42,12 +42,15 @@ const emptyPage: DesertLivePageData = {
 
 function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { currentUser } = useAuth();
   const isAdmin = hasAdminAccess(currentUser?.role);
   const isMyPage = scope === "MY";
 
   const [category, setCategory] =
-    useState<DesertLiveCategoryFilter>("ALL");
+    useState<DesertLiveCategoryFilter>(
+      searchParams.get("category") === "MARKETPLACE" ? "MARKETPLACE" : "ALL",
+    );
   const [status, setStatus] = useState<DesertLiveStatusFilter>("ALL");
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
@@ -277,13 +280,18 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
                   item={item}
                   busy={busyItemId === item.id}
                   showModerationActions={
-                    !isMyPage && isAdmin && item.linkedRaceId === null
+                    !isMyPage && isAdmin && item.linkedRaceId === null &&
+                    (item.linkedMarketplaceListingId === null ||
+                      item.moderationStatus === "PENDING")
                   }
-                  showOwnerActions={isMyPage && item.linkedRaceId === null}
+                  showOwnerActions={isMyPage && item.linkedRaceId === null &&
+                    item.linkedMarketplaceListingId === null}
                   onView={() =>
                     navigate(
                       item.linkedRaceId
                         ? `/races/${item.linkedRaceId}`
+                        : item.linkedMarketplaceListingId
+                          ? `/marketplace/${item.linkedMarketplaceListingId}`
                         : isMyPage
                           ? `/activity/my/${item.id}`
                           : `/activity/${item.id}`,

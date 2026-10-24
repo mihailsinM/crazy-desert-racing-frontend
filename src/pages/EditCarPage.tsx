@@ -2,14 +2,17 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import MediaFormPage from "../components/forms/MediaFormPage";
+import ImageFocusPicker from "../components/images/ImageFocusPicker";
 import RaceCarImage from "../components/images/RaceCarImage";
 import {
   deleteRaceCarImage,
   getRaceCarAssetUrl,
   getRaceCarById,
   updateRaceCar,
+  updateRaceCarMobileFraming,
 } from "../services/raceCarService";
 import type { RaceCar } from "../types/raceCar";
+import { createImageFramingProfile, type ImageFramingProfile } from "../utils/imageFocus";
 import { getRaceCarImageFraming } from "../utils/raceCarImageFraming";
 
 function EditCarPage() {
@@ -17,6 +20,7 @@ function EditCarPage() {
   const navigate = useNavigate();
   const carId = Number(id);
   const [existingCar, setExistingCar] = useState<RaceCar | null>(null);
+  const [mobileFraming, setMobileFraming] = useState<ImageFramingProfile | null>(null);
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [horsePower, setHorsePower] = useState("");
@@ -31,6 +35,10 @@ function EditCarPage() {
     void getRaceCarById(carId)
       .then((car) => {
         setExistingCar(car);
+        const mobile = car.mobileImageFraming ?? getRaceCarImageFraming(car).card;
+        setMobileFraming(createImageFramingProfile(
+          mobile.focusX, mobile.focusY, mobile.cropPercent,
+        ));
         setName(car.name);
         setBrand(car.brand);
         setHorsePower(String(car.horsePower));
@@ -62,6 +70,21 @@ function EditCarPage() {
           ? caughtError.message
           : "Failed to remove car photo",
       );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function saveMobileFraming() {
+    if (!mobileFraming) return;
+    setSaving(true);
+    setError("");
+    try {
+      setExistingCar(await updateRaceCarMobileFraming(carId, mobileFraming));
+      setMessage("Mobile photo framing saved.");
+    } catch (caughtError) {
+      setError(caughtError instanceof Error
+        ? caughtError.message : "Failed to save mobile photo framing");
     } finally {
       setSaving(false);
     }
@@ -169,6 +192,31 @@ function EditCarPage() {
             </div>
           </div>
         </div>
+
+        {imageUrl && mobileFraming && (
+          <details>
+            <summary className="du-field-label">Mobile photo framing</summary>
+            <p className="du-text-soft">Choose the car's position for the phone view. Desktop framing stays as it is.</p>
+            <ImageFocusPicker
+              imageUrl={imageUrl}
+              imageAlt={`${existingCar.brand} ${existingCar.name}`}
+              value={{ x: mobileFraming.focusX, y: mobileFraming.focusY }}
+              onChange={(focus) => setMobileFraming((current) => current && ({
+                ...current, focusX: focus.x, focusY: focus.y,
+              }))}
+              cropPercent={mobileFraming.cropPercent}
+              onCropPercentChange={(cropPercent) => setMobileFraming((current) => current && ({
+                ...current, cropPercent,
+              }))}
+              previewVariants={["mobile"]}
+              disabled={saving}
+            />
+            <button type="button" className="du-button du-button-small du-button-rect"
+              disabled={saving} onClick={() => void saveMobileFraming()}>
+              Save mobile framing
+            </button>
+          </details>
+        )}
 
         <button
           className="du-button du-button-primary"

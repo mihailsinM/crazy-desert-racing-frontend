@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import type { ImageFramingProfile } from "../../utils/imageFocus";
 
 import FocalImage from "../images/FocalImage";
 import AuthenticatedFocalImage from "../images/AuthenticatedFocalImage";
@@ -9,6 +10,7 @@ type DetailsCardImage = {
   focusX?: number;
   focusY?: number;
   cropPercent?: number;
+  mobileFraming?: ImageFramingProfile;
   ariaHidden?: boolean;
   authenticated?: boolean;
 };
@@ -48,6 +50,14 @@ function DetailsCard({
   scrollable = false,
   scrollAll = false,
 }: DetailsCardProps) {
+  const [mobile, setMobile] = useState(() => window.matchMedia("(max-width: 800px)").matches);
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 800px)");
+    const update = () => setMobile(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+  const framing = mobile && image.mobileFraming ? image.mobileFraming : image;
   const content = (
     <>
       <div className="du-details-heading">
@@ -83,9 +93,9 @@ function DetailsCard({
         <AuthenticatedFocalImage
           src={image.src}
           alt={image.alt}
-          focusX={image.focusX}
-          focusY={image.focusY}
-          cropPercent={image.cropPercent}
+          focusX={framing.focusX}
+          focusY={framing.focusY}
+          cropPercent={framing.cropPercent}
           className="du-details-media"
           aria-hidden={image.ariaHidden}
         />
@@ -93,9 +103,9 @@ function DetailsCard({
         <FocalImage
           src={image.src}
           alt={image.alt}
-          focusX={image.focusX}
-          focusY={image.focusY}
-          cropPercent={image.cropPercent}
+          focusX={framing.focusX}
+          focusY={framing.focusY}
+          cropPercent={framing.cropPercent}
           className="du-details-media"
           aria-hidden={image.ariaHidden}
         />

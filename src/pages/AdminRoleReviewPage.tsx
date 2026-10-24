@@ -54,7 +54,7 @@ export default function AdminRoleReviewPage() {
         <div className="du-details-overlay du-scroll du-details-overlay-top du-admin-review">
           <div className="du-page-header du-page-header-split">
             <div><p className="du-details-eyebrow">Super Administrator</p><h1 className="du-details-title">Review Admin Access</h1></div>
-            <Link className="du-button" to="/admin/users">← Back</Link>
+            <Link className="du-button du-button-small du-button-rect du-button-back" to="/admin/users">← Back</Link>
           </div>
           {error && <p className="du-error" role="alert">{error}</p>}
           {!Number.isInteger(userId) || userId <= 0 ? <p className="du-error">Invalid user</p> : !user && !error ? <p>Loading profile...</p> : null}
