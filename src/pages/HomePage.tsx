@@ -13,8 +13,8 @@ function HomePage() {
       <div className="home-page-content du-page-scroll">
         <HeroSection />
         <UpcomingRacesSection />
-        <WhyJoinSection />
         <FestivalExperienceSection />
+        <WhyJoinSection />
         <VipPreviewSection />
       </div>
     </main>

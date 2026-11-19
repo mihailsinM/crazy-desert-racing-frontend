@@ -168,6 +168,9 @@ function Navbar() {
               Races
             </NavLink>
 
+            <NavLink to="/festivals" className={getNavLinkClass}
+              onClick={() => setMenuOpen(false)}>Festivals</NavLink>
+
             <NavLink
               to="/marketplace"
               className={({ isActive }) =>
@@ -203,7 +206,7 @@ function Navbar() {
         ) : (
           <>
             <a
-              href="#races"
+              href="/#races"
               className="du-nav-link"
               onClick={() => setMenuOpen(false)}
             >
@@ -211,20 +214,23 @@ function Navbar() {
             </a>
 
             <a
-              href="#vip"
+              href="/#vip"
               className="du-nav-link"
               onClick={() => setMenuOpen(false)}
             >
               VIP Club
             </a>
 
-            <a
-              href="#festival"
-              className="du-nav-link"
+            <NavLink
+              to="/festivals"
+              className={getNavLinkClass}
               onClick={() => setMenuOpen(false)}
             >
-              Festival
-            </a>
+              Festivals
+            </NavLink>
+
+            <NavLink to="/marketplace" className={getNavLinkClass}
+              onClick={() => setMenuOpen(false)}>Marketplace</NavLink>
 
             <NavLink
               to="/login"

@@ -1,9 +1,8 @@
 .upcoming-races-section {
-  padding: 90px 24px;
+  padding: 30px 24px 40px;
 }
 
 .upcoming-races-header {
-  max-width: 1100px;
   margin: 0 auto 34px;
 }
 
@@ -21,11 +20,7 @@
 }
 
 .upcoming-races-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  max-width: 1100px;
-  margin: 0 auto;
-  gap: 22px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .upcoming-race-card {
@@ -100,7 +95,5 @@
 }
 
 @media (max-width: 800px) {
-  .upcoming-races-grid {
-    grid-template-columns: 1fr;
-  }
+  .upcoming-races-grid { grid-template-columns: 1fr; }
 }

@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import PasswordInput from "../components/auth/PasswordInput";
 import { login, LoginRequestError } from "../services/authService";
 import logo from "../assets/logo.png";
 import "../styles/auth-page.css";
 
 function LoginPage() {
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailReviewed, setEmailReviewed] = useState(false);
@@ -113,6 +115,7 @@ function LoginPage() {
         </form>
 
         {message && <p className="auth-message" role="alert">{message}</p>}
+        <p className="auth-message">New here? <Link to={`/register${location.search}`}>Create an account</Link></p>
       </section>
     </main>
   );

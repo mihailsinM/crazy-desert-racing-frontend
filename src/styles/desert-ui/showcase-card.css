@@ -14,6 +14,12 @@
   background-clip: padding-box;
 }
 
+a.du-showcase-card,
+a.du-showcase-card:visited {
+  color: var(--du-text-main);
+  text-decoration: none;
+}
+
 .du-showcase-media {
   position: absolute;
   inset: 0;
@@ -62,6 +68,17 @@
   font-size: 42px;
   margin: 0 0 22px;
   color: var(--du-text-main);
+}
+
+.du-festival-card .du-showcase-title {
+  font-size: clamp(21px, 2vw, 28px);
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.du-festival-card .du-showcase-eyebrow {
+  font-size: 11px;
+  letter-spacing: 1px;
 }
 
 .du-showcase-meta {

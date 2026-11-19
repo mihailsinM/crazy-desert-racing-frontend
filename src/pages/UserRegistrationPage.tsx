@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import PasswordInput from "../components/auth/PasswordInput";
 import DesertLiveMenuFilter from "../components/desert-live/DesertLiveMenuFilter";
 import { removeToken } from "../services/authService";
@@ -20,6 +20,7 @@ const licenseCategoryOptions = [
 type RegistrationField = "name" | "age" | "email" | "license" | "password" | "confirm";
 
 function RegisterPage() {
+  const location = useLocation();
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [email, setEmail] = useState("");
@@ -94,7 +95,7 @@ function RegisterPage() {
       removeToken();
 
       setTimeout(() => {
-        navigate("/login");
+        navigate(`/login${location.search}`);
       }, 1200);
     } catch {
       setMessage("Failed to create account. Please check your data.");
@@ -222,7 +223,7 @@ function RegisterPage() {
         {message && <p className="auth-message" role="status">{message}</p>}
 
         <p className="auth-footer">
-          Already have an account? <Link to="/login">Login</Link>
+          Already have an account? <Link to={`/login${location.search}`}>Login</Link>
         </p>
       </section>
     </main>

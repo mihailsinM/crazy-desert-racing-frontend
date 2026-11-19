@@ -1,6 +1,8 @@
-.hero-section {
+.home-page .hero-section {
   display: flex;
   align-items: center;
+  min-height: auto;
+  padding-bottom: 24px;
 }
 
 .hero-layout {

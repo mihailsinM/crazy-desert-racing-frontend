@@ -11,24 +11,67 @@ import "../styles/upcoming-races-section.css";
 function UpcomingRacesSection() {
   const navigate = useNavigate();
   const [races, setRaces] = useState<Race[]>([]);
+  const [changing, setChanging] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+    let pool: Race[] = [];
+    let current: Race[] = [];
+    let timeout: number | undefined;
+    let frame: number | undefined;
+    let revealFrame: number | undefined;
+    function pick() {
+      const shuffled = [...pool];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      const next = shuffled.slice(0, 3);
+      if (next.length > 1 && next.every((race, index) => race.id === current[index]?.id)) {
+        next.push(next.shift()!);
+      }
+      return next;
+    }
     async function loadRaces() {
-      const data = await getAllRaces();
-      setRaces(data.slice(0, 3));
+      try {
+        const data = await getAllRaces();
+        if (!mounted) return;
+        pool = data;
+        current = pick();
+        setRaces(current);
+      } catch { /* Keep the page visible if races are unavailable. */ }
     }
 
-    loadRaces();
+    void loadRaces();
+    const interval = window.setInterval(() => {
+      if (document.visibilityState !== "visible" || pool.length < 2) return;
+      setChanging(true);
+      timeout = window.setTimeout(() => {
+        if (!mounted) return;
+        current = pick();
+        setRaces(current);
+        frame = window.requestAnimationFrame(() => {
+          revealFrame = window.requestAnimationFrame(() => { if (mounted) setChanging(false); });
+        });
+      }, 750);
+    }, 15_000);
+    return () => {
+      mounted = false;
+      window.clearInterval(interval);
+      if (timeout !== undefined) window.clearTimeout(timeout);
+      if (frame !== undefined) window.cancelAnimationFrame(frame);
+      if (revealFrame !== undefined) window.cancelAnimationFrame(revealFrame);
+    };
   }, []);
 
   return (
     <section id="races" className="upcoming-races-section">
-      <div className="upcoming-races-header">
+      <div className="upcoming-races-header du-container">
         <p>Race Calendar</p>
         <h2>Upcoming Races</h2>
       </div>
 
-      <div className="upcoming-races-grid">
+      <div className={`upcoming-races-grid du-showcase-grid du-container${changing ? " festival-preview-grid-changing" : ""}`}>
         {races.map((race) => {
           const imageUrl = getRaceAssetUrl(race.imageUrl);
           const cardFraming = getRaceImageFraming(race).card;

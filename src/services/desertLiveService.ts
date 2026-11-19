@@ -149,6 +149,11 @@ export async function getPublicDesertLiveItems(
   return readJson(response, "Failed to load Desert Live");
 }
 
+export async function getFestivalHistory(page: number): Promise<DesertLivePage> {
+  const response = await fetch(`${API_BASE_URL}/desert-live/festivals/history?page=${page}&size=12`);
+  return readJson(response, "Failed to load festival history");
+}
+
 export async function getPublicDesertLiveItem(
   id: number,
 ): Promise<DesertLiveItem> {

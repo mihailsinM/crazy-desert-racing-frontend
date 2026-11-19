@@ -73,6 +73,10 @@ function MarketplaceDetailsPage() {
 
   async function contactSeller() {
     if (!listing) return;
+    if (!currentUser) {
+      navigate(`/login?next=${encodeURIComponent(`/marketplace/${listing.id}`)}&chatUser=${listing.sellerId}&listing=${listing.id}`);
+      return;
+    }
     setBusy(true);
     setError("");
     try {
@@ -123,7 +127,9 @@ function MarketplaceDetailsPage() {
 
   const car = listing.car;
   const ownListing = currentUser?.id === listing.sellerId;
-  const imageUrl = getRaceCarAssetUrl(car.imageUrl);
+  const originalImageUrl = getRaceCarAssetUrl(car.imageUrl);
+  const imageUrl = !currentUser && originalImageUrl?.includes("/driver-photos/")
+    ? null : originalImageUrl;
   const framing = getRaceCarImageFraming(car).card;
   const price = new Intl.NumberFormat("en-US", {
     style: "currency", currency: listing.currency,
@@ -164,7 +170,7 @@ function MarketplaceDetailsPage() {
         onClick: () => { void deleteListing(); },
       }] : []),
     ] : [
-      ...(available && !hasAdminAccess(currentUser?.role) ? [{
+      ...(available && currentUser && !hasAdminAccess(currentUser.role) ? [{
         label: "Report sale to Administration", icon: "⚑", disabled: busy,
         onClick: () => { void contactAdministration(); },
       }] : []),

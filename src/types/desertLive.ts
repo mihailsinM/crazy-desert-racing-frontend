@@ -30,6 +30,9 @@ export type DesertLiveItem = {
   moderationNote: string | null;
   activeFrom: string | null;
   activeUntil: string | null;
+  festivalLocation: string | null;
+  festivalAddress: string | null;
+  festivalTicketPrice: number | null;
   createdAt: string;
   updatedAt: string;
   imageFocusX: number;
@@ -54,6 +57,9 @@ export type DesertLiveWriteRequest = {
   targetUrl: string | null;
   activeFrom: string | null;
   activeUntil: string | null;
+  festivalLocation: string | null;
+  festivalAddress: string | null;
+  festivalTicketPrice: number | null;
 };
 
 export type DesertLivePageQuery = {

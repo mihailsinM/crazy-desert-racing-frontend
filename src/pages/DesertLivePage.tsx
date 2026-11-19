@@ -292,6 +292,8 @@ function DesertLivePage({ scope = "PUBLIC" }: DesertLivePageProps) {
                         ? `/races/${item.linkedRaceId}`
                         : item.linkedMarketplaceListingId
                           ? `/marketplace/${item.linkedMarketplaceListingId}`
+                        : item.category === "FESTIVAL" && item.moderationStatus === "APPROVED"
+                          ? `/festivals/${item.id}`
                         : isMyPage
                           ? `/activity/my/${item.id}`
                           : `/activity/${item.id}`,

@@ -136,6 +136,18 @@
   margin-bottom: auto;
 }
 
+.du-festival-details-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.du-festival-details-content .du-details-description {
+  max-width: none;
+  margin: auto 0 0;
+  padding-top: 24px;
+}
+
 .du-details-actions {
   display: flex;
   flex-direction: column;

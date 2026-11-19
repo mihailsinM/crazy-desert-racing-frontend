@@ -11,9 +11,11 @@ import {
 import { getRaceCarAssetUrl } from "../services/raceCarService";
 import type { MarketplaceListing } from "../types/marketplace";
 import { getRaceCarImageFraming } from "../utils/raceCarImageFraming";
+import { useAuth } from "../context/authContext";
 
 function MarketplacePage() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const mine = searchParams.get("mine") === "1";
   const [listings, setListings] = useState<MarketplaceListing[]>([]);
@@ -22,6 +24,7 @@ function MarketplacePage() {
   const [inquiries, setInquiries] = useState(0);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     let active = true;
     const refresh = () => {
       void getChatUnreadCount().then((counts) => {
@@ -34,9 +37,13 @@ function MarketplacePage() {
       active = false;
       window.removeEventListener(CHAT_UNREAD_CHANGED_EVENT, refresh);
     };
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
+    if (mine && !isAuthenticated) {
+      navigate(`/login?next=${encodeURIComponent("/marketplace?mine=1")}`, { replace: true });
+      return;
+    }
     let active = true;
 
     async function loadListings() {
@@ -54,7 +61,7 @@ function MarketplacePage() {
 
     void loadListings();
     return () => { active = false; };
-  }, [mine]);
+  }, [mine, isAuthenticated, navigate]);
 
   return (
     <section className="du-page du-viewport-page du-collection-page">
@@ -71,13 +78,13 @@ function MarketplacePage() {
             onClick={() => {
               if (mine) { setError(""); setLoading(true); setSearchParams({}); }
             }}>Browse cars</button>
-          <button type="button" aria-pressed={mine}
+          {isAuthenticated && <button type="button" aria-pressed={mine}
             className={`du-button du-button-small du-button-rect${mine ? " du-button-primary" : ""}`}
             onClick={() => {
               if (!mine) { setError(""); setLoading(true); setSearchParams({ mine: "1" }); }
-            }}>My listings</button>
+            }}>My listings</button>}
           <button type="button" className="du-button du-button-primary du-button-small du-button-rect"
-            onClick={() => navigate("/cars")}>Sell from My Cars</button>
+            onClick={() => navigate(isAuthenticated ? "/cars" : `/login?next=${encodeURIComponent("/cars")}`)}>Sell from My Cars</button>
         </div>
       </header>
 
@@ -86,7 +93,9 @@ function MarketplacePage() {
         {loading ? <p className="du-sand-text">Loading listings...</p> : (
           <div className="du-showcase-grid">
             {listings.map((listing) => {
-              const imageUrl = getRaceCarAssetUrl(listing.car.imageUrl);
+              const originalImageUrl = getRaceCarAssetUrl(listing.car.imageUrl);
+              const imageUrl = !isAuthenticated && originalImageUrl?.includes("/driver-photos/")
+                ? null : originalImageUrl;
               const framing = getRaceCarImageFraming(listing.car).card;
               return (
                 <article key={listing.id} className="du-card du-showcase-card"

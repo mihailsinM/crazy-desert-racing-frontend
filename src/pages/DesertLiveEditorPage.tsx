@@ -81,6 +81,9 @@ function itemMatchesRequest(
     item.targetUrl === request.targetUrl &&
     dateTimesEqual(item.activeFrom, request.activeFrom) &&
     dateTimesEqual(item.activeUntil, request.activeUntil)
+    && item.festivalLocation === request.festivalLocation
+    && item.festivalAddress === request.festivalAddress
+    && item.festivalTicketPrice === request.festivalTicketPrice
   );
 }
 
@@ -103,6 +106,10 @@ function DesertLiveEditorPage({
   const [targetUrl, setTargetUrl] = useState("");
   const [activeFrom, setActiveFrom] = useState("");
   const [activeUntil, setActiveUntil] = useState("");
+  const [festivalLocation, setFestivalLocation] = useState("");
+  const [festivalAddress, setFestivalAddress] = useState("");
+  const [festivalTicketPrice, setFestivalTicketPrice] = useState("");
+  const [freeEntry, setFreeEntry] = useState(true);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imageFraming, setImageFraming] = useState<ImageFramingProfiles>(() =>
     createImageFramingProfiles(),
@@ -155,6 +162,10 @@ function DesertLiveEditorPage({
           setTargetUrl(item.targetUrl ?? "");
           setActiveFrom(toLocalDateTime(item.activeFrom));
           setActiveUntil(toLocalDateTime(item.activeUntil));
+          setFestivalLocation(item.festivalLocation ?? "");
+          setFestivalAddress(item.festivalAddress ?? "");
+          setFestivalTicketPrice(item.festivalTicketPrice?.toString() ?? "");
+          setFreeEntry(item.festivalTicketPrice === null);
           setImageFraming(getDesertLiveImageFraming(item));
         }
       } catch (caughtError) {
@@ -222,6 +233,10 @@ function DesertLiveEditorPage({
       targetUrl: targetUrl.trim() || null,
       activeFrom: toApiDateTime(activeFrom),
       activeUntil: toApiDateTime(activeUntil),
+      festivalLocation: category === "FESTIVAL" ? festivalLocation.trim() : null,
+      festivalAddress: category === "FESTIVAL" ? festivalAddress.trim() || null : null,
+      festivalTicketPrice: category === "FESTIVAL" && !freeEntry
+        ? Number(festivalTicketPrice) : null,
     };
   }
 
@@ -271,6 +286,16 @@ function DesertLiveEditorPage({
       return;
     }
 
+    if (category === "FESTIVAL" && (!activeFrom || !activeUntil || !festivalLocation.trim())) {
+      setError("Festival dates and location are required.");
+      return;
+    }
+    if (category === "FESTIVAL" && !freeEntry
+        && (!festivalTicketPrice || Number(festivalTicketPrice) <= 0)) {
+      setError("Enter a ticket price in ₪ or choose free entry.");
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -306,7 +331,8 @@ function DesertLiveEditorPage({
       }
 
       navigate(
-        usesAdminApi || savedItem.moderationStatus === "APPROVED"
+        savedItem.category === "FESTIVAL" ? `/festivals/${savedItem.id}`
+          : usesAdminApi || savedItem.moderationStatus === "APPROVED"
           ? `/activity/${savedItem.id}`
           : "/activity/my",
       );
@@ -409,12 +435,14 @@ function DesertLiveEditorPage({
     !hasContentChanges &&
     hasFramingChanges,
   );
-  let submitLabel = usesAdminApi ? "Publish Now" : "Submit for Review";
+  let submitLabel = category === "FESTIVAL" || usesAdminApi
+    ? "Publish Festival" : "Submit for Review";
 
   if (isFramingOnlySave) {
     submitLabel = "Save Image Framing";
   } else if (isEditing) {
-    submitLabel = usesAdminApi ? "Save Changes" : "Submit Changes";
+    submitLabel = category === "FESTIVAL" || usesAdminApi
+      ? "Save Changes" : "Submit Changes";
   }
 
   return (
@@ -430,8 +458,8 @@ function DesertLiveEditorPage({
               <p className="du-details-eyebrow">Desert Live</p>
               <h1 className="du-details-title">
                 {isEditing || existingItem
-                  ? "Edit Publication"
-                  : "Post Advertisement"}
+                  ? category === "FESTIVAL" ? "Edit Festival" : "Edit Publication"
+                  : category === "FESTIVAL" ? "Create Festival" : "Post Advertisement"}
               </h1>
             </div>
             <button
@@ -493,25 +521,48 @@ function DesertLiveEditorPage({
                 />
               </label>
 
+              {category === "FESTIVAL" && <label className="du-field">
+                <span className="du-field-label">City / area</span>
+                <input className="du-input" maxLength={160} required
+                  value={festivalLocation} onChange={(event) => setFestivalLocation(event.target.value)} />
+              </label>}
+
+              {category === "FESTIVAL" && <label className="du-field du-desert-live-editor-wide">
+                <span className="du-field-label">Venue address or coordinates (optional)</span>
+                <input className="du-input" maxLength={300}
+                  placeholder="Street and number, city, Israel"
+                  value={festivalAddress} onChange={(event) => setFestivalAddress(event.target.value)} />
+              </label>}
+
               <label className="du-field">
-                <span className="du-field-label">Active from (optional)</span>
+                <span className="du-field-label">{category === "FESTIVAL" ? "Festival starts" : "Active from (optional)"}</span>
                 <input
                   className="du-input"
                   type="datetime-local"
+                  required={category === "FESTIVAL"}
                   value={activeFrom}
                   onChange={(event) => setActiveFrom(event.target.value)}
                 />
               </label>
 
               <label className="du-field">
-                <span className="du-field-label">Active until (optional)</span>
+                <span className="du-field-label">{category === "FESTIVAL" ? "Festival ends" : "Active until (optional)"}</span>
                 <input
                   className="du-input"
                   type="datetime-local"
+                  required={category === "FESTIVAL"}
                   value={activeUntil}
                   onChange={(event) => setActiveUntil(event.target.value)}
                 />
               </label>
+              {category === "FESTIVAL" && <div className="du-field">
+                <span className="du-field-label">Entry</span>
+                <label><input type="checkbox" checked={freeEntry}
+                  onChange={(event) => setFreeEntry(event.target.checked)} /> Free entry</label>
+                {!freeEntry && <input className="du-input" type="number" min="0.01" step="0.01"
+                  value={festivalTicketPrice} required placeholder="Ticket price in ₪"
+                  onChange={(event) => setFestivalTicketPrice(event.target.value)} />}
+              </div>}
             </div>
 
             <div className="du-desert-live-image-editor">
@@ -617,7 +668,7 @@ function DesertLiveEditorPage({
 
             {error && <p className="du-error">{error}</p>}
 
-            {!usesAdminApi && (
+            {!usesAdminApi && category !== "FESTIVAL" && (
               <p className="du-caption">
                 New publications, replaced images, and content changes are sent
                 to an administrator for review. Changing only the image focus

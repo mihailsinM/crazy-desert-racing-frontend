@@ -342,19 +342,18 @@
 
 .du-marketplace-details .du-details-description {
   max-width: none;
-  margin: 0 0 12px;
+  margin: auto 0 12px;
+  padding-top: 24px;
+}
+
+.du-marketplace-details .du-car-gallery-photos-scroll {
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 801px) {
   .du-marketplace-details .du-car-gallery-photos-scroll {
-    display: flex;
-    flex-direction: column;
     min-height: 100%;
-  }
-
-  .du-marketplace-details .du-details-description {
-    margin-top: auto;
-    padding-top: 24px;
   }
 }
 
